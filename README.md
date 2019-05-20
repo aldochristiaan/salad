@@ -49,12 +49,12 @@ export PATH=$ANDROID_HOME/tools:$PATH
 export PATH="/usr/local/bin:$PATH"
 ```
 
-#### Build
+### Build
 
 Run `./gradlew shadowJar` to get jar libs.
 
 Check output folder `build/libs/salad-<version>.jar`
 
-#### How to use this library
+### How to use this library
 
 Open [HOW-TO](https://github.com/aldochristiaan/salad/blob/master/docs/How-to.md) to start implement this library on your project
