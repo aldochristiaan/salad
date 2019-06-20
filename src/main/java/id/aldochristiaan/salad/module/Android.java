@@ -1,23 +1,24 @@
 package id.aldochristiaan.salad.module;
 
 import id.aldochristiaan.salad.module.android.*;
-import id.aldochristiaan.salad.module.general.*;
+import id.aldochristiaan.salad.module.general.Randomize;
+import id.aldochristiaan.salad.module.general.ValidateValue;
 import id.aldochristiaan.salad.util.ChangeContext;
 import id.aldochristiaan.salad.util.Direction;
 import id.aldochristiaan.salad.util.FakerUtil;
 import id.aldochristiaan.salad.util.LogUtil;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.android.AndroidElement;
-import io.appium.java_client.pagefactory.AppiumFieldDecorator;
+import io.appium.java_client.android.nativekey.AndroidKey;
+import io.appium.java_client.android.nativekey.KeyEvent;
+import io.appium.java_client.android.nativekey.KeyEventFlag;
 import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.*;
-import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.io.File;
 import java.io.IOException;
-import java.time.Duration;
 import java.util.List;
 import java.util.Objects;
 
@@ -28,7 +29,6 @@ public class Android extends Mobile {
     protected AndroidDriver<AndroidElement> androidDriver;
 
     public Android(AndroidDriver<AndroidElement> androidDriver) {
-        PageFactory.initElements(new AppiumFieldDecorator(androidDriver, Duration.ofSeconds(20)), this);
         this.androidDriver = androidDriver;
     }
 
@@ -86,6 +86,10 @@ public class Android extends Mobile {
 
     protected FakerUtil fakerUtil() {
         return new FakerUtil();
+    }
+
+    protected Deeplink deeplink() {
+        return new Deeplink(androidDriver);
     }
 
     protected AndroidElement findElementBy(By by) {
@@ -150,10 +154,6 @@ public class Android extends Mobile {
                 .until(ExpectedConditions.visibilityOfAllElementsLocatedBy(by));
     }
 
-    protected void hideKeyboard() {
-        androidDriver.hideKeyboard();
-    }
-
     protected void takeScreenshot(String name) {
         File scrFile = ((TakesScreenshot) androidDriver).getScreenshotAs(OutputType.FILE);
         File imageFile = new File("screenshot/" + name + ".png");
@@ -175,6 +175,29 @@ public class Android extends Mobile {
         } catch (IOException e) {
             LogUtil.error("Failed to take screenshot!");
             e.printStackTrace();
+        }
+    }
+
+    protected void pressBackButton() {
+        androidDriver.pressKey(new KeyEvent().withKey(AndroidKey.BACK));
+    }
+
+    protected void pressEnterButton() {
+        androidDriver.pressKey(new KeyEvent().withKey(AndroidKey.ENTER));
+    }
+
+    protected void pressSearchButton() {
+        androidDriver.pressKey(new KeyEvent(AndroidKey.ENTER)
+                .withFlag(KeyEventFlag.SOFT_KEYBOARD)
+                .withFlag(KeyEventFlag.KEEP_TOUCH_MODE)
+                .withFlag(KeyEventFlag.EDITOR_ACTION));
+    }
+
+    protected void hideKeyboard() {
+        try {
+            androidDriver.hideKeyboard();
+        } catch (Exception e) {
+            LogUtil.info("No visible keyboard!");
         }
     }
 }

@@ -8,16 +8,13 @@ import id.aldochristiaan.salad.util.FakerUtil;
 import id.aldochristiaan.salad.util.LogUtil;
 import io.appium.java_client.ios.IOSDriver;
 import io.appium.java_client.ios.IOSElement;
-import io.appium.java_client.pagefactory.AppiumFieldDecorator;
 import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.*;
-import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.io.File;
 import java.io.IOException;
-import java.time.Duration;
 import java.util.List;
 import java.util.Objects;
 
@@ -28,7 +25,6 @@ public class Ios extends Mobile {
     protected IOSDriver<IOSElement> iosDriver;
 
     public Ios(IOSDriver<IOSElement> iosDriver) {
-        PageFactory.initElements(new AppiumFieldDecorator(iosDriver, Duration.ofSeconds(20)), this);
         this.iosDriver = iosDriver;
     }
 
@@ -78,6 +74,10 @@ public class Ios extends Mobile {
 
     protected FakerUtil fakerUtil() {
         return new FakerUtil();
+    }
+
+    protected Deeplink deeplink() {
+        return new Deeplink(iosDriver);
     }
 
     protected IOSElement findElementBy(By by) {
@@ -142,10 +142,6 @@ public class Ios extends Mobile {
                 .until(ExpectedConditions.visibilityOfAllElementsLocatedBy(by));
     }
 
-    protected void hideKeyboard() {
-        iosDriver.hideKeyboard();
-    }
-
     protected void takeScreenshot(String name) {
         File scrFile = ((TakesScreenshot) iosDriver).getScreenshotAs(OutputType.FILE);
         File imageFile = new File("screenshot/" + name + ".png");
@@ -170,5 +166,11 @@ public class Ios extends Mobile {
         }
     }
 
-
+    protected void hideKeyboard() {
+        try {
+            iosDriver.hideKeyboard();
+        } catch (Exception e) {
+            LogUtil.info("No visible keyboard!");
+        }
+    }
 }

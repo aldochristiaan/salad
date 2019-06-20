@@ -17,9 +17,11 @@ public class Mobile {
 
         switch (locatorType) {
             case "id":
-                return By.id(locatorValue);
+                return MobileBy.id(locatorValue);
             case "accessibilityId":
                 return MobileBy.AccessibilityId(locatorValue);
+            case "contentDescription":
+                return MobileBy.xpath("//*[@content-desc='" + locatorValue + "']");
             case "name":
                 return MobileBy.ByIosNsPredicate.iOSNsPredicateString("name == '" + locatorValue + "'");
             case "label":
@@ -29,15 +31,15 @@ public class Mobile {
             case "labelcontains":
                 return MobileBy.ByIosNsPredicate.iOSNsPredicateString("label CONTAINS '" + locatorValue + "'");
             case "xpath":
-                return By.xpath(locatorValue);
+                return MobileBy.xpath(locatorValue);
             case "class":
-                return By.className(locatorValue);
+                return MobileBy.className(locatorValue);
             case "text":
-                return By.xpath("/*//*[@text=\"" + locatorValue + "\"]");
+                return MobileBy.xpath("//*[@text='" + locatorValue + "']");
             case "containsText":
-                return By.xpath("/*//*[contains(@text, '" + locatorValue + "')]");
+                return MobileBy.xpath("//*[contains(@text, '" + locatorValue + "')]");
             case "translationText":
-                return By.xpath("//*[contains(@text,'" + locatorValue + "') or contains(@text, " +
+                return MobileBy.xpath("//*[contains(@text,'" + locatorValue + "') or contains(@text, " +
                         "translate('" + locatorValue + "', 'abcdefghijklmnopqrstuvwxyz', 'ABCDEFGHIJKLMNOPQRSTUVWXYZ')) or " +
                         "contains(@text, translate('" + locatorValue + "', 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'))]");
             default:
@@ -60,5 +62,13 @@ public class Mobile {
                 constructedValue
         );
         return constructedLocator;
+    }
+
+    protected void delay(int milliseconds) {
+        try {
+            Thread.sleep(milliseconds);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }
