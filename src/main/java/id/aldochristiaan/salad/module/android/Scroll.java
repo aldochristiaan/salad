@@ -30,7 +30,13 @@ public class Scroll extends Android {
         androidDriver.executeScript("mobile:swipe", args);
     }
 
-    public void element(AndroidElement androidElement, SwipeSpeed swipeSpeed, Coordinates startCoordinates, Coordinates endCoordinates, PrecisionDescriber precisionDescriber, int iteration) {
+    public void element(
+            AndroidElement androidElement,
+            SwipeSpeed swipeSpeed,
+            Coordinates startCoordinates,
+            Coordinates endCoordinates,
+            PrecisionDescriber precisionDescriber,
+            int iteration) {
         HashMap<String, Object> args = new HashMap<>();
         args.put("element", androidElement);
         args.put("swiper", swipeSpeed.toString());
