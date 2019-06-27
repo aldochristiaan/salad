@@ -11,6 +11,10 @@ public class Mobile {
 
     protected By getLocator(String elementLocator) {
         String elementValue = ELEMENT_PROPERTIES.getProperty(elementLocator);
+        if (elementValue == null) {
+            LogUtil.error("Couldn't find locator : " + elementLocator + " ! Please check properties file!");
+            throw new NoSuchElementException("Couldn't find locator : " + elementLocator);
+        }
         String[] locator = elementValue.split("_");
         String locatorType = locator[0];
         String locatorValue = elementValue.substring(elementValue.indexOf("_") + 1);
@@ -43,8 +47,7 @@ public class Mobile {
                         "translate('" + locatorValue + "', 'abcdefghijklmnopqrstuvwxyz', 'ABCDEFGHIJKLMNOPQRSTUVWXYZ')) or " +
                         "contains(@text, translate('" + locatorValue + "', 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'))]");
             default:
-                LogUtil.error("Couldn't find locator : " + locatorValue + " ! Please check properties file!");
-                throw new NoSuchElementException("Couldn't find locator : " + locatorValue);
+                return null;
         }
     }
 

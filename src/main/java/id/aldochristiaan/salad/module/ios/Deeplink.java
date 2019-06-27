@@ -10,7 +10,7 @@ public class Deeplink extends Ios {
         super(iosDriver);
     }
 
-    public void open(String deeplink){
+    public void open(String deeplink) {
         iosDriver.get(deeplink);
     }
 }

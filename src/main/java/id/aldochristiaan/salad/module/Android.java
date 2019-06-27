@@ -92,6 +92,10 @@ public class Android extends Mobile {
         return new Deeplink(androidDriver);
     }
 
+    protected Scroll scroll() {
+        return new Scroll(androidDriver);
+    }
+
     protected AndroidElement findElementBy(By by) {
         AndroidElement element = null;
         for (int i = 0; i < MAX_SWIPE_COUNT; i++) {

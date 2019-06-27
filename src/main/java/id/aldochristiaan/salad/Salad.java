@@ -33,7 +33,7 @@ public class Salad {
     private LogLevel logLevel;
     private Integer appiumPort;
     private String elementPropertiesDirectory;
-    private Properties capabilitiesProperties;
+    public static Properties CAPABILITIES_PROPERTIES;
     public static Properties ELEMENT_PROPERTIES;
     public static int DEFAULT_TIMEOUT = 60;
     public static int MAX_SWIPE_COUNT = 20;
@@ -47,19 +47,19 @@ public class Salad {
         this.logLevel = logLevel;
     }
 
-    public Salad(Properties capabilitiesProperties, String elementPropertiesDirectory, Platform platform, LogLevel logLevel) {
+    public Salad(Properties capabilitiesProperies, String elementPropertiesDirectory, Platform platform, LogLevel logLevel) {
         this.elementPropertiesDirectory = elementPropertiesDirectory;
-        this.capabilitiesProperties = capabilitiesProperties;
         this.platform = platform;
         this.logLevel = logLevel;
+        CAPABILITIES_PROPERTIES = capabilitiesProperies;
     }
 
-    public Salad(Properties capabilitiesProperties, String elementPropertiesDirectory, Platform platform, Integer appiumPort, LogLevel logLevel) {
+    public Salad(Properties capabilitiesProperies, String elementPropertiesDirectory, Platform platform, Integer appiumPort, LogLevel logLevel) {
         this.elementPropertiesDirectory = elementPropertiesDirectory;
-        this.capabilitiesProperties = capabilitiesProperties;
         this.platform = platform;
         this.appiumPort = appiumPort;
         this.logLevel = logLevel;
+        CAPABILITIES_PROPERTIES = capabilitiesProperies;
     }
 
     public void start() {
@@ -78,15 +78,15 @@ public class Salad {
         loadElementProperties(elementPropertiesDirectory);
         switch (platform) {
             case ANDROID:
-                if (capabilitiesProperties != null) setAndroidCapabilities(capabilitiesProperties);
+                if (CAPABILITIES_PROPERTIES != null) setAndroidCapabilities(CAPABILITIES_PROPERTIES);
                 androidDriver = new AndroidDriver<>(service.getUrl(), desiredCapabilities);
                 break;
             case ESPRESSO:
-                if (capabilitiesProperties != null) setEspressoCapabilities(capabilitiesProperties);
+                if (CAPABILITIES_PROPERTIES != null) setEspressoCapabilities(CAPABILITIES_PROPERTIES);
                 androidDriver = new AndroidDriver<>(service.getUrl(), desiredCapabilities);
                 break;
             case IOS:
-                if (capabilitiesProperties != null) setIosCapabilities(capabilitiesProperties);
+                if (CAPABILITIES_PROPERTIES != null) setIosCapabilities(CAPABILITIES_PROPERTIES);
                 iosDriver = new IOSDriver<>(service.getUrl(), desiredCapabilities);
                 break;
             default:
@@ -131,7 +131,7 @@ public class Salad {
         return iosDriver;
     }
 
-    public Boolean isRunning(){
+    public Boolean isRunning() {
         return service.isRunning();
     }
 

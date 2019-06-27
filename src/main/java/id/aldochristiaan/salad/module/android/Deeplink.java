@@ -10,7 +10,7 @@ public class Deeplink extends Android {
         super(androidDriver);
     }
 
-    public void open(String deeplink){
+    public void open(String deeplink) {
         androidDriver.get(deeplink);
     }
 }
