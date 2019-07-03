@@ -20,6 +20,7 @@ public class CheckElement extends Android {
             wait.until(ExpectedConditions.visibilityOf(androidElement));
             return true;
         } catch (Exception e) {
+            LogUtil.error(e.getMessage());
             return false;
         }
     }
@@ -31,7 +32,8 @@ public class CheckElement extends Android {
             wait.until(ExpectedConditions.visibilityOfElementLocated(by));
             return true;
         } catch (Exception e) {
-            LogUtil.info("Element with locator : " + elementLocator + " is not present!");
+            LogUtil.error(e.getMessage());
+            LogUtil.error("Element with locator : " + elementLocator + " is not present!");
             return false;
         }
     }
@@ -43,6 +45,7 @@ public class CheckElement extends Android {
             wait.until(ExpectedConditions.invisibilityOfElementLocated(by));
             return true;
         } catch (Exception e) {
+            LogUtil.error(e.getMessage());
             LogUtil.info("Element with locator : " + elementLocator + " is still present!");
             return false;
         }

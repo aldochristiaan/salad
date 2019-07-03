@@ -96,6 +96,30 @@ public class Android extends Mobile {
         return new Scroll(androidDriver);
     }
 
+    protected Drawer drawer() {
+        return new Drawer(androidDriver);
+    }
+
+    protected Flash flash() {
+        return new Flash(androidDriver);
+    }
+
+    protected ViewPager viewPager() {
+        return new ViewPager(androidDriver);
+    }
+
+    protected Navigate navigate() {
+        return new Navigate(androidDriver);
+    }
+
+    protected ValidateToast validateToast() {
+        return new ValidateToast(androidDriver);
+    }
+
+    protected UiAutomator uiAutomator() {
+        return new UiAutomator(androidDriver);
+    }
+
     protected AndroidElement findElementBy(By by) {
         AndroidElement element = null;
         for (int i = 0; i < MAX_SWIPE_COUNT; i++) {
