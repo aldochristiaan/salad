@@ -16,11 +16,12 @@ public class Scroll extends Android {
     }
 
     public void element(
-            AndroidElement androidElement,
+            String elementLocator,
             SwipeSpeed swipeSpeed,
             Coordinates startCoordinates,
             Coordinates endCoordinates,
             PrecisionDescriber precisionDescriber) {
+        AndroidElement androidElement = getElement().withLocator(elementLocator);
         HashMap<String, Object> args = new HashMap<>();
         args.put("element", androidElement);
         args.put("swiper", swipeSpeed.toString());
@@ -31,12 +32,13 @@ public class Scroll extends Android {
     }
 
     public void element(
-            AndroidElement androidElement,
+            String elementLocator,
             SwipeSpeed swipeSpeed,
             Coordinates startCoordinates,
             Coordinates endCoordinates,
             PrecisionDescriber precisionDescriber,
             int iteration) {
+        AndroidElement androidElement = getElement().withLocator(elementLocator);
         HashMap<String, Object> args = new HashMap<>();
         args.put("element", androidElement);
         args.put("swiper", swipeSpeed.toString());
