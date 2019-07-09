@@ -12,9 +12,10 @@ public class Navigate extends Android {
         super(androidDriver);
     }
 
-    public void toElement(AndroidElement navigationElement, int menuItemId){
+    public void toElement(String elementLocator, int menuItemId){
+        AndroidElement androidElement = androidDriver.findElement(getLocator(elementLocator));
         HashMap<String, Object> args = new HashMap<>();
-        args.put("element", navigationElement);
+        args.put("element", androidElement);
         args.put("menuItemId", menuItemId);
         androidDriver.executeScript("mobile:navigateTo", args);
     }

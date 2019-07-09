@@ -13,7 +13,8 @@ public class ViewPager extends Android {
         super(androidDriver);
     }
 
-    public void scrollTo(AndroidElement androidElement, ScrollDirection scrollDirection, boolean smoothScroll) {
+    public void scrollTo(String elementLocator, ScrollDirection scrollDirection, boolean smoothScroll) {
+        AndroidElement androidElement = androidDriver.findElement(getLocator(elementLocator));
         HashMap<String, Object> args = new HashMap<>();
         args.put("element", androidElement);
         args.put("scrollTo", scrollDirection.toString().toLowerCase());
@@ -21,7 +22,8 @@ public class ViewPager extends Android {
         androidDriver.executeScript("mobile:scrollToPage", args);
     }
 
-    public void scrollTo(AndroidElement androidElement, ScrollDirection scrollDirection, boolean smoothScroll, int iteration) {
+    public void scrollTo(String elementLocator, ScrollDirection scrollDirection, boolean smoothScroll, int iteration) {
+        AndroidElement androidElement = androidDriver.findElement(getLocator(elementLocator));
         HashMap<String, Object> args = new HashMap<>();
         args.put("element", androidElement);
         args.put("scrollTo", scrollDirection.toString().toLowerCase());
@@ -31,7 +33,8 @@ public class ViewPager extends Android {
         }
     }
 
-    public void scrollToPage(AndroidElement androidElement, int page) {
+    public void scrollToPage(String elementLocator, int page) {
+        AndroidElement androidElement = androidDriver.findElement(getLocator(elementLocator));
         HashMap<String, Object> args = new HashMap<>();
         args.put("element", androidElement);
         args.put("scrollToPage", page);

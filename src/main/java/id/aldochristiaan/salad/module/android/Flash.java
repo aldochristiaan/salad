@@ -12,7 +12,8 @@ public class Flash extends Android {
         super(androidDriver);
     }
 
-    public void element(AndroidElement androidElement, int durationMillis, int repeatCount) {
+    public void element(String elementLocator, int durationMillis, int repeatCount) {
+        AndroidElement androidElement = androidDriver.findElement(getLocator(elementLocator));
         HashMap<String, Object> args = new HashMap<>();
         args.put("element", androidElement);
         args.put("durationMillis", durationMillis);

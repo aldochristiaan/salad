@@ -21,7 +21,7 @@ public class Scroll extends Android {
             Coordinates startCoordinates,
             Coordinates endCoordinates,
             PrecisionDescriber precisionDescriber) {
-        AndroidElement androidElement = getElement().withLocator(elementLocator);
+        AndroidElement androidElement = androidDriver.findElement(getLocator(elementLocator));
         HashMap<String, Object> args = new HashMap<>();
         args.put("element", androidElement);
         args.put("swiper", swipeSpeed.toString());
@@ -38,7 +38,7 @@ public class Scroll extends Android {
             Coordinates endCoordinates,
             PrecisionDescriber precisionDescriber,
             int iteration) {
-        AndroidElement androidElement = getElement().withLocator(elementLocator);
+        AndroidElement androidElement = androidDriver.findElement(getLocator(elementLocator));
         HashMap<String, Object> args = new HashMap<>();
         args.put("element", androidElement);
         args.put("swiper", swipeSpeed.toString());
