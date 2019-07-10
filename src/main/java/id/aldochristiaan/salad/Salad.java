@@ -28,7 +28,7 @@ public class Salad {
     private IOSDriver<IOSElement> iosDriver;
     private AppiumDriverLocalService service;
     private AppiumServiceBuilder builder;
-    private DesiredCapabilities desiredCapabilities;
+    private DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
     private Platform platform;
     private LogLevel logLevel;
     private Integer appiumPort;
@@ -136,7 +136,6 @@ public class Salad {
     }
 
     private void setAndroidCapabilities(Properties capabilitiesProperties) {
-        desiredCapabilities = new DesiredCapabilities();
         desiredCapabilities.setCapability(MobileCapabilityType.AUTOMATION_NAME, AutomationName.ANDROID_UIAUTOMATOR2);
         desiredCapabilities.setCapability(MobileCapabilityType.PLATFORM_NAME, MobilePlatform.ANDROID);
         desiredCapabilities.setCapability(MobileCapabilityType.NEW_COMMAND_TIMEOUT, 60);
@@ -150,7 +149,6 @@ public class Salad {
     }
 
     private void setEspressoCapabilities(Properties capabilitiesProperties) {
-        desiredCapabilities = new DesiredCapabilities();
         desiredCapabilities.setCapability(MobileCapabilityType.AUTOMATION_NAME, AutomationName.ESPRESSO);
         desiredCapabilities.setCapability(MobileCapabilityType.PLATFORM_NAME, MobilePlatform.ANDROID);
         desiredCapabilities.setCapability(MobileCapabilityType.NEW_COMMAND_TIMEOUT, 60);
@@ -162,7 +160,6 @@ public class Salad {
     }
 
     private void setIosCapabilities(Properties capabilitiesProperties) {
-        desiredCapabilities = new DesiredCapabilities();
         desiredCapabilities.setCapability(MobileCapabilityType.AUTOMATION_NAME, AutomationName.IOS_XCUI_TEST);
         desiredCapabilities.setCapability(MobileCapabilityType.PLATFORM_NAME, MobilePlatform.IOS);
         desiredCapabilities.setCapability(MobileCapabilityType.NEW_COMMAND_TIMEOUT, 60);
@@ -192,4 +189,9 @@ public class Salad {
             }
         }
     }
+
+    public void setCapability(String capabilityName, String value){
+        desiredCapabilities.setCapability(capabilityName, value);
+    }
+
 }
