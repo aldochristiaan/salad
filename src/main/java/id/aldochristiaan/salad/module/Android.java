@@ -120,6 +120,10 @@ public class Android extends Mobile {
         return new UiAutomator(androidDriver);
     }
 
+    protected Espresso espresso() {
+        return new Espresso(androidDriver);
+    }
+
     protected AndroidElement findElementBy(By by) {
         AndroidElement element = null;
         for (int i = 0; i < MAX_SWIPE_COUNT; i++) {
