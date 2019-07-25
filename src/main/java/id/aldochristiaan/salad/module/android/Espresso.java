@@ -72,7 +72,6 @@ public class Espresso extends Android {
             AndroidElement androidElement = androidDriver.findElement(getLocator(elementLocator));
             for (int i = 0; i < count; i++) {
                 androidElement.click();
-                delay(150);
             }
         } catch (InvalidElementStateException e) {
             throw new InvalidElementStateException("Problem at element : " + elementLocator, e);
