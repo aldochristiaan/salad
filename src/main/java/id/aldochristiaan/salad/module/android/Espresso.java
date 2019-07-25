@@ -72,6 +72,7 @@ public class Espresso extends Android {
             AndroidElement androidElement = androidDriver.findElement(getLocator(elementLocator));
             for (int i = 0; i < count; i++) {
                 androidElement.click();
+                delay(150);
             }
         } catch (InvalidElementStateException e) {
             throw new InvalidElementStateException("Problem at element : " + elementLocator, e);
@@ -170,7 +171,6 @@ public class Espresso extends Android {
             } catch (Exception e) {
                 scroll().element(scrollLocator, swipeSpeed, Coordinates.CENTER, Coordinates.TOP_CENTER, PrecisionDescriber.FINGER);
             }
-
         }
     }
 
@@ -180,6 +180,14 @@ public class Espresso extends Android {
             return true;
         } catch (NoSuchElementException e) {
             return false;
+        }
+    }
+
+    public boolean isElementEnabled(String elementLocator) {
+        try {
+            return Boolean.parseBoolean(androidDriver.findElement(getLocator(elementLocator)).getAttribute("enabled"));
+        } catch (NoSuchElementException e) {
+            throw new NoSuchElementException("Couldn't find this element : " + elementLocator, e);
         }
     }
 
@@ -201,6 +209,14 @@ public class Espresso extends Android {
         } else {
             return false;
         }
+    }
+
+    public void validateEnabled(String elementLocator) {
+        validateValue().equalsTrue(isElementEnabled(elementLocator), "Element with locator : " + elementLocator + " is not enabled!");
+    }
+
+    public void validateDisabled(String elementLocator) {
+        validateValue().equalsFalse(isElementEnabled(elementLocator), "Element with locator : " + elementLocator + " is enabled!");
     }
 
     public void validateDisplayed(String elementLocator, int timeoutInSeconds) {

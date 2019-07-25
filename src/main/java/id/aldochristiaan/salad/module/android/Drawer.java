@@ -12,14 +12,14 @@ public class Drawer extends Android {
         super(androidDriver);
     }
 
-    public void open(String elementLocator){
+    public void open(String elementLocator) {
         AndroidElement androidElement = androidDriver.findElement(getLocator(elementLocator));
         HashMap<String, Object> args = new HashMap<>();
         args.put("element", androidElement);
         androidDriver.executeScript("mobile:openDrawer", args);
     }
 
-    public void close(String elementLocator){
+    public void close(String elementLocator) {
         AndroidElement androidElement = androidDriver.findElement(getLocator(elementLocator));
         HashMap<String, Object> args = new HashMap<>();
         args.put("element", androidElement);

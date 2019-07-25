@@ -104,7 +104,6 @@ public class Salad {
                     service.stop();
                 } catch (Exception e) {
                     LogUtil.info("Android driver closed!");
-                    e.printStackTrace();
                 }
                 break;
             case IOS:
@@ -114,7 +113,6 @@ public class Salad {
                     service.stop();
                 } catch (Exception e) {
                     LogUtil.info("Android driver closed!");
-                    e.printStackTrace();
                 }
                 break;
             default:
@@ -190,8 +188,7 @@ public class Salad {
         }
     }
 
-    public void setCapability(String capabilityName, String value){
+    public void setCapability(String capabilityName, String value) {
         desiredCapabilities.setCapability(capabilityName, value);
     }
-
 }
