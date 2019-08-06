@@ -190,6 +190,14 @@ public class Espresso extends Android {
         }
     }
 
+    public boolean isElementSelected(String elementLocator) {
+        try {
+            return Boolean.parseBoolean(androidDriver.findElement(getLocator(elementLocator)).getAttribute("selected"));
+        } catch (NoSuchElementException e) {
+            throw new NoSuchElementException("Couldn't find this element : " + elementLocator, e);
+        }
+    }
+
     public boolean isElementDisplayed(String elementLocator, int timeoutInSeconds) {
         int screenHeight = androidDriver.manage().window().getSize().getHeight();
         boolean isElementFound = false;
@@ -216,6 +224,14 @@ public class Espresso extends Android {
 
     public void validateDisabled(String elementLocator) {
         validateValue().equalsFalse(isElementEnabled(elementLocator), "Element with locator : " + elementLocator + " is enabled!");
+    }
+
+    public void validateSelected(String elementLocator) {
+        validateValue().equalsTrue(isElementSelected(elementLocator), "Element with locator : " + elementLocator + " is not selected!");
+    }
+
+    public void validateNotSelected(String elementLocator) {
+        validateValue().equalsFalse(isElementSelected(elementLocator), "Element with locator : " + elementLocator + " is selected!");
     }
 
     public void validateDisplayed(String elementLocator, int timeoutInSeconds) {
