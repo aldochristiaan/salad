@@ -240,32 +240,64 @@ public class Espresso extends Android {
         validateValue().equalsTrue(isElementEnabled(elementLocator), "Element with locator : " + elementLocator + " is not enabled!");
     }
 
+    public void validateEnabled(String elementLocator, String message) {
+        validateValue().equalsTrue(isElementEnabled(elementLocator), message);
+    }
+
     public void validateDisabled(String elementLocator) {
         validateValue().equalsFalse(isElementEnabled(elementLocator), "Element with locator : " + elementLocator + " is enabled!");
+    }
+
+    public void validateDisabled(String elementLocator, String message) {
+        validateValue().equalsFalse(isElementEnabled(elementLocator), message);
     }
 
     public void validateSelected(String elementLocator) {
         validateValue().equalsTrue(isElementSelected(elementLocator), "Element with locator : " + elementLocator + " is not selected!");
     }
 
+    public void validateSelected(String elementLocator, String message) {
+        validateValue().equalsTrue(isElementSelected(elementLocator), message);
+    }
+
     public void validateNotSelected(String elementLocator) {
         validateValue().equalsFalse(isElementSelected(elementLocator), "Element with locator : " + elementLocator + " is selected!");
+    }
+
+    public void validateNotSelected(String elementLocator, String message) {
+        validateValue().equalsFalse(isElementSelected(elementLocator), message);
     }
 
     public void validateDisplayed(String elementLocator, int timeoutInSeconds) {
         validateValue().equalsTrue(isElementDisplayed(elementLocator, timeoutInSeconds), "Element with locator : " + elementLocator + " is not displayed on screen!");
     }
 
+    public void validateDisplayed(String elementLocator, int timeoutInSeconds, String message) {
+        validateValue().equalsTrue(isElementDisplayed(elementLocator, timeoutInSeconds), message);
+    }
+
     public void validateNotDisplayed(String elementLocator, int timeoutInSeconds) {
         validateValue().equalsFalse(isElementDisplayed(elementLocator, timeoutInSeconds), "Element with locator : " + elementLocator + " is displayed on screen!");
+    }
+
+    public void validateNotDisplayed(String elementLocator, int timeoutInSeconds, String message) {
+        validateValue().equalsFalse(isElementDisplayed(elementLocator, timeoutInSeconds), message);
     }
 
     public void validateExist(String elementLocator, int timeoutInSeconds) {
         validateValue().equalsTrue(isElementExist(elementLocator), "Element with locator : " + elementLocator + " doesn't exist!");
     }
 
+    public void validateExist(String elementLocator, int timeoutInSeconds, String message) {
+        validateValue().equalsTrue(isElementExist(elementLocator), message);
+    }
+
     public void validateNotExist(String elementLocator, int timeoutInSeconds) {
         validateValue().equalsFalse(isElementExist(elementLocator), "Element with locator : " + elementLocator + " do exist!");
+    }
+
+    public void validateNotExist(String elementLocator, int timeoutInSeconds, String message) {
+        validateValue().equalsFalse(isElementExist(elementLocator), message);
     }
 
     public String getText(String elementLocator) {
