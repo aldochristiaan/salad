@@ -36,7 +36,7 @@ public class Salad {
     public static Properties CAPABILITIES_PROPERTIES;
     public static Properties ELEMENT_PROPERTIES;
     public static int DEFAULT_TIMEOUT = 60;
-    public static int MAX_SWIPE_COUNT = 20;
+    public static int MAX_SWIPE_COUNT = 15;
 
     public Salad() {
     }

@@ -11,6 +11,8 @@ import org.junit.Assert;
 import org.openqa.selenium.InvalidElementStateException;
 import org.openqa.selenium.NoSuchElementException;
 
+import java.util.List;
+
 import static id.aldochristiaan.salad.Salad.MAX_SWIPE_COUNT;
 
 public class Espresso extends Android {
@@ -163,6 +165,22 @@ public class Espresso extends Android {
             try {
                 AndroidElement androidElement = androidDriver.findElement(getLocator(elementLocator));
                 if (screenHeight < androidElement.getLocation().getY()) {
+                    scroll().element(scrollLocator, swipeSpeed, Coordinates.CENTER, Coordinates.TOP_CENTER, PrecisionDescriber.FINGER);
+                } else {
+                    break;
+                }
+            } catch (Exception e) {
+                scroll().element(scrollLocator, swipeSpeed, Coordinates.CENTER, Coordinates.TOP_CENTER, PrecisionDescriber.FINGER);
+            }
+        }
+    }
+
+    public void scrollTo(String elementLocator, int index, String scrollLocator, SwipeSpeed swipeSpeed) {
+        int screenHeight = androidDriver.manage().window().getSize().getHeight();
+        for (int i = 0; i < MAX_SWIPE_COUNT; i++) {
+            try {
+                List<AndroidElement> androidElements = androidDriver.findElements(getLocator(elementLocator));
+                if (screenHeight < androidElements.get(index).getLocation().getY()) {
                     scroll().element(scrollLocator, swipeSpeed, Coordinates.CENTER, Coordinates.TOP_CENTER, PrecisionDescriber.FINGER);
                 } else {
                     break;
