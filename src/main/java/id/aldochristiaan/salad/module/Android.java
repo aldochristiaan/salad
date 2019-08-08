@@ -135,7 +135,7 @@ public class Android extends Mobile {
             }
         }
         if (element == null) {
-            throw new NotFoundException();
+            throw new NoSuchElementException("Couldn't find this element : " + by.toString());
         }
         return element;
     }
@@ -151,7 +151,7 @@ public class Android extends Mobile {
             }
         }
         if (element == null) {
-            throw new NotFoundException();
+            throw new NoSuchElementException("Couldn't find this element : " + by.toString());
         }
         return element;
     }
@@ -172,7 +172,7 @@ public class Android extends Mobile {
             }
         }
         if (elements == null) {
-            throw new NotFoundException();
+            throw new NoSuchElementException("Couldn't find this element : " + by.toString());
         }
         return elements;
     }
@@ -188,7 +188,7 @@ public class Android extends Mobile {
             }
         }
         if (elements == null) {
-            throw new NotFoundException();
+            throw new NoSuchElementException("Couldn't find this element : " + by.toString());
         }
         return elements;
     }
