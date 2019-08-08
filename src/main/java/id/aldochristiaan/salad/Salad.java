@@ -129,7 +129,7 @@ public class Salad {
         return iosDriver;
     }
 
-    public Boolean isRunning() {
+    public boolean isRunning() {
         return service.isRunning();
     }
 
