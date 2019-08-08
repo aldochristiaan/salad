@@ -134,6 +134,9 @@ public class Android extends Mobile {
                 swipe().up();
             }
         }
+        if (element == null) {
+            throw new NotFoundException();
+        }
         return element;
     }
 
@@ -146,6 +149,9 @@ public class Android extends Mobile {
             } catch (NoSuchElementException e) {
                 swipe().toDirection(direction);
             }
+        }
+        if (element == null) {
+            throw new NotFoundException();
         }
         return element;
     }
@@ -165,6 +171,9 @@ public class Android extends Mobile {
                 swipe().up();
             }
         }
+        if (elements == null) {
+            throw new NotFoundException();
+        }
         return elements;
     }
 
@@ -177,6 +186,9 @@ public class Android extends Mobile {
             } catch (NoSuchElementException e) {
                 swipe().toDirection(direction);
             }
+        }
+        if (elements == null) {
+            throw new NotFoundException();
         }
         return elements;
     }
@@ -206,7 +218,6 @@ public class Android extends Mobile {
             LogUtil.info("Screenshot taken!");
         } catch (IOException e) {
             LogUtil.error("Failed to take screenshot!");
-            e.printStackTrace();
         }
     }
 
