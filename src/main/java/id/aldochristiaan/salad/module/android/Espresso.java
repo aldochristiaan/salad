@@ -41,7 +41,7 @@ public class Espresso extends Android {
         }
     }
 
-    public void tap(String elementLocator, String scrollLocator, SwipeSpeed swipeSpeed) {
+    public void tap(String elementLocator, String swipeLocator, SwipeSpeed swipeSpeed) {
         for (int i = 0; i < MAX_SWIPE_COUNT; i++) {
             try {
                 AndroidElement androidElement = androidDriver.findElement(getLocator(elementLocator));
@@ -49,13 +49,13 @@ public class Espresso extends Android {
                 androidElement.click();
                 break;
             } catch (InvalidElementStateException | NoSuchElementException | AssertionError e) {
-                scroll().element(scrollLocator, swipeSpeed, Coordinates.CENTER, Coordinates.TOP_CENTER, PrecisionDescriber.FINGER);
+                espressoSwipe().element(swipeLocator, swipeSpeed, Coordinates.CENTER, Coordinates.TOP_CENTER, PrecisionDescriber.FINGER);
                 delay(500);
             }
         }
     }
 
-    public void tap(String elementLocator, int index, String scrollLocator, SwipeSpeed swipeSpeed) {
+    public void tap(String elementLocator, int index, String swipeLocator, SwipeSpeed swipeSpeed) {
         for (int i = 0; i < MAX_SWIPE_COUNT; i++) {
             try {
                 AndroidElement androidElement = androidDriver.findElements(getLocator(elementLocator)).get(index);
@@ -63,7 +63,7 @@ public class Espresso extends Android {
                 androidElement.click();
                 break;
             } catch (InvalidElementStateException | NoSuchElementException | AssertionError e) {
-                scroll().element(scrollLocator, swipeSpeed, Coordinates.CENTER, Coordinates.TOP_CENTER, PrecisionDescriber.FINGER);
+                espressoSwipe().element(swipeLocator, swipeSpeed, Coordinates.CENTER, Coordinates.TOP_CENTER, PrecisionDescriber.FINGER);
                 delay(500);
             }
         }
@@ -127,7 +127,7 @@ public class Espresso extends Android {
         }
     }
 
-    public void type(String elementLocator, String scrollLocator, String text) {
+    public void type(String elementLocator, String swipeLocator, String text) {
         for (int i = 0; i < MAX_SWIPE_COUNT; i++) {
             try {
                 AndroidElement androidElement = androidDriver.findElement(getLocator(elementLocator));
@@ -138,12 +138,12 @@ public class Espresso extends Android {
                 break;
             } catch (InvalidElementStateException | NoSuchElementException | AssertionError e) {
                 hideKeyboard();
-                scroll().element(scrollLocator, SwipeSpeed.FAST, Coordinates.CENTER, Coordinates.TOP_CENTER, PrecisionDescriber.FINGER);
+                espressoSwipe().element(swipeLocator, SwipeSpeed.FAST, Coordinates.CENTER, Coordinates.TOP_CENTER, PrecisionDescriber.FINGER);
             }
         }
     }
 
-    public void type(String elementLocator, String scrollLocator, String text, int index) {
+    public void type(String elementLocator, String swipeLocator, String text, int index) {
         for (int i = 0; i < MAX_SWIPE_COUNT; i++) {
             try {
                 AndroidElement androidElement = androidDriver.findElements(getLocator(elementLocator)).get(index);
@@ -154,39 +154,39 @@ public class Espresso extends Android {
                 break;
             } catch (InvalidElementStateException | NoSuchElementException | AssertionError e) {
                 hideKeyboard();
-                scroll().element(scrollLocator, SwipeSpeed.FAST, Coordinates.CENTER, Coordinates.TOP_CENTER, PrecisionDescriber.FINGER);
+                espressoSwipe().element(swipeLocator, SwipeSpeed.FAST, Coordinates.CENTER, Coordinates.TOP_CENTER, PrecisionDescriber.FINGER);
             }
         }
     }
 
-    public void scrollTo(String elementLocator, String scrollLocator, SwipeSpeed swipeSpeed) {
+    public void swipeTo(String elementLocator, String swipeLocator, SwipeSpeed swipeSpeed) {
         int screenHeight = androidDriver.manage().window().getSize().getHeight();
         for (int i = 0; i < MAX_SWIPE_COUNT; i++) {
             try {
                 AndroidElement androidElement = androidDriver.findElement(getLocator(elementLocator));
                 if (screenHeight < androidElement.getLocation().getY()) {
-                    scroll().element(scrollLocator, swipeSpeed, Coordinates.CENTER, Coordinates.TOP_CENTER, PrecisionDescriber.FINGER);
+                    espressoSwipe().element(swipeLocator, swipeSpeed, Coordinates.CENTER, Coordinates.TOP_CENTER, PrecisionDescriber.FINGER);
                 } else {
                     break;
                 }
             } catch (Exception e) {
-                scroll().element(scrollLocator, swipeSpeed, Coordinates.CENTER, Coordinates.TOP_CENTER, PrecisionDescriber.FINGER);
+                espressoSwipe().element(swipeLocator, swipeSpeed, Coordinates.CENTER, Coordinates.TOP_CENTER, PrecisionDescriber.FINGER);
             }
         }
     }
 
-    public void scrollTo(String elementLocator, int index, String scrollLocator, SwipeSpeed swipeSpeed) {
+    public void swipeTo(String elementLocator, int index, String swipeLocator, SwipeSpeed swipeSpeed) {
         int screenHeight = androidDriver.manage().window().getSize().getHeight();
         for (int i = 0; i < MAX_SWIPE_COUNT; i++) {
             try {
                 List<AndroidElement> androidElements = androidDriver.findElements(getLocator(elementLocator));
                 if (screenHeight < androidElements.get(index).getLocation().getY()) {
-                    scroll().element(scrollLocator, swipeSpeed, Coordinates.CENTER, Coordinates.TOP_CENTER, PrecisionDescriber.FINGER);
+                    espressoSwipe().element(swipeLocator, swipeSpeed, Coordinates.CENTER, Coordinates.TOP_CENTER, PrecisionDescriber.FINGER);
                 } else {
                     break;
                 }
             } catch (Exception e) {
-                scroll().element(scrollLocator, swipeSpeed, Coordinates.CENTER, Coordinates.TOP_CENTER, PrecisionDescriber.FINGER);
+                espressoSwipe().element(swipeLocator, swipeSpeed, Coordinates.CENTER, Coordinates.TOP_CENTER, PrecisionDescriber.FINGER);
             }
         }
     }

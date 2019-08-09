@@ -9,9 +9,9 @@ import io.appium.java_client.android.AndroidElement;
 
 import java.util.HashMap;
 
-public class Scroll extends Android {
+public class EspressoSwipe extends Android {
 
-    public Scroll(AndroidDriver<AndroidElement> androidDriver) {
+    public EspressoSwipe(AndroidDriver<AndroidElement> androidDriver) {
         super(androidDriver);
     }
 

@@ -92,8 +92,8 @@ public class Android extends Mobile {
         return new Deeplink(androidDriver);
     }
 
-    protected Scroll scroll() {
-        return new Scroll(androidDriver);
+    protected EspressoSwipe espressoSwipe() {
+        return new EspressoSwipe(androidDriver);
     }
 
     protected Drawer drawer() {
