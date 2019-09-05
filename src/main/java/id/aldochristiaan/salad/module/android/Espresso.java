@@ -13,8 +13,6 @@ import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import java.util.List;
-
 import static id.aldochristiaan.salad.Salad.MAX_SWIPE_COUNT;
 
 public class Espresso extends Android {
@@ -163,66 +161,26 @@ public class Espresso extends Android {
     }
 
     public void swipeTo(String elementLocator, String swipeLocator, SwipeSpeed swipeSpeed) {
-        int screenHeight = androidDriver.manage().window().getSize().getHeight();
-        for (int i = 0; i < MAX_SWIPE_COUNT; i++) {
-            try {
-                AndroidElement androidElement = androidDriver.findElement(getLocator(elementLocator));
-                if (screenHeight < androidElement.getLocation().getY()) {
-                    espressoSwipe().element(swipeLocator, swipeSpeed, Coordinates.CENTER, Coordinates.TOP_CENTER, PrecisionDescriber.FINGER);
-                } else {
-                    break;
-                }
-            } catch (Exception e) {
-                espressoSwipe().element(swipeLocator, swipeSpeed, Coordinates.CENTER, Coordinates.TOP_CENTER, PrecisionDescriber.FINGER);
-            }
+        for (int swipeCount = 0; !isElementDisplayed(elementLocator, 1) && swipeCount <= MAX_SWIPE_COUNT; ++swipeCount) {
+            espressoSwipe().element(swipeLocator, swipeSpeed, Coordinates.CENTER, Coordinates.TOP_CENTER, PrecisionDescriber.FINGER);
         }
     }
 
     public void swipeTo(String elementLocator, String swipeLocator, SwipeSpeed swipeSpeed, Coordinates startCoordinate, Coordinates endCoordinate) {
-        int screenHeight = androidDriver.manage().window().getSize().getHeight();
-        for (int i = 0; i < MAX_SWIPE_COUNT; i++) {
-            try {
-                AndroidElement androidElement = androidDriver.findElement(getLocator(elementLocator));
-                if (screenHeight < androidElement.getLocation().getY()) {
-                    espressoSwipe().element(swipeLocator, swipeSpeed, startCoordinate, endCoordinate, PrecisionDescriber.FINGER);
-                } else {
-                    break;
-                }
-            } catch (Exception e) {
-                espressoSwipe().element(swipeLocator, swipeSpeed, Coordinates.CENTER, Coordinates.TOP_CENTER, PrecisionDescriber.FINGER);
-            }
+        for (int swipeCount = 0; !isElementDisplayed(elementLocator, 1) && swipeCount <= MAX_SWIPE_COUNT; ++swipeCount) {
+            espressoSwipe().element(swipeLocator, swipeSpeed, startCoordinate, endCoordinate, PrecisionDescriber.FINGER);
         }
     }
 
     public void swipeTo(String elementLocator, int index, String swipeLocator, SwipeSpeed swipeSpeed) {
-        int screenHeight = androidDriver.manage().window().getSize().getHeight();
-        for (int i = 0; i < MAX_SWIPE_COUNT; i++) {
-            try {
-                List<AndroidElement> androidElements = androidDriver.findElements(getLocator(elementLocator));
-                if (screenHeight < androidElements.get(index).getLocation().getY()) {
-                    espressoSwipe().element(swipeLocator, swipeSpeed, Coordinates.CENTER, Coordinates.TOP_CENTER, PrecisionDescriber.FINGER);
-                } else {
-                    break;
-                }
-            } catch (Exception e) {
-                espressoSwipe().element(swipeLocator, swipeSpeed, Coordinates.CENTER, Coordinates.TOP_CENTER, PrecisionDescriber.FINGER);
-            }
+        for (int swipeCount = 0; !isElementDisplayed(elementLocator, index, 1) && swipeCount <= MAX_SWIPE_COUNT; ++swipeCount) {
+            espressoSwipe().element(swipeLocator, swipeSpeed, Coordinates.CENTER, Coordinates.TOP_CENTER, PrecisionDescriber.FINGER);
         }
     }
 
     public void swipeTo(String elementLocator, int index, String swipeLocator, SwipeSpeed swipeSpeed, Coordinates startCoordinate, Coordinates endCoordinate) {
-        int screenHeight = androidDriver.manage().window().getSize().getHeight();
-        for (int i = 0; i < MAX_SWIPE_COUNT; i++) {
-            try {
-                List<AndroidElement> androidElements = androidDriver.findElements(getLocator(elementLocator));
-                if (screenHeight < androidElements.get(index).getLocation().getY()) {
-                    espressoSwipe().element(swipeLocator, swipeSpeed, startCoordinate, endCoordinate, PrecisionDescriber.FINGER);
-                } else {
-                    break;
-                }
-            } catch (Exception e) {
-                espressoSwipe().element(swipeLocator, swipeSpeed, startCoordinate, endCoordinate, PrecisionDescriber.FINGER);
-            }
+        for (int swipeCount = 0; !isElementDisplayed(elementLocator, index, 1) && swipeCount <= MAX_SWIPE_COUNT; ++swipeCount) {
+            espressoSwipe().element(swipeLocator, swipeSpeed, startCoordinate, endCoordinate, PrecisionDescriber.FINGER);
         }
     }
 
@@ -258,6 +216,26 @@ public class Espresso extends Android {
         for (int i = 0; i < timeoutInSeconds * 5; i++) {
             try {
                 yPosition = androidDriver.findElement(getLocator(elementLocator)).getLocation().getY();
+                isElementFound = true;
+                break;
+            } catch (Exception e) {
+                delay(200);
+            }
+        }
+        if (isElementFound) {
+            return screenHeight >= yPosition;
+        } else {
+            return false;
+        }
+    }
+
+    public boolean isElementDisplayed(String elementLocator, int index, int timeoutInSeconds) {
+        int screenHeight = androidDriver.manage().window().getSize().getHeight();
+        boolean isElementFound = false;
+        int yPosition = 0;
+        for (int i = 0; i < timeoutInSeconds * 5; i++) {
+            try {
+                yPosition = androidDriver.findElements(getLocator(elementLocator)).get(i).getLocation().getY();
                 isElementFound = true;
                 break;
             } catch (Exception e) {
