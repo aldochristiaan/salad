@@ -208,6 +208,14 @@ public class Espresso extends Android {
             throw new NoSuchElementException("Couldn't find this element : " + elementLocator, e);
         }
     }
+    
+    public boolean isElementChecked(String elementLocator) {
+        try {
+            return Boolean.parseBoolean(androidDriver.findElement(getLocator(elementLocator)).getAttribute("checked"));
+        } catch (NoSuchElementException e) {
+            throw new NoSuchElementException("Couldn't find this element : " + elementLocator, e);
+        }
+    }
 
     public boolean isElementDisplayed(String elementLocator, int timeoutInSeconds) {
         int screenHeight = androidDriver.manage().window().getSize().getHeight();
@@ -311,6 +319,10 @@ public class Espresso extends Android {
 
     public void validateNotExist(String elementLocator, String errorMessage) {
         validateValue().equalsFalse(isElementExist(elementLocator), errorMessage);
+    }
+    
+    public void validateChecked(String elementLocator) {
+        validateValue().equalsTrue(isElementChecked(elementLocator), errorMessage);
     }
 
     public void validateStaleness(AndroidElement androidElement, int timeoutInSeconds) {
