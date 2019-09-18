@@ -100,15 +100,14 @@ public class ValidateValue {
         Assert.assertFalse(message, condition);
     }
 
-    public void contains(String actual, String expected) {
+    public void contains(String expected, String actual) {
         Assert.assertTrue(expected + "is not contained in " + actual, actual.contains(expected));
     }
 
-    public void contains(String actual, String expected, String message) {
+    public void contains(String expected, String actual, String message) {
         Assert.assertTrue(message, actual.contains(expected));
     }
-
-    public boolean isContains(String actual, String expected) {
+    public boolean isContains(String expected, String actual) {
         return actual.contains(expected);
     }
 }

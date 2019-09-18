@@ -10,6 +10,7 @@ import io.appium.java_client.android.AndroidElement;
 import org.junit.Assert;
 import org.openqa.selenium.InvalidElementStateException;
 import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.NotFoundException;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -254,6 +255,22 @@ public class Espresso extends Android {
             return screenHeight >= yPosition;
         } else {
             return false;
+        }
+    }
+
+    public void validateElementWithText(String elementLocator, String text) {
+        if (isElementExist(elementLocator)) {
+            validateValue().equals(text, getText(elementLocator));
+        } else {
+            throw new NoSuchElementException("Couldn't find this element : " + elementLocator);
+        }
+    }
+
+    public void validateElementContainsText(String elementLocator, String text) {
+        if (isElementExist(elementLocator)) {
+            validateValue().contains(text, getText(elementLocator));
+        } else {
+            throw new NoSuchElementException("Couldn't find this element : " + elementLocator);
         }
     }
 

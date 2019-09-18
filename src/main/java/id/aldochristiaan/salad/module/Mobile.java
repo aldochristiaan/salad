@@ -34,6 +34,8 @@ public class Mobile {
                 return MobileBy.ByIosNsPredicate.iOSNsPredicateString("value == '" + locatorValue + "'");
             case "labelcontains":
                 return MobileBy.ByIosNsPredicate.iOSNsPredicateString("label CONTAINS '" + locatorValue + "'");
+            case "viewTag":
+                return MobileBy.AndroidViewTag(locatorValue);
             case "xpath":
                 return MobileBy.xpath(locatorValue);
             case "class":
