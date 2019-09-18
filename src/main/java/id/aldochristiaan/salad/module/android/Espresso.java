@@ -194,6 +194,14 @@ public class Espresso extends Android {
         }
     }
 
+    public boolean isElementVisible(String elementLocator) {
+        try {
+            return Boolean.parseBoolean(androidDriver.findElement(getLocator(elementLocator)).getAttribute("visible"));
+        } catch (NoSuchElementException e) {
+            throw new NoSuchElementException("Couldn't find this element : " + elementLocator, e);
+        }
+    }
+
     public boolean isElementEnabled(String elementLocator) {
         try {
             return Boolean.parseBoolean(androidDriver.findElement(getLocator(elementLocator)).getAttribute("enabled"));
@@ -255,6 +263,22 @@ public class Espresso extends Android {
             return screenHeight >= yPosition;
         } else {
             return false;
+        }
+    }
+
+    public String getElementAttributeValue(String elementLocator, String attribute) {
+        if (isElementExist(elementLocator)) {
+            return androidDriver.findElement(getLocator(elementLocator)).getAttribute(attribute);
+        } else {
+            throw new NoSuchElementException("Couldn't find this element : " + elementLocator);
+        }
+    }
+
+    public void validateElementVisible(String elementLocator) {
+        if (isElementExist(elementLocator)) {
+            validateValue().equalsTrue(isElementVisible(elementLocator));
+        } else {
+            throw new NoSuchElementException("Couldn't find this element : " + elementLocator);
         }
     }
 
