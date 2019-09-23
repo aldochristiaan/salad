@@ -91,7 +91,7 @@ public class Espresso extends Mobile {
         return new FakerUtil();
     }
 
-    public boolean isElementExist(String elementLocator) {
+    protected boolean isElementExist(String elementLocator) {
         try {
             androidDriver.findElement(getLocator(elementLocator));
             return true;
@@ -100,7 +100,7 @@ public class Espresso extends Mobile {
         }
     }
 
-    public boolean isElementVisible(String elementLocator) {
+    protected boolean isElementVisible(String elementLocator) {
         try {
             return Boolean.parseBoolean(androidDriver.findElement(getLocator(elementLocator)).getAttribute("visible"));
         } catch (NoSuchElementException e) {
@@ -108,7 +108,7 @@ public class Espresso extends Mobile {
         }
     }
 
-    public boolean isElementEnabled(String elementLocator) {
+    protected boolean isElementEnabled(String elementLocator) {
         try {
             return Boolean.parseBoolean(androidDriver.findElement(getLocator(elementLocator)).getAttribute("enabled"));
         } catch (NoSuchElementException e) {
@@ -116,7 +116,7 @@ public class Espresso extends Mobile {
         }
     }
 
-    public boolean isElementSelected(String elementLocator) {
+    protected boolean isElementSelected(String elementLocator) {
         try {
             return Boolean.parseBoolean(androidDriver.findElement(getLocator(elementLocator)).getAttribute("selected"));
         } catch (NoSuchElementException e) {
@@ -124,7 +124,7 @@ public class Espresso extends Mobile {
         }
     }
 
-    public boolean isElementChecked(String elementLocator) {
+    protected boolean isElementChecked(String elementLocator) {
         try {
             return Boolean.parseBoolean(androidDriver.findElement(getLocator(elementLocator)).getAttribute("checked"));
         } catch (NoSuchElementException e) {
@@ -132,7 +132,7 @@ public class Espresso extends Mobile {
         }
     }
 
-    public boolean isElementDisplayed(String elementLocator, int timeoutInSeconds) {
+    protected boolean isElementDisplayed(String elementLocator, int timeoutInSeconds) {
         int screenHeight = androidDriver.manage().window().getSize().getHeight();
         boolean isElementFound = false;
         int yPosition = 0;
@@ -152,7 +152,7 @@ public class Espresso extends Mobile {
         }
     }
 
-    public boolean isElementDisplayed(String elementLocator, int index, int timeoutInSeconds) {
+    protected boolean isElementDisplayed(String elementLocator, int index, int timeoutInSeconds) {
         int screenHeight = androidDriver.manage().window().getSize().getHeight();
         boolean isElementFound = false;
         int yPosition = 0;
@@ -172,7 +172,7 @@ public class Espresso extends Mobile {
         }
     }
 
-    public String getElementAttributeValue(String elementLocator, String attribute) {
+    protected String getElementAttributeValue(String elementLocator, String attribute) {
         if (isElementExist(elementLocator)) {
             return androidDriver.findElement(getLocator(elementLocator)).getAttribute(attribute);
         } else {
@@ -180,7 +180,7 @@ public class Espresso extends Mobile {
         }
     }
 
-    public void validateElementVisible(String elementLocator) {
+    protected void validateElementVisible(String elementLocator) {
         if (isElementExist(elementLocator)) {
             validateValue().equalsTrue(isElementVisible(elementLocator));
         } else {
@@ -188,7 +188,7 @@ public class Espresso extends Mobile {
         }
     }
 
-    public void validateElementWithText(String elementLocator, String text) {
+    protected void validateElementWithText(String elementLocator, String text) {
         if (isElementExist(elementLocator)) {
             validateValue().equals(text, getText(elementLocator));
         } else {
@@ -196,7 +196,7 @@ public class Espresso extends Mobile {
         }
     }
 
-    public void validateElementContainsText(String elementLocator, String text) {
+    protected void validateElementContainsText(String elementLocator, String text) {
         if (isElementExist(elementLocator)) {
             validateValue().contains(text, getText(elementLocator));
         } else {
@@ -204,79 +204,79 @@ public class Espresso extends Mobile {
         }
     }
 
-    public void validateEnabled(String elementLocator) {
+    protected void validateEnabled(String elementLocator) {
         validateValue().equalsTrue(isElementEnabled(elementLocator), "Element with locator : " + elementLocator + " is not enabled!");
     }
 
-    public void validateEnabled(String elementLocator, String errorMessage) {
+    protected void validateEnabled(String elementLocator, String errorMessage) {
         validateValue().equalsTrue(isElementEnabled(elementLocator), errorMessage);
     }
 
-    public void validateDisabled(String elementLocator) {
+    protected void validateDisabled(String elementLocator) {
         validateValue().equalsFalse(isElementEnabled(elementLocator), "Element with locator : " + elementLocator + " is enabled!");
     }
 
-    public void validateDisabled(String elementLocator, String errorMessage) {
+    protected void validateDisabled(String elementLocator, String errorMessage) {
         validateValue().equalsFalse(isElementEnabled(elementLocator), errorMessage);
     }
 
-    public void validateSelected(String elementLocator) {
+    protected void validateSelected(String elementLocator) {
         validateValue().equalsTrue(isElementSelected(elementLocator), "Element with locator : " + elementLocator + " is not selected!");
     }
 
-    public void validateSelected(String elementLocator, String errorMessage) {
+    protected void validateSelected(String elementLocator, String errorMessage) {
         validateValue().equalsTrue(isElementSelected(elementLocator), errorMessage);
     }
 
-    public void validateNotSelected(String elementLocator) {
+    protected void validateNotSelected(String elementLocator) {
         validateValue().equalsFalse(isElementSelected(elementLocator), "Element with locator : " + elementLocator + " is selected!");
     }
 
-    public void validateNotSelected(String elementLocator, String errorMessage) {
+    protected void validateNotSelected(String elementLocator, String errorMessage) {
         validateValue().equalsFalse(isElementSelected(elementLocator), errorMessage);
     }
 
-    public void validateDisplayed(String elementLocator, int timeoutInSeconds) {
+    protected void validateDisplayed(String elementLocator, int timeoutInSeconds) {
         validateValue().equalsTrue(isElementDisplayed(elementLocator, timeoutInSeconds), "Element with locator : " + elementLocator + " is not displayed on screen!");
     }
 
-    public void validateDisplayed(String elementLocator, int timeoutInSeconds, String errorMessage) {
+    protected void validateDisplayed(String elementLocator, int timeoutInSeconds, String errorMessage) {
         validateValue().equalsTrue(isElementDisplayed(elementLocator, timeoutInSeconds), errorMessage);
     }
 
-    public void validateNotDisplayed(String elementLocator, int timeoutInSeconds) {
+    protected void validateNotDisplayed(String elementLocator, int timeoutInSeconds) {
         validateValue().equalsFalse(isElementDisplayed(elementLocator, timeoutInSeconds), "Element with locator : " + elementLocator + " is displayed on screen!");
     }
 
-    public void validateNotDisplayed(String elementLocator, int timeoutInSeconds, String errorMessage) {
+    protected void validateNotDisplayed(String elementLocator, int timeoutInSeconds, String errorMessage) {
         validateValue().equalsFalse(isElementDisplayed(elementLocator, timeoutInSeconds), errorMessage);
     }
 
-    public void validateExist(String elementLocator) {
+    protected void validateExist(String elementLocator) {
         validateValue().equalsTrue(isElementExist(elementLocator), "Element with locator : " + elementLocator + " doesn't exist!");
     }
 
-    public void validateExist(String elementLocator, String errorMessage) {
+    protected void validateExist(String elementLocator, String errorMessage) {
         validateValue().equalsTrue(isElementExist(elementLocator), errorMessage);
     }
 
-    public void validateNotExist(String elementLocator) {
+    protected void validateNotExist(String elementLocator) {
         validateValue().equalsFalse(isElementExist(elementLocator), "Element with locator : " + elementLocator + " do exist!");
     }
 
-    public void validateNotExist(String elementLocator, String errorMessage) {
+    protected void validateNotExist(String elementLocator, String errorMessage) {
         validateValue().equalsFalse(isElementExist(elementLocator), errorMessage);
     }
 
-    public void validateChecked(String elementLocator, String errorMessage) {
+    protected void validateChecked(String elementLocator, String errorMessage) {
         validateValue().equalsTrue(isElementChecked(elementLocator), errorMessage);
     }
 
-    public void validateStaleness(AndroidElement androidElement, int timeoutInSeconds) {
+    protected void validateStaleness(AndroidElement androidElement, int timeoutInSeconds) {
         validateValue().equalsTrue((new WebDriverWait(androidDriver, timeoutInSeconds)).until(ExpectedConditions.stalenessOf(androidElement)));
     }
 
-    public String getText(String elementLocator) {
+    protected String getText(String elementLocator) {
         try {
             return androidDriver.findElement(getLocator(elementLocator)).getText();
         } catch (InvalidElementStateException e) {
@@ -286,7 +286,7 @@ public class Espresso extends Mobile {
         }
     }
 
-    public String getText(String elementLocator, int index) {
+    protected String getText(String elementLocator, int index) {
         try {
             return androidDriver.findElements(getLocator(elementLocator)).get(index).getText();
         } catch (InvalidElementStateException e) {
@@ -299,7 +299,7 @@ public class Espresso extends Mobile {
     /*
       For args, please refer to http://appium.io/docs/en/commands/mobile-command/#android-espresso-only
      */
-    public Object backdoor(ImmutableMap<String, Object> args) {
+    protected Object backdoor(ImmutableMap<String, Object> args) {
         return androidDriver.executeScript("mobile: backdoor", args);
     }
 
