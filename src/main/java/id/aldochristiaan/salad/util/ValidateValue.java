@@ -1,4 +1,4 @@
-package id.aldochristiaan.salad.module.general;
+package id.aldochristiaan.salad.util;
 
 import org.junit.Assert;
 
@@ -107,6 +107,7 @@ public class ValidateValue {
     public void contains(String expected, String actual, String message) {
         Assert.assertTrue(message, actual.contains(expected));
     }
+
     public boolean isContains(String expected, String actual) {
         return actual.contains(expected);
     }

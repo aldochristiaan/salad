@@ -1,13 +1,13 @@
-package id.aldochristiaan.salad.module.android;
+package id.aldochristiaan.salad.module.android.espresso;
 
-import id.aldochristiaan.salad.module.Android;
+import id.aldochristiaan.salad.module.Espresso;
 import id.aldochristiaan.salad.util.ScrollDirection;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.android.AndroidElement;
 
 import java.util.HashMap;
 
-public class ViewPager extends Android {
+public class ViewPager extends Espresso {
 
     public ViewPager(AndroidDriver<AndroidElement> androidDriver) {
         super(androidDriver);

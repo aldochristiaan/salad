@@ -1,10 +1,10 @@
-package id.aldochristiaan.salad.module.android;
+package id.aldochristiaan.salad.module.android.uiautomator2;
 
-import id.aldochristiaan.salad.module.Android;
+import id.aldochristiaan.salad.module.UiAutomator2;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.android.AndroidElement;
 
-public class GetTextFromElement extends Android {
+public class GetTextFromElement extends UiAutomator2 {
 
     public GetTextFromElement(AndroidDriver<AndroidElement> androidDriver) {
         super(androidDriver);

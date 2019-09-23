@@ -1,8 +1,7 @@
-package id.aldochristiaan.salad.module.general;
+package id.aldochristiaan.salad.util;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
-import org.junit.Test;
 
 import java.security.SecureRandom;
 

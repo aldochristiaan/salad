@@ -1,12 +1,13 @@
-package id.aldochristiaan.salad.util;
+package id.aldochristiaan.salad.module.android.uiautomator2;
 
-import id.aldochristiaan.salad.module.Android;
+import id.aldochristiaan.salad.module.UiAutomator2;
+import id.aldochristiaan.salad.util.LogUtil;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.android.AndroidElement;
 
 import java.util.Set;
 
-public class ChangeContext extends Android {
+public class ChangeContext extends UiAutomator2 {
 
     public ChangeContext(AndroidDriver<AndroidElement> androidDriver) {
         super(androidDriver);

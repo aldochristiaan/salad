@@ -1,11 +1,7 @@
 package id.aldochristiaan.salad.module;
 
-import id.aldochristiaan.salad.module.general.Randomize;
-import id.aldochristiaan.salad.module.general.ValidateValue;
 import id.aldochristiaan.salad.module.ios.*;
-import id.aldochristiaan.salad.util.Direction;
-import id.aldochristiaan.salad.util.FakerUtil;
-import id.aldochristiaan.salad.util.LogUtil;
+import id.aldochristiaan.salad.util.*;
 import io.appium.java_client.ios.IOSDriver;
 import io.appium.java_client.ios.IOSElement;
 import org.apache.commons.io.FileUtils;

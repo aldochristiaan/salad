@@ -1,6 +1,6 @@
-package id.aldochristiaan.salad.module.android;
+package id.aldochristiaan.salad.module.android.uiautomator2;
 
-import id.aldochristiaan.salad.module.Android;
+import id.aldochristiaan.salad.module.UiAutomator2;
 import id.aldochristiaan.salad.util.Direction;
 import io.appium.java_client.TouchAction;
 import io.appium.java_client.android.AndroidDriver;
@@ -14,7 +14,7 @@ import org.openqa.selenium.Point;
 
 import java.time.Duration;
 
-public class Swipe extends Android {
+public class Swipe extends UiAutomator2 {
 
     public Swipe(AndroidDriver<AndroidElement> androidDriver) {
         super(androidDriver);

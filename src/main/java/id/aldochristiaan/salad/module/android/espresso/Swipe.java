@@ -1,6 +1,6 @@
-package id.aldochristiaan.salad.module.android;
+package id.aldochristiaan.salad.module.android.espresso;
 
-import id.aldochristiaan.salad.module.Android;
+import id.aldochristiaan.salad.module.Espresso;
 import id.aldochristiaan.salad.util.Coordinates;
 import id.aldochristiaan.salad.util.PrecisionDescriber;
 import id.aldochristiaan.salad.util.SwipeSpeed;
@@ -9,9 +9,9 @@ import io.appium.java_client.android.AndroidElement;
 
 import java.util.HashMap;
 
-public class EspressoSwipe extends Android {
+public class Swipe extends Espresso {
 
-    public EspressoSwipe(AndroidDriver<AndroidElement> androidDriver) {
+    public Swipe(AndroidDriver<AndroidElement> androidDriver) {
         super(androidDriver);
     }
 

@@ -1,12 +1,12 @@
-package id.aldochristiaan.salad.module.android;
+package id.aldochristiaan.salad.module.android.espresso;
 
-import id.aldochristiaan.salad.module.Android;
+import id.aldochristiaan.salad.module.Espresso;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.android.AndroidElement;
 
 import java.util.HashMap;
 
-public class Navigate extends Android {
+public class Navigate extends Espresso {
 
     public Navigate(AndroidDriver<AndroidElement> androidDriver) {
         super(androidDriver);

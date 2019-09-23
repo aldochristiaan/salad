@@ -1,9 +1,13 @@
 package id.aldochristiaan.salad.module;
 
-import id.aldochristiaan.salad.module.android.*;
-import id.aldochristiaan.salad.module.general.Randomize;
-import id.aldochristiaan.salad.module.general.ValidateValue;
-import id.aldochristiaan.salad.util.ChangeContext;
+import id.aldochristiaan.salad.module.android.espresso.*;
+import id.aldochristiaan.salad.module.android.uiautomator2.*;
+import id.aldochristiaan.salad.module.android.uiautomator2.GetElement;
+import id.aldochristiaan.salad.module.android.uiautomator2.GetMultipleElement;
+import id.aldochristiaan.salad.module.android.uiautomator2.Swipe;
+import id.aldochristiaan.salad.util.Randomize;
+import id.aldochristiaan.salad.util.ValidateValue;
+import id.aldochristiaan.salad.module.android.uiautomator2.ChangeContext;
 import id.aldochristiaan.salad.util.Direction;
 import id.aldochristiaan.salad.util.FakerUtil;
 import id.aldochristiaan.salad.util.LogUtil;
@@ -24,11 +28,11 @@ import java.util.Objects;
 
 import static id.aldochristiaan.salad.Salad.MAX_SWIPE_COUNT;
 
-public class Android extends Mobile {
+public class UiAutomator2 extends Mobile {
 
     protected AndroidDriver<AndroidElement> androidDriver;
 
-    public Android(AndroidDriver<AndroidElement> androidDriver) {
+    public UiAutomator2(AndroidDriver<AndroidElement> androidDriver) {
         this.androidDriver = androidDriver;
     }
 
@@ -88,14 +92,6 @@ public class Android extends Mobile {
         return new FakerUtil();
     }
 
-    protected Deeplink deeplink() {
-        return new Deeplink(androidDriver);
-    }
-
-    protected EspressoSwipe espressoSwipe() {
-        return new EspressoSwipe(androidDriver);
-    }
-
     protected Drawer drawer() {
         return new Drawer(androidDriver);
     }
@@ -114,14 +110,6 @@ public class Android extends Mobile {
 
     protected ValidateToast validateToast() {
         return new ValidateToast(androidDriver);
-    }
-
-    protected UiAutomator uiAutomator() {
-        return new UiAutomator(androidDriver);
-    }
-
-    protected Espresso espresso() {
-        return new Espresso(androidDriver);
     }
 
     protected AndroidElement findElementBy(By by) {
@@ -242,5 +230,9 @@ public class Android extends Mobile {
         } catch (Exception e) {
             LogUtil.info("No visible keyboard!");
         }
+    }
+
+    protected void openDeeplink(String deeplink) {
+        androidDriver.get(deeplink);
     }
 }

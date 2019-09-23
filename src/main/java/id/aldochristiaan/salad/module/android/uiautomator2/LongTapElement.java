@@ -1,12 +1,12 @@
-package id.aldochristiaan.salad.module.android;
+package id.aldochristiaan.salad.module.android.uiautomator2;
 
-import id.aldochristiaan.salad.module.Android;
+import id.aldochristiaan.salad.module.UiAutomator2;
 import io.appium.java_client.TouchAction;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.android.AndroidElement;
 import io.appium.java_client.touch.offset.ElementOption;
 
-public class LongTapElement extends Android {
+public class LongTapElement extends UiAutomator2 {
 
     public LongTapElement(AndroidDriver<AndroidElement> androidDriver) {
         super(androidDriver);

@@ -1,188 +1,94 @@
-package id.aldochristiaan.salad.module.android;
+package id.aldochristiaan.salad.module;
 
 import com.google.common.collect.ImmutableMap;
-import id.aldochristiaan.salad.module.Android;
-import id.aldochristiaan.salad.util.Coordinates;
-import id.aldochristiaan.salad.util.PrecisionDescriber;
-import id.aldochristiaan.salad.util.SwipeSpeed;
+import id.aldochristiaan.salad.module.android.espresso.*;
+import id.aldochristiaan.salad.util.FakerUtil;
+import id.aldochristiaan.salad.util.LogUtil;
+import id.aldochristiaan.salad.util.Randomize;
+import id.aldochristiaan.salad.util.ValidateValue;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.android.AndroidElement;
-import org.junit.Assert;
+import io.appium.java_client.android.nativekey.AndroidKey;
+import io.appium.java_client.android.nativekey.KeyEvent;
+import io.appium.java_client.android.nativekey.KeyEventFlag;
+import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.InvalidElementStateException;
 import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.NotFoundException;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import static id.aldochristiaan.salad.Salad.MAX_SWIPE_COUNT;
+import java.io.File;
+import java.io.IOException;
+import java.util.Objects;
 
-public class Espresso extends Android {
+public class Espresso extends Mobile {
+
+    protected AndroidDriver<AndroidElement> androidDriver;
 
     public Espresso(AndroidDriver<AndroidElement> androidDriver) {
-        super(androidDriver);
+        this.androidDriver = androidDriver;
     }
 
-    public void tap(String elementLocator) {
-        try {
-            androidDriver.findElement(getLocator(elementLocator)).click();
-        } catch (InvalidElementStateException e) {
-            throw new InvalidElementStateException("Problem at element : " + elementLocator, e);
-        } catch (NoSuchElementException e) {
-            throw new NoSuchElementException("Couldn't find this element : " + elementLocator, e);
-        }
+    protected Tap tap() {
+        return new Tap(androidDriver);
     }
 
-    public void tap(String elementLocator, int index) {
-        try {
-            androidDriver.findElements(getLocator(elementLocator)).get(index).click();
-        } catch (InvalidElementStateException e) {
-            throw new InvalidElementStateException("Problem at element : " + elementLocator, e);
-        } catch (NoSuchElementException e) {
-            throw new NoSuchElementException("Couldn't find this element : " + elementLocator, e);
-        }
+    protected MultipleTap multipleTap() {
+        return new MultipleTap(androidDriver);
     }
 
-    public void tap(String elementLocator, String swipeLocator, SwipeSpeed swipeSpeed) {
-        for (int i = 0; i < MAX_SWIPE_COUNT; i++) {
-            try {
-                AndroidElement androidElement = androidDriver.findElement(getLocator(elementLocator));
-                Assert.assertTrue(androidElement.isDisplayed());
-                androidElement.click();
-                break;
-            } catch (InvalidElementStateException | NoSuchElementException | AssertionError e) {
-                espressoSwipe().element(swipeLocator, swipeSpeed, Coordinates.CENTER, Coordinates.TOP_CENTER, PrecisionDescriber.FINGER);
-                delay(500);
-            }
-        }
+    protected Type type() {
+        return new Type(androidDriver);
     }
 
-    public void tap(String elementLocator, int index, String swipeLocator, SwipeSpeed swipeSpeed) {
-        for (int i = 0; i < MAX_SWIPE_COUNT; i++) {
-            try {
-                AndroidElement androidElement = androidDriver.findElements(getLocator(elementLocator)).get(index);
-                Assert.assertTrue(androidElement.isDisplayed());
-                androidElement.click();
-                break;
-            } catch (InvalidElementStateException | NoSuchElementException | AssertionError e) {
-                espressoSwipe().element(swipeLocator, swipeSpeed, Coordinates.CENTER, Coordinates.TOP_CENTER, PrecisionDescriber.FINGER);
-                delay(500);
-            }
-        }
+    protected Swipe swipe() {
+        return new Swipe(androidDriver);
     }
 
-    public void multipleTap(String elementLocator, int count) {
-        try {
-            AndroidElement androidElement = androidDriver.findElement(getLocator(elementLocator));
-            for (int i = 0; i < count; i++) {
-                androidElement.click();
-                delay(150);
-            }
-        } catch (InvalidElementStateException e) {
-            throw new InvalidElementStateException("Problem at element : " + elementLocator, e);
-        } catch (NoSuchElementException e) {
-            throw new NoSuchElementException("Couldn't find this element : " + elementLocator, e);
-        }
+    protected SwipeTo swipeTo() {
+        return new SwipeTo(androidDriver);
     }
 
-    public void multipleTap(String elementLocator, int count, int index) {
-        try {
-            AndroidElement androidElement = androidDriver.findElements(getLocator(elementLocator)).get(index);
-            for (int i = 0; i < count; i++) {
-                androidElement.click();
-            }
-        } catch (InvalidElementStateException e) {
-            throw new InvalidElementStateException("Problem at element : " + elementLocator, e);
-        } catch (NoSuchElementException e) {
-            throw new NoSuchElementException("Couldn't find this element : " + elementLocator, e);
-        }
+    protected Navigate navigate() {
+        return new Navigate(androidDriver);
     }
 
-    public void type(String elementLocator, String text) {
-        try {
-            AndroidElement androidElement = androidDriver.findElement(getLocator(elementLocator));
-            Assert.assertTrue(androidElement.isDisplayed());
-            androidElement.clear();
-            androidElement.sendKeys(text);
-            hideKeyboard();
-        } catch (InvalidElementStateException e) {
-            throw new InvalidElementStateException("Problem at element : " + elementLocator, e);
-        } catch (NoSuchElementException e) {
-            throw new NoSuchElementException("Couldn't find this element : " + elementLocator, e);
-        } catch (AssertionError e) {
-            throw new AssertionError("Failed to validate element : " + elementLocator, e);
-        }
+    protected GetElement getElement() {
+        return new GetElement(androidDriver);
     }
 
-    public void type(String elementLocator, String text, int index) {
-        try {
-            AndroidElement androidElement = androidDriver.findElements(getLocator(elementLocator)).get(index);
-            Assert.assertTrue(androidElement.isDisplayed());
-            androidElement.clear();
-            androidElement.sendKeys(text);
-            hideKeyboard();
-        } catch (InvalidElementStateException e) {
-            throw new InvalidElementStateException("Problem at element : " + elementLocator, e);
-        } catch (NoSuchElementException e) {
-            throw new NoSuchElementException("Couldn't find this element : " + elementLocator, e);
-        } catch (AssertionError e) {
-            throw new AssertionError("Failed to validate element : " + elementLocator, e);
-        }
+    protected GetMultipleElement getMultipleElement() {
+        return new GetMultipleElement(androidDriver);
     }
 
-    public void type(String elementLocator, String swipeLocator, String text) {
-        for (int i = 0; i < MAX_SWIPE_COUNT; i++) {
-            try {
-                AndroidElement androidElement = androidDriver.findElement(getLocator(elementLocator));
-                Assert.assertTrue(androidElement.isDisplayed());
-                androidElement.clear();
-                androidElement.sendKeys(text);
-                hideKeyboard();
-                break;
-            } catch (InvalidElementStateException | NoSuchElementException | AssertionError e) {
-                hideKeyboard();
-                espressoSwipe().element(swipeLocator, SwipeSpeed.FAST, Coordinates.CENTER, Coordinates.TOP_CENTER, PrecisionDescriber.FINGER);
-            }
-        }
+    protected Flash flash() {
+        return new Flash(androidDriver);
     }
 
-    public void type(String elementLocator, String swipeLocator, String text, int index) {
-        for (int i = 0; i < MAX_SWIPE_COUNT; i++) {
-            try {
-                AndroidElement androidElement = androidDriver.findElements(getLocator(elementLocator)).get(index);
-                Assert.assertTrue(androidElement.isDisplayed());
-                androidElement.clear();
-                androidElement.sendKeys(text);
-                hideKeyboard();
-                break;
-            } catch (InvalidElementStateException | NoSuchElementException | AssertionError e) {
-                hideKeyboard();
-                espressoSwipe().element(swipeLocator, SwipeSpeed.FAST, Coordinates.CENTER, Coordinates.TOP_CENTER, PrecisionDescriber.FINGER);
-            }
-        }
+    protected ValidateToast validateToast() {
+        return new ValidateToast(androidDriver);
     }
 
-    public void swipeTo(String elementLocator, String swipeLocator, SwipeSpeed swipeSpeed) {
-        for (int swipeCount = 0; !isElementDisplayed(elementLocator, 1) && swipeCount <= MAX_SWIPE_COUNT; ++swipeCount) {
-            espressoSwipe().element(swipeLocator, swipeSpeed, Coordinates.CENTER, Coordinates.TOP_CENTER, PrecisionDescriber.FINGER);
-        }
+    protected ValidateValue validateValue() {
+        return new ValidateValue();
     }
 
-    public void swipeTo(String elementLocator, String swipeLocator, SwipeSpeed swipeSpeed, Coordinates startCoordinate, Coordinates endCoordinate) {
-        for (int swipeCount = 0; !isElementDisplayed(elementLocator, 1) && swipeCount <= MAX_SWIPE_COUNT; ++swipeCount) {
-            espressoSwipe().element(swipeLocator, swipeSpeed, startCoordinate, endCoordinate, PrecisionDescriber.FINGER);
-        }
+    protected UiAutomator uiAutomator() {
+        return new UiAutomator(androidDriver);
     }
 
-    public void swipeTo(String elementLocator, int index, String swipeLocator, SwipeSpeed swipeSpeed) {
-        for (int swipeCount = 0; !isElementDisplayed(elementLocator, index, 1) && swipeCount <= MAX_SWIPE_COUNT; ++swipeCount) {
-            espressoSwipe().element(swipeLocator, swipeSpeed, Coordinates.CENTER, Coordinates.TOP_CENTER, PrecisionDescriber.FINGER);
-        }
+    protected ViewPager viewPager() {
+        return new ViewPager(androidDriver);
     }
 
-    public void swipeTo(String elementLocator, int index, String swipeLocator, SwipeSpeed swipeSpeed, Coordinates startCoordinate, Coordinates endCoordinate) {
-        for (int swipeCount = 0; !isElementDisplayed(elementLocator, index, 1) && swipeCount <= MAX_SWIPE_COUNT; ++swipeCount) {
-            espressoSwipe().element(swipeLocator, swipeSpeed, startCoordinate, endCoordinate, PrecisionDescriber.FINGER);
-        }
+    protected Randomize randomize() {
+        return new Randomize();
+    }
+
+    protected FakerUtil fakerUtil() {
+        return new FakerUtil();
     }
 
     public boolean isElementExist(String elementLocator) {
@@ -395,5 +301,55 @@ public class Espresso extends Android {
      */
     public Object backdoor(ImmutableMap<String, Object> args) {
         return androidDriver.executeScript("mobile: backdoor", args);
+    }
+
+    protected void takeScreenshot(String name) {
+        File scrFile = ((TakesScreenshot) androidDriver).getScreenshotAs(OutputType.FILE);
+        File imageFile = new File("screenshot/" + name + ".png");
+        try {
+            FileUtils.copyFile(Objects.requireNonNull(scrFile), imageFile);
+            LogUtil.info("Screenshot taken!");
+        } catch (IOException e) {
+            LogUtil.error("Failed to take screenshot!");
+            e.printStackTrace();
+        }
+    }
+
+    protected void takeScreenshot(String path, String name) {
+        File scrFile = ((TakesScreenshot) androidDriver).getScreenshotAs(OutputType.FILE);
+        File imageFile = new File(path + "/" + name + ".png");
+        try {
+            FileUtils.copyFile(Objects.requireNonNull(scrFile), imageFile);
+            LogUtil.info("Screenshot taken!");
+        } catch (IOException e) {
+            LogUtil.error("Failed to take screenshot!");
+        }
+    }
+
+    protected void pressBackButton() {
+        androidDriver.pressKey(new KeyEvent().withKey(AndroidKey.BACK));
+    }
+
+    protected void pressEnterButton() {
+        androidDriver.pressKey(new KeyEvent().withKey(AndroidKey.ENTER));
+    }
+
+    protected void pressSearchButton() {
+        androidDriver.pressKey(new KeyEvent(AndroidKey.ENTER)
+                .withFlag(KeyEventFlag.SOFT_KEYBOARD)
+                .withFlag(KeyEventFlag.KEEP_TOUCH_MODE)
+                .withFlag(KeyEventFlag.EDITOR_ACTION));
+    }
+
+    protected void hideKeyboard() {
+        try {
+            androidDriver.hideKeyboard();
+        } catch (Exception e) {
+            LogUtil.info("No visible keyboard!");
+        }
+    }
+
+    protected void openDeeplink(String deeplink) {
+        androidDriver.get(deeplink);
     }
 }

@@ -1,6 +1,6 @@
-package id.aldochristiaan.salad.module.android;
+package id.aldochristiaan.salad.module.android.uiautomator2;
 
-import id.aldochristiaan.salad.module.Android;
+import id.aldochristiaan.salad.module.UiAutomator2;
 import id.aldochristiaan.salad.util.Coordinates;
 import id.aldochristiaan.salad.util.LogUtil;
 import id.aldochristiaan.salad.util.PrecisionDescriber;
@@ -14,7 +14,7 @@ import io.appium.java_client.touch.offset.PointOption;
 import java.time.Duration;
 import java.util.HashMap;
 
-public class TapElement extends Android {
+public class TapElement extends UiAutomator2 {
 
     public TapElement(AndroidDriver<AndroidElement> androidDriver) {
         super(androidDriver);
