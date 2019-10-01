@@ -1,6 +1,6 @@
 package id.aldochristiaan.salad.module.ios;
 
-import id.aldochristiaan.salad.module.Ios;
+import id.aldochristiaan.salad.module.XCUITest;
 import id.aldochristiaan.salad.util.Direction;
 import io.appium.java_client.TouchAction;
 import io.appium.java_client.ios.IOSDriver;
@@ -14,7 +14,7 @@ import org.openqa.selenium.Point;
 
 import java.time.Duration;
 
-public class Swipe extends Ios {
+public class Swipe extends XCUITest {
 
     public Swipe(IOSDriver<IOSElement> iosDriver) {
         super(iosDriver);

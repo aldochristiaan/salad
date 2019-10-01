@@ -71,7 +71,7 @@ public class Tap extends Espresso {
         }
     }
 
-    public void location(int x, int y, Duration time){
+    public void location(int x, int y, Duration time) {
         TouchAction touchAction = new TouchAction(androidDriver);
         touchAction.press(new PointOption().withCoordinates(x, y)).waitAction(new WaitOptions().withDuration(time)).release().perform();
     }

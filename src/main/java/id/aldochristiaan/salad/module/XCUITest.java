@@ -1,12 +1,9 @@
 package id.aldochristiaan.salad.module;
 
-import id.aldochristiaan.salad.module.android.uiautomator2.*;
+import id.aldochristiaan.salad.module.ios.*;
 import id.aldochristiaan.salad.util.*;
-import io.appium.java_client.android.AndroidDriver;
-import io.appium.java_client.android.AndroidElement;
-import io.appium.java_client.android.nativekey.AndroidKey;
-import io.appium.java_client.android.nativekey.KeyEvent;
-import io.appium.java_client.android.nativekey.KeyEventFlag;
+import io.appium.java_client.ios.IOSDriver;
+import io.appium.java_client.ios.IOSElement;
 import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -19,32 +16,32 @@ import java.util.Objects;
 
 import static id.aldochristiaan.salad.Salad.MAX_SWIPE_COUNT;
 
-public class UiAutomator2 extends Mobile {
+public class XCUITest extends Mobile {
 
-    protected AndroidDriver<AndroidElement> androidDriver;
+    protected IOSDriver<IOSElement> iosDriver;
 
-    public UiAutomator2(AndroidDriver<AndroidElement> androidDriver) {
-        this.androidDriver = androidDriver;
+    public XCUITest(IOSDriver<IOSElement> iosDriver) {
+        this.iosDriver = iosDriver;
     }
 
     protected GetElement getElement() {
-        return new GetElement(androidDriver);
+        return new GetElement(iosDriver);
     }
 
     protected GetMultipleElement getMultipleElement() {
-        return new GetMultipleElement(androidDriver);
+        return new GetMultipleElement(iosDriver);
     }
 
     protected LongTap longTapElement() {
-        return new LongTap(androidDriver);
+        return new LongTap(iosDriver);
     }
 
     protected Swipe swipe() {
-        return new Swipe(androidDriver);
+        return new Swipe(iosDriver);
     }
 
     protected Tap tapElement() {
-        return new Tap(androidDriver);
+        return new Tap(iosDriver);
     }
 
     protected ValidateValue validateValue() {
@@ -52,15 +49,7 @@ public class UiAutomator2 extends Mobile {
     }
 
     protected Type typeText() {
-        return new Type(androidDriver);
-    }
-
-    protected ChangeContext changeContext() {
-        return new ChangeContext(androidDriver);
-    }
-
-    protected Toast toast() {
-        return new Toast(androidDriver);
+        return new Type(iosDriver);
     }
 
     protected Randomize randomize() {
@@ -71,83 +60,75 @@ public class UiAutomator2 extends Mobile {
         return new FakerUtil();
     }
 
-    protected AndroidElement findElementBy(By by) {
-        AndroidElement element = null;
+    protected Deeplink deeplink() {
+        return new Deeplink(iosDriver);
+    }
+
+    protected IOSElement findElementBy(By by) {
+        IOSElement element = null;
         for (int i = 0; i < MAX_SWIPE_COUNT; i++) {
             try {
-                element = androidDriver.findElement(by);
+                element = iosDriver.findElement(by);
                 break;
             } catch (NoSuchElementException e) {
                 swipe().up();
             }
         }
-        if (element == null) {
-            throw new NoSuchElementException("Couldn't find this element : " + by.toString());
-        }
         return element;
     }
 
-    protected AndroidElement findElementBy(By by, Direction direction) {
-        AndroidElement element = null;
+    protected IOSElement findElementBy(By by, Direction direction) {
+        IOSElement element = null;
         for (int i = 0; i < MAX_SWIPE_COUNT; i++) {
             try {
-                element = androidDriver.findElement(by);
+                element = iosDriver.findElement(by);
                 break;
             } catch (NoSuchElementException e) {
                 swipe().toDirection(direction);
             }
         }
-        if (element == null) {
-            throw new NoSuchElementException("Couldn't find this element : " + by.toString());
-        }
         return element;
     }
 
-    protected AndroidElement findElementBy(By by, int timeout) {
-        return (AndroidElement) (new WebDriverWait(androidDriver, timeout))
+    protected IOSElement findElementBy(By by, int timeout) {
+        return (IOSElement) (new WebDriverWait(iosDriver, timeout))
                 .until(ExpectedConditions.visibilityOfElementLocated(by));
     }
 
-    protected List<AndroidElement> findElementsBy(By by) {
-        List<AndroidElement> elements = null;
+    protected List<IOSElement> findElementsBy(By by) {
+        List<IOSElement> elements = null;
         for (int i = 0; i < MAX_SWIPE_COUNT; i++) {
             try {
-                elements = androidDriver.findElements(by);
+                elements = iosDriver.findElements(by);
                 break;
             } catch (NoSuchElementException e) {
                 swipe().up();
             }
-        }
-        if (elements == null) {
-            throw new NoSuchElementException("Couldn't find this element : " + by.toString());
         }
         return elements;
     }
 
-    protected List<AndroidElement> findElementsBy(By by, Direction direction) {
-        List<AndroidElement> elements = null;
+    protected List<IOSElement> findElementsBy(By by, Direction direction) {
+        List<IOSElement> elements = null;
         for (int i = 0; i < MAX_SWIPE_COUNT; i++) {
             try {
-                elements = androidDriver.findElements(by);
+                elements = iosDriver.findElements(by);
                 break;
             } catch (NoSuchElementException e) {
                 swipe().toDirection(direction);
             }
-        }
-        if (elements == null) {
-            throw new NoSuchElementException("Couldn't find this element : " + by.toString());
         }
         return elements;
     }
 
     protected List<WebElement> findElementsBy(By by, int timeout) {
-        return (new WebDriverWait(androidDriver, timeout))
+        return (new WebDriverWait(iosDriver, timeout))
                 .until(ExpectedConditions.visibilityOfAllElementsLocatedBy(by));
     }
 
     protected boolean isElementExist(String elementLocator, int timeout) {
         try {
-            WebDriverWait wait = new WebDriverWait(androidDriver, timeout);
+            WebDriverWait wait = new WebDriverWait(iosDriver, timeout);
             wait.until(ExpectedConditions.presenceOfElementLocated(getLocator(elementLocator)));
             return true;
         } catch (Exception e) {
@@ -158,7 +139,7 @@ public class UiAutomator2 extends Mobile {
 
     protected boolean isElementVisible(String elementLocator) {
         try {
-            return Boolean.parseBoolean(androidDriver.findElement(getLocator(elementLocator)).getAttribute("visible"));
+            return Boolean.parseBoolean(iosDriver.findElement(getLocator(elementLocator)).getAttribute("visible"));
         } catch (NoSuchElementException e) {
             throw new NoSuchElementException("Couldn't find this element : " + elementLocator, e);
         }
@@ -166,7 +147,7 @@ public class UiAutomator2 extends Mobile {
 
     protected boolean isElementEnabled(String elementLocator) {
         try {
-            return Boolean.parseBoolean(androidDriver.findElement(getLocator(elementLocator)).getAttribute("enabled"));
+            return Boolean.parseBoolean(iosDriver.findElement(getLocator(elementLocator)).getAttribute("enabled"));
         } catch (NoSuchElementException e) {
             throw new NoSuchElementException("Couldn't find this element : " + elementLocator, e);
         }
@@ -174,7 +155,7 @@ public class UiAutomator2 extends Mobile {
 
     protected boolean isElementSelected(String elementLocator) {
         try {
-            return Boolean.parseBoolean(androidDriver.findElement(getLocator(elementLocator)).getAttribute("selected"));
+            return Boolean.parseBoolean(iosDriver.findElement(getLocator(elementLocator)).getAttribute("selected"));
         } catch (NoSuchElementException e) {
             throw new NoSuchElementException("Couldn't find this element : " + elementLocator, e);
         }
@@ -182,7 +163,7 @@ public class UiAutomator2 extends Mobile {
 
     protected boolean isElementChecked(String elementLocator) {
         try {
-            return Boolean.parseBoolean(androidDriver.findElement(getLocator(elementLocator)).getAttribute("checked"));
+            return Boolean.parseBoolean(iosDriver.findElement(getLocator(elementLocator)).getAttribute("checked"));
         } catch (NoSuchElementException e) {
             throw new NoSuchElementException("Couldn't find this element : " + elementLocator, e);
         }
@@ -190,7 +171,7 @@ public class UiAutomator2 extends Mobile {
 
     protected String getElementAttributeValue(String elementLocator, String attribute) {
         if (isElementVisible(elementLocator)) {
-            return androidDriver.findElement(getLocator(elementLocator)).getAttribute(attribute);
+            return iosDriver.findElement(getLocator(elementLocator)).getAttribute(attribute);
         } else {
             throw new NoSuchElementException("Couldn't find this element : " + elementLocator);
         }
@@ -217,6 +198,26 @@ public class UiAutomator2 extends Mobile {
             validateValue().contains(text, getText(elementLocator));
         } else {
             throw new NoSuchElementException("Couldn't find this element : " + elementLocator);
+        }
+    }
+
+    protected String getText(String elementLocator) {
+        try {
+            return iosDriver.findElement(getLocator(elementLocator)).getText();
+        } catch (InvalidElementStateException e) {
+            throw new InvalidElementStateException("Problem at element : " + elementLocator, e);
+        } catch (NoSuchElementException e) {
+            throw new NoSuchElementException("Couldn't find this element : " + elementLocator, e);
+        }
+    }
+
+    protected String getText(String elementLocator, int index) {
+        try {
+            return iosDriver.findElements(getLocator(elementLocator)).get(index).getText();
+        } catch (InvalidElementStateException e) {
+            throw new InvalidElementStateException("Problem at element : " + elementLocator, e);
+        } catch (NoSuchElementException e) {
+            throw new NoSuchElementException("Couldn't find this element : " + elementLocator, e);
         }
     }
 
@@ -288,32 +289,12 @@ public class UiAutomator2 extends Mobile {
         validateValue().equalsTrue(isElementChecked(elementLocator), errorMessage);
     }
 
-    protected void validateStaleness(AndroidElement androidElement, int timeoutInSeconds) {
-        validateValue().equalsTrue((new WebDriverWait(androidDriver, timeoutInSeconds)).until(ExpectedConditions.stalenessOf(androidElement)));
-    }
-
-    protected String getText(String elementLocator) {
-        try {
-            return androidDriver.findElement(getLocator(elementLocator)).getText();
-        } catch (InvalidElementStateException e) {
-            throw new InvalidElementStateException("Problem at element : " + elementLocator, e);
-        } catch (NoSuchElementException e) {
-            throw new NoSuchElementException("Couldn't find this element : " + elementLocator, e);
-        }
-    }
-
-    protected String getText(String elementLocator, int index) {
-        try {
-            return androidDriver.findElements(getLocator(elementLocator)).get(index).getText();
-        } catch (InvalidElementStateException e) {
-            throw new InvalidElementStateException("Problem at element : " + elementLocator, e);
-        } catch (NoSuchElementException e) {
-            throw new NoSuchElementException("Couldn't find this element : " + elementLocator, e);
-        }
+    protected void validateStaleness(IOSElement iosElement, int timeoutInSeconds) {
+        validateValue().equalsTrue((new WebDriverWait(iosDriver, timeoutInSeconds)).until(ExpectedConditions.stalenessOf(iosElement)));
     }
 
     protected void takeScreenshot(String name) {
-        File scrFile = ((TakesScreenshot) androidDriver).getScreenshotAs(OutputType.FILE);
+        File scrFile = ((TakesScreenshot) iosDriver).getScreenshotAs(OutputType.FILE);
         File imageFile = new File("screenshot/" + name + ".png");
         try {
             FileUtils.copyFile(Objects.requireNonNull(scrFile), imageFile);
@@ -325,40 +306,22 @@ public class UiAutomator2 extends Mobile {
     }
 
     protected void takeScreenshot(String path, String name) {
-        File scrFile = ((TakesScreenshot) androidDriver).getScreenshotAs(OutputType.FILE);
+        File scrFile = ((TakesScreenshot) iosDriver).getScreenshotAs(OutputType.FILE);
         File imageFile = new File(path + "/" + name + ".png");
         try {
             FileUtils.copyFile(Objects.requireNonNull(scrFile), imageFile);
             LogUtil.info("Screenshot taken!");
         } catch (IOException e) {
             LogUtil.error("Failed to take screenshot!");
+            e.printStackTrace();
         }
-    }
-
-    protected void pressBackButton() {
-        androidDriver.pressKey(new KeyEvent().withKey(AndroidKey.BACK));
-    }
-
-    protected void pressEnterButton() {
-        androidDriver.pressKey(new KeyEvent().withKey(AndroidKey.ENTER));
-    }
-
-    protected void pressSearchButton() {
-        androidDriver.pressKey(new KeyEvent(AndroidKey.ENTER)
-                .withFlag(KeyEventFlag.SOFT_KEYBOARD)
-                .withFlag(KeyEventFlag.KEEP_TOUCH_MODE)
-                .withFlag(KeyEventFlag.EDITOR_ACTION));
     }
 
     protected void hideKeyboard() {
         try {
-            androidDriver.hideKeyboard();
+            iosDriver.hideKeyboard();
         } catch (Exception e) {
             LogUtil.info("No visible keyboard!");
         }
-    }
-
-    protected void openDeeplink(String deeplink) {
-        androidDriver.get(deeplink);
     }
 }

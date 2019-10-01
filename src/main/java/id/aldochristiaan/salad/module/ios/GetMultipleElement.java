@@ -1,13 +1,13 @@
 package id.aldochristiaan.salad.module.ios;
 
-import id.aldochristiaan.salad.module.Ios;
+import id.aldochristiaan.salad.module.XCUITest;
 import io.appium.java_client.ios.IOSDriver;
 import io.appium.java_client.ios.IOSElement;
 import org.openqa.selenium.WebElement;
 
 import java.util.List;
 
-public class GetMultipleElement extends Ios {
+public class GetMultipleElement extends XCUITest {
 
     public GetMultipleElement(IOSDriver<IOSElement> iosDriver) {
         super(iosDriver);
