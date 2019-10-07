@@ -53,6 +53,16 @@ public class Mobile {
         }
     }
 
+    protected String getWebLocator(String webLocator) {
+        String elementValue = ELEMENT_PROPERTIES.getProperty(webLocator);
+        if (elementValue == null) {
+            LogUtil.error("Couldn't find locator : " + webLocator + " ! Please check properties file!");
+            throw new NoSuchElementException("Couldn't find locator : " + webLocator);
+        } else {
+            return elementValue;
+        }
+    }
+
     protected String constructLocator(String elementLocator, Object... args) {
         String elementValue = ELEMENT_PROPERTIES.getProperty(elementLocator);
         String constructedValue = String.format(elementValue, args);

@@ -67,12 +67,12 @@ public class Espresso extends Mobile {
         return new Flash(androidDriver);
     }
 
-    protected ValidateToast validateToast() {
-        return new ValidateToast(androidDriver);
+    protected WebAtoms webAtoms() {
+        return new WebAtoms(androidDriver);
     }
 
-    protected ValidateValue validateValue() {
-        return new ValidateValue();
+    protected ValidateToast validateToast() {
+        return new ValidateToast(androidDriver);
     }
 
     protected UiAutomator uiAutomator() {
@@ -81,6 +81,10 @@ public class Espresso extends Mobile {
 
     protected ViewPager viewPager() {
         return new ViewPager(androidDriver);
+    }
+
+    protected ValidateValue validateValue() {
+        return new ValidateValue();
     }
 
     protected Randomize randomize() {
