@@ -1,11 +1,11 @@
 package id.aldochristiaan.salad.module.ios;
 
-import id.aldochristiaan.salad.module.Ios;
+import id.aldochristiaan.salad.module.XCUITest;
 import id.aldochristiaan.salad.util.Direction;
 import io.appium.java_client.ios.IOSDriver;
 import io.appium.java_client.ios.IOSElement;
 
-public class GetElement extends Ios {
+public class GetElement extends XCUITest {
 
     public GetElement(IOSDriver<IOSElement> iosDriver) {
         super(iosDriver);
