@@ -1,8 +1,8 @@
 package id.aldochristiaan.salad;
 
+import id.aldochristiaan.salad.util.Driver;
 import id.aldochristiaan.salad.util.LogLevel;
 import id.aldochristiaan.salad.util.LogUtil;
-import id.aldochristiaan.salad.util.Platform;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.android.AndroidElement;
 import io.appium.java_client.ios.IOSDriver;
@@ -29,7 +29,7 @@ public class Salad {
     private AppiumDriverLocalService service;
     private AppiumServiceBuilder builder;
     private DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
-    private Platform platform;
+    private Driver driver;
     private LogLevel logLevel;
     private Integer appiumPort;
     private String elementPropertiesDirectory;
@@ -41,22 +41,22 @@ public class Salad {
     public Salad() {
     }
 
-    public Salad(DesiredCapabilities desiredCapabilities, Platform platform, LogLevel logLevel) {
+    public Salad(DesiredCapabilities desiredCapabilities, Driver driver, LogLevel logLevel) {
         this.desiredCapabilities = desiredCapabilities;
-        this.platform = platform;
+        this.driver = driver;
         this.logLevel = logLevel;
     }
 
-    public Salad(Properties capabilitiesProperies, String elementPropertiesDirectory, Platform platform, LogLevel logLevel) {
+    public Salad(Properties capabilitiesProperies, String elementPropertiesDirectory, Driver driver, LogLevel logLevel) {
         this.elementPropertiesDirectory = elementPropertiesDirectory;
-        this.platform = platform;
+        this.driver = driver;
         this.logLevel = logLevel;
         CAPABILITIES_PROPERTIES = capabilitiesProperies;
     }
 
-    public Salad(Properties capabilitiesProperies, String elementPropertiesDirectory, Platform platform, Integer appiumPort, LogLevel logLevel) {
+    public Salad(Properties capabilitiesProperies, String elementPropertiesDirectory, Driver driver, Integer appiumPort, LogLevel logLevel) {
         this.elementPropertiesDirectory = elementPropertiesDirectory;
-        this.platform = platform;
+        this.driver = driver;
         this.appiumPort = appiumPort;
         this.logLevel = logLevel;
         CAPABILITIES_PROPERTIES = capabilitiesProperies;
@@ -76,8 +76,8 @@ public class Salad {
         service.start();
 
         loadElementProperties(elementPropertiesDirectory);
-        switch (platform) {
-            case ANDROID:
+        switch (driver) {
+            case UIAUTOMATOR2:
                 if (CAPABILITIES_PROPERTIES != null) setAndroidCapabilities(CAPABILITIES_PROPERTIES);
                 androidDriver = new AndroidDriver<>(service.getUrl(), desiredCapabilities);
                 break;
@@ -85,7 +85,7 @@ public class Salad {
                 if (CAPABILITIES_PROPERTIES != null) setEspressoCapabilities(CAPABILITIES_PROPERTIES);
                 androidDriver = new AndroidDriver<>(service.getUrl(), desiredCapabilities);
                 break;
-            case IOS:
+            case XCUITEST:
                 if (CAPABILITIES_PROPERTIES != null) setIosCapabilities(CAPABILITIES_PROPERTIES);
                 iosDriver = new IOSDriver<>(service.getUrl(), desiredCapabilities);
                 break;
@@ -95,9 +95,10 @@ public class Salad {
         }
     }
 
-    public void stop(Platform platform) {
-        switch (platform) {
-            case ANDROID:
+    public void stop(Driver driver) {
+        switch (driver) {
+            case UIAUTOMATOR2:
+            case ESPRESSO:
                 try {
                     LogUtil.info("Stopping appium server!");
                     androidDriver.quit();
@@ -106,7 +107,7 @@ public class Salad {
                     LogUtil.info("Android driver closed!");
                 }
                 break;
-            case IOS:
+            case XCUITEST:
                 try {
                     LogUtil.info("Stopping appium server!");
                     iosDriver.quit();
@@ -116,7 +117,7 @@ public class Salad {
                 }
                 break;
             default:
-                LogUtil.error("Platform not found! Choose between ANDROID or IOS");
+                LogUtil.error("Platform not found! Choose between UIAUTOMATOR2, ESPRESSO or XCUITEST");
                 throw new NotFoundException();
         }
     }

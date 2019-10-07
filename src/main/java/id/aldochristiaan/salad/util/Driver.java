@@ -1,7 +1,7 @@
 package id.aldochristiaan.salad.util;
 
-public enum Platform {
-    ANDROID,
+public enum Driver {
+    UIAUTOMATOR2,
     ESPRESSO,
-    IOS
+    XCUITEST
 }
