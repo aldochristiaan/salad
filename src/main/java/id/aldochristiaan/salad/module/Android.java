@@ -1,23 +1,24 @@
 package id.aldochristiaan.salad.module;
 
 import id.aldochristiaan.salad.module.android.*;
-import id.aldochristiaan.salad.module.general.*;
+import id.aldochristiaan.salad.module.general.Randomize;
+import id.aldochristiaan.salad.module.general.ValidateValue;
 import id.aldochristiaan.salad.util.ChangeContext;
 import id.aldochristiaan.salad.util.Direction;
 import id.aldochristiaan.salad.util.FakerUtil;
 import id.aldochristiaan.salad.util.LogUtil;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.android.AndroidElement;
-import io.appium.java_client.pagefactory.AppiumFieldDecorator;
+import io.appium.java_client.android.nativekey.AndroidKey;
+import io.appium.java_client.android.nativekey.KeyEvent;
+import io.appium.java_client.android.nativekey.KeyEventFlag;
 import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.*;
-import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.io.File;
 import java.io.IOException;
-import java.time.Duration;
 import java.util.List;
 import java.util.Objects;
 
@@ -28,7 +29,6 @@ public class Android extends Mobile {
     protected AndroidDriver<AndroidElement> androidDriver;
 
     public Android(AndroidDriver<AndroidElement> androidDriver) {
-        PageFactory.initElements(new AppiumFieldDecorator(androidDriver, Duration.ofSeconds(20)), this);
         this.androidDriver = androidDriver;
     }
 
@@ -88,6 +88,42 @@ public class Android extends Mobile {
         return new FakerUtil();
     }
 
+    protected Deeplink deeplink() {
+        return new Deeplink(androidDriver);
+    }
+
+    protected EspressoSwipe espressoSwipe() {
+        return new EspressoSwipe(androidDriver);
+    }
+
+    protected Drawer drawer() {
+        return new Drawer(androidDriver);
+    }
+
+    protected Flash flash() {
+        return new Flash(androidDriver);
+    }
+
+    protected ViewPager viewPager() {
+        return new ViewPager(androidDriver);
+    }
+
+    protected Navigate navigate() {
+        return new Navigate(androidDriver);
+    }
+
+    protected ValidateToast validateToast() {
+        return new ValidateToast(androidDriver);
+    }
+
+    protected UiAutomator uiAutomator() {
+        return new UiAutomator(androidDriver);
+    }
+
+    protected Espresso espresso() {
+        return new Espresso(androidDriver);
+    }
+
     protected AndroidElement findElementBy(By by) {
         AndroidElement element = null;
         for (int i = 0; i < MAX_SWIPE_COUNT; i++) {
@@ -97,6 +133,9 @@ public class Android extends Mobile {
             } catch (NoSuchElementException e) {
                 swipe().up();
             }
+        }
+        if (element == null) {
+            throw new NoSuchElementException("Couldn't find this element : " + by.toString());
         }
         return element;
     }
@@ -110,6 +149,9 @@ public class Android extends Mobile {
             } catch (NoSuchElementException e) {
                 swipe().toDirection(direction);
             }
+        }
+        if (element == null) {
+            throw new NoSuchElementException("Couldn't find this element : " + by.toString());
         }
         return element;
     }
@@ -129,6 +171,9 @@ public class Android extends Mobile {
                 swipe().up();
             }
         }
+        if (elements == null) {
+            throw new NoSuchElementException("Couldn't find this element : " + by.toString());
+        }
         return elements;
     }
 
@@ -142,16 +187,15 @@ public class Android extends Mobile {
                 swipe().toDirection(direction);
             }
         }
+        if (elements == null) {
+            throw new NoSuchElementException("Couldn't find this element : " + by.toString());
+        }
         return elements;
     }
 
     protected List<WebElement> findElementsBy(By by, int timeout) {
         return (new WebDriverWait(androidDriver, timeout))
                 .until(ExpectedConditions.visibilityOfAllElementsLocatedBy(by));
-    }
-
-    protected void hideKeyboard() {
-        androidDriver.hideKeyboard();
     }
 
     protected void takeScreenshot(String name) {
@@ -174,7 +218,29 @@ public class Android extends Mobile {
             LogUtil.info("Screenshot taken!");
         } catch (IOException e) {
             LogUtil.error("Failed to take screenshot!");
-            e.printStackTrace();
+        }
+    }
+
+    protected void pressBackButton() {
+        androidDriver.pressKey(new KeyEvent().withKey(AndroidKey.BACK));
+    }
+
+    protected void pressEnterButton() {
+        androidDriver.pressKey(new KeyEvent().withKey(AndroidKey.ENTER));
+    }
+
+    protected void pressSearchButton() {
+        androidDriver.pressKey(new KeyEvent(AndroidKey.ENTER)
+                .withFlag(KeyEventFlag.SOFT_KEYBOARD)
+                .withFlag(KeyEventFlag.KEEP_TOUCH_MODE)
+                .withFlag(KeyEventFlag.EDITOR_ACTION));
+    }
+
+    protected void hideKeyboard() {
+        try {
+            androidDriver.hideKeyboard();
+        } catch (Exception e) {
+            LogUtil.info("No visible keyboard!");
         }
     }
 }

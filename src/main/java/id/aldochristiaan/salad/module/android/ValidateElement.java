@@ -74,4 +74,12 @@ public class ValidateElement extends Android {
     public void uncheckedByLocator(String elementLocator, int timeout, String message) {
         Assert.assertFalse(message, getElement().withLocator(elementLocator, timeout).isSelected());
     }
+
+    public void displayedByLocator(String elementLocator) {
+        Assert.assertTrue("Element with locator : " + elementLocator + " is not displayed!", getElement().withLocator(elementLocator).isDisplayed());
+    }
+
+    public void displayedByLocator(String elementLocator, String message) {
+        Assert.assertTrue(message, getElement().withLocator(elementLocator).isDisplayed());
+    }
 }

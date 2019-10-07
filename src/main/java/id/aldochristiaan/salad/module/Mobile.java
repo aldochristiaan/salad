@@ -11,15 +11,21 @@ public class Mobile {
 
     protected By getLocator(String elementLocator) {
         String elementValue = ELEMENT_PROPERTIES.getProperty(elementLocator);
+        if (elementValue == null) {
+            LogUtil.error("Couldn't find locator : " + elementLocator + " ! Please check properties file!");
+            throw new NoSuchElementException("Couldn't find locator : " + elementLocator);
+        }
         String[] locator = elementValue.split("_");
         String locatorType = locator[0];
         String locatorValue = elementValue.substring(elementValue.indexOf("_") + 1);
 
         switch (locatorType) {
             case "id":
-                return By.id(locatorValue);
+                return MobileBy.id(locatorValue);
             case "accessibilityId":
                 return MobileBy.AccessibilityId(locatorValue);
+            case "contentDescription":
+                return MobileBy.xpath("//*[@content-desc='" + locatorValue + "']");
             case "name":
                 return MobileBy.ByIosNsPredicate.iOSNsPredicateString("name == '" + locatorValue + "'");
             case "label":
@@ -28,21 +34,22 @@ public class Mobile {
                 return MobileBy.ByIosNsPredicate.iOSNsPredicateString("value == '" + locatorValue + "'");
             case "labelcontains":
                 return MobileBy.ByIosNsPredicate.iOSNsPredicateString("label CONTAINS '" + locatorValue + "'");
+            case "viewTag":
+                return MobileBy.AndroidViewTag(locatorValue);
             case "xpath":
-                return By.xpath(locatorValue);
+                return MobileBy.xpath(locatorValue);
             case "class":
-                return By.className(locatorValue);
+                return MobileBy.className(locatorValue);
             case "text":
-                return By.xpath("/*//*[@text=\"" + locatorValue + "\"]");
+                return MobileBy.xpath("//*[@text='" + locatorValue + "']");
             case "containsText":
-                return By.xpath("/*//*[contains(@text, '" + locatorValue + "')]");
+                return MobileBy.xpath("//*[contains(@text, '" + locatorValue + "')]");
             case "translationText":
-                return By.xpath("//*[contains(@text,'" + locatorValue + "') or contains(@text, " +
+                return MobileBy.xpath("//*[contains(@text,'" + locatorValue + "') or contains(@text, " +
                         "translate('" + locatorValue + "', 'abcdefghijklmnopqrstuvwxyz', 'ABCDEFGHIJKLMNOPQRSTUVWXYZ')) or " +
                         "contains(@text, translate('" + locatorValue + "', 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'))]");
             default:
-                LogUtil.error("Couldn't find locator : " + locatorValue + " ! Please check properties file!");
-                throw new NoSuchElementException("Couldn't find locator : " + locatorValue);
+                return null;
         }
     }
 
@@ -60,5 +67,13 @@ public class Mobile {
                 constructedValue
         );
         return constructedLocator;
+    }
+
+    protected void delay(int milliseconds) {
+        try {
+            Thread.sleep(milliseconds);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }

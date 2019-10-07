@@ -31,7 +31,7 @@ public class CheckElement extends Android {
             wait.until(ExpectedConditions.visibilityOfElementLocated(by));
             return true;
         } catch (Exception e) {
-            LogUtil.info("Element with locator : " + elementLocator + " is not present!");
+            LogUtil.error("Element with locator : " + elementLocator + " is not present!");
             return false;
         }
     }

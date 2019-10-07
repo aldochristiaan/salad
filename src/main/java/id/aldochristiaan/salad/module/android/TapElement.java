@@ -1,7 +1,10 @@
 package id.aldochristiaan.salad.module.android;
 
 import id.aldochristiaan.salad.module.Android;
+import id.aldochristiaan.salad.util.Coordinates;
 import id.aldochristiaan.salad.util.LogUtil;
+import id.aldochristiaan.salad.util.PrecisionDescriber;
+import id.aldochristiaan.salad.util.Tapper;
 import io.appium.java_client.TouchAction;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.android.AndroidElement;
@@ -9,6 +12,7 @@ import io.appium.java_client.touch.WaitOptions;
 import io.appium.java_client.touch.offset.PointOption;
 
 import java.time.Duration;
+import java.util.HashMap;
 
 public class TapElement extends Android {
 
@@ -74,6 +78,15 @@ public class TapElement extends Android {
         } else {
             LogUtil.error("Couldn't find element with locator : " + elementLocator);
         }
+    }
+
+    public void withEspresso(String elementLocator, Tapper tapper, Coordinates coordinates, PrecisionDescriber precisionDescriber) {
+        HashMap<String, Object> args = new HashMap<>();
+        args.put("element", getElement().withLocator(elementLocator, 2));
+        args.put("tapper", tapper.toString());
+        args.put("coordinatesProvider", coordinates.toString());
+        args.put("precisionDescriber", precisionDescriber.toString());
+        androidDriver.executeScript("mobile:clickAction", args);
     }
 
     public void withLocation(int x, int y, Duration time) {

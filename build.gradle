@@ -6,7 +6,7 @@ plugins {
 apply plugin: 'com.github.johnrengelman.shadow'
 
 group 'salad'
-version '1.0.0'
+version '1.1.0'
 
 sourceCompatibility = 1.8
 
@@ -24,8 +24,8 @@ shadowJar {
 }
 
 dependencies {
-    implementation 'io.appium:java-client:7.0.0'
-    implementation 'com.github.javafaker:javafaker:0.17.2'
+    implementation 'io.appium:java-client:7.2.0'
+    implementation 'com.github.javafaker:javafaker:1.0.0'
     implementation 'org.slf4j:slf4j-simple:1.7.26'
     implementation 'org.apache.logging.log4j:log4j-core:2.11.2'
     implementation group: 'junit', name: 'junit', version: '4.12'
