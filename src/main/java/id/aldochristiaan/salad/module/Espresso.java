@@ -71,6 +71,10 @@ public class Espresso extends Mobile {
         return new WebAtoms(androidDriver);
     }
 
+    protected Drawer drawer() {
+        return new Drawer(androidDriver);
+    }
+
     protected ValidateToast validateToast() {
         return new ValidateToast(androidDriver);
     }
