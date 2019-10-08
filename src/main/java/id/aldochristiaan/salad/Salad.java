@@ -17,6 +17,8 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Properties;
@@ -31,6 +33,7 @@ public class Salad {
     private DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
     private Driver driver;
     private LogLevel logLevel;
+    private URL appiumServerURL;
     private Integer appiumPort;
     private String elementPropertiesDirectory;
     public static Properties CAPABILITIES_PROPERTIES;
@@ -54,6 +57,18 @@ public class Salad {
         CAPABILITIES_PROPERTIES = capabilitiesProperies;
     }
 
+    public Salad(Properties capabilitiesProperies, String elementPropertiesDirectory, Driver driver, String customServerURL) {
+        this.elementPropertiesDirectory = elementPropertiesDirectory;
+        this.driver = driver;
+        try {
+            this.appiumServerURL = new URL(customServerURL + "/wd/hub");
+        } catch (MalformedURLException e) {
+            LogUtil.error("There is a problem with server url : " + customServerURL);
+            e.printStackTrace();
+        }
+        CAPABILITIES_PROPERTIES = capabilitiesProperies;
+    }
+
     public Salad(Properties capabilitiesProperies, String elementPropertiesDirectory, Driver driver, Integer appiumPort, LogLevel logLevel) {
         this.elementPropertiesDirectory = elementPropertiesDirectory;
         this.driver = driver;
@@ -63,31 +78,36 @@ public class Salad {
     }
 
     public void start() {
-        builder = new AppiumServiceBuilder();
-        if (appiumPort == null) {
-            builder.usingAnyFreePort();
+        if (appiumServerURL == null) {
+            builder = new AppiumServiceBuilder();
+            if (appiumPort == null) {
+                builder.usingAnyFreePort();
+            } else {
+                builder.usingPort(appiumPort);
+            }
+            builder.withStartUpTimeOut(DEFAULT_TIMEOUT, TimeUnit.SECONDS);
+            builder.withArgument(GeneralServerFlag.LOG_LEVEL, logLevel.toString().toLowerCase());
+            service = AppiumDriverLocalService.buildService(builder);
+            LogUtil.info("Starting Appium Server!");
+            service.start();
+            appiumServerURL = service.getUrl();
         } else {
-            builder.usingPort(appiumPort);
+            LogUtil.info("Using custom appium server : " + appiumServerURL.toString());
         }
-        builder.withStartUpTimeOut(DEFAULT_TIMEOUT, TimeUnit.SECONDS);
-        builder.withArgument(GeneralServerFlag.LOG_LEVEL, logLevel.toString().toLowerCase());
-        service = AppiumDriverLocalService.buildService(builder);
-        LogUtil.info("Starting Appium Server!");
-        service.start();
 
         loadElementProperties(elementPropertiesDirectory);
         switch (driver) {
             case UIAUTOMATOR2:
                 if (CAPABILITIES_PROPERTIES != null) setAndroidCapabilities(CAPABILITIES_PROPERTIES);
-                androidDriver = new AndroidDriver<>(service.getUrl(), desiredCapabilities);
+                androidDriver = new AndroidDriver<>(appiumServerURL, desiredCapabilities);
                 break;
             case ESPRESSO:
                 if (CAPABILITIES_PROPERTIES != null) setEspressoCapabilities(CAPABILITIES_PROPERTIES);
-                androidDriver = new AndroidDriver<>(service.getUrl(), desiredCapabilities);
+                androidDriver = new AndroidDriver<>(appiumServerURL, desiredCapabilities);
                 break;
             case XCUITEST:
                 if (CAPABILITIES_PROPERTIES != null) setIosCapabilities(CAPABILITIES_PROPERTIES);
-                iosDriver = new IOSDriver<>(service.getUrl(), desiredCapabilities);
+                iosDriver = new IOSDriver<>(appiumServerURL, desiredCapabilities);
                 break;
             default:
                 LogUtil.error("Platform not found! Choose between ANDROID or IOS");
