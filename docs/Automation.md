@@ -12,7 +12,7 @@ public class AndroidFactory {
    private static Salad salad; // Automation Engine
    protected static YourApp yourApp;
 
-   @BeforeAll // Junit5 annotation
+   @BeforeAll
    public static void setUp() { // To start appium server and inject elements 
        String elementPropertiesDirectory = "src/test/resources/element/your_app/"; // Element properties file
        String capabilitiesFileName = "your_app.properties";
@@ -22,7 +22,7 @@ public class AndroidFactory {
        yourApp = new YourApp(salad.getAndroidDriver()); // or salad.getIosDriver();
    }
 
-   @AfterAll // J
+   @AfterAll
    public static void tearDown() { 
        salad.stop(Platform.ANDROID); // or Platform.IOS
    }

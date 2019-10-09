@@ -23,6 +23,14 @@ public class Tap extends XCUITest {
         findElementsBy(getLocator(elementLocator)).get(index).click();
     }
 
+    public void pendingElement(String elementLocator, int timeout) {
+        findElementBy(getLocator(elementLocator), timeout).click();
+    }
+
+    public void pendingElement(String elementLocator, int timeout, int index) {
+        findElementsBy(getLocator(elementLocator), timeout).get(index).click();
+    }
+
     public void location(int x, int y, Duration time) {
         TouchAction touchAction = new TouchAction(iosDriver);
         touchAction.press(new PointOption().withCoordinates(x, y)).waitAction(new WaitOptions().withDuration(time)).release().perform();

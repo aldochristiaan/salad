@@ -50,14 +50,14 @@ public class Salad {
         this.logLevel = logLevel;
     }
 
-    public Salad(Properties capabilitiesProperies, String elementPropertiesDirectory, Driver driver, LogLevel logLevel) {
+    public Salad(Properties capabilitiesProperties, String elementPropertiesDirectory, Driver driver, LogLevel logLevel) {
         this.elementPropertiesDirectory = elementPropertiesDirectory;
         this.driver = driver;
         this.logLevel = logLevel;
-        CAPABILITIES_PROPERTIES = capabilitiesProperies;
+        CAPABILITIES_PROPERTIES = capabilitiesProperties;
     }
 
-    public Salad(Properties capabilitiesProperies, String elementPropertiesDirectory, Driver driver, String customServerURL) {
+    public Salad(Properties capabilitiesProperties, String elementPropertiesDirectory, Driver driver, String customServerURL) {
         this.elementPropertiesDirectory = elementPropertiesDirectory;
         this.driver = driver;
         try {
@@ -66,52 +66,56 @@ public class Salad {
             LogUtil.error("There is a problem with server url : " + customServerURL);
             e.printStackTrace();
         }
-        CAPABILITIES_PROPERTIES = capabilitiesProperies;
+        CAPABILITIES_PROPERTIES = capabilitiesProperties;
     }
 
-    public Salad(Properties capabilitiesProperies, String elementPropertiesDirectory, Driver driver, Integer appiumPort, LogLevel logLevel) {
+    public Salad(Properties capabilitiesProperties, String elementPropertiesDirectory, Driver driver, Integer appiumPort, LogLevel logLevel) {
         this.elementPropertiesDirectory = elementPropertiesDirectory;
         this.driver = driver;
         this.appiumPort = appiumPort;
         this.logLevel = logLevel;
-        CAPABILITIES_PROPERTIES = capabilitiesProperies;
+        CAPABILITIES_PROPERTIES = capabilitiesProperties;
     }
 
     public void start() {
-        if (appiumServerURL == null) {
-            builder = new AppiumServiceBuilder();
-            if (appiumPort == null) {
-                builder.usingAnyFreePort();
+        try {
+            if (appiumServerURL == null) {
+                builder = new AppiumServiceBuilder();
+                if (appiumPort == null) {
+                    builder.usingAnyFreePort();
+                } else {
+                    builder.usingPort(appiumPort);
+                }
+                builder.withStartUpTimeOut(DEFAULT_TIMEOUT, TimeUnit.SECONDS);
+                builder.withArgument(GeneralServerFlag.LOG_LEVEL, logLevel.toString().toLowerCase());
+                service = AppiumDriverLocalService.buildService(builder);
+                LogUtil.info("Starting Appium Server!");
+                service.start();
+                appiumServerURL = service.getUrl();
             } else {
-                builder.usingPort(appiumPort);
+                LogUtil.info("Using custom appium server : " + appiumServerURL.toString());
             }
-            builder.withStartUpTimeOut(DEFAULT_TIMEOUT, TimeUnit.SECONDS);
-            builder.withArgument(GeneralServerFlag.LOG_LEVEL, logLevel.toString().toLowerCase());
-            service = AppiumDriverLocalService.buildService(builder);
-            LogUtil.info("Starting Appium Server!");
-            service.start();
-            appiumServerURL = service.getUrl();
-        } else {
-            LogUtil.info("Using custom appium server : " + appiumServerURL.toString());
-        }
 
-        loadElementProperties(elementPropertiesDirectory);
-        switch (driver) {
-            case UIAUTOMATOR2:
-                if (CAPABILITIES_PROPERTIES != null) setAndroidCapabilities(CAPABILITIES_PROPERTIES);
-                androidDriver = new AndroidDriver<>(appiumServerURL, desiredCapabilities);
-                break;
-            case ESPRESSO:
-                if (CAPABILITIES_PROPERTIES != null) setEspressoCapabilities(CAPABILITIES_PROPERTIES);
-                androidDriver = new AndroidDriver<>(appiumServerURL, desiredCapabilities);
-                break;
-            case XCUITEST:
-                if (CAPABILITIES_PROPERTIES != null) setIosCapabilities(CAPABILITIES_PROPERTIES);
-                iosDriver = new IOSDriver<>(appiumServerURL, desiredCapabilities);
-                break;
-            default:
-                LogUtil.error("Platform not found! Choose between ANDROID or IOS");
-                throw new NotFoundException();
+            loadElementProperties(elementPropertiesDirectory);
+            switch (driver) {
+                case UIAUTOMATOR2:
+                    if (CAPABILITIES_PROPERTIES != null) setAndroidCapabilities(CAPABILITIES_PROPERTIES);
+                    androidDriver = new AndroidDriver<>(appiumServerURL, desiredCapabilities);
+                    break;
+                case ESPRESSO:
+                    if (CAPABILITIES_PROPERTIES != null) setEspressoCapabilities(CAPABILITIES_PROPERTIES);
+                    androidDriver = new AndroidDriver<>(appiumServerURL, desiredCapabilities);
+                    break;
+                case XCUITEST:
+                    if (CAPABILITIES_PROPERTIES != null) setIosCapabilities(CAPABILITIES_PROPERTIES);
+                    iosDriver = new IOSDriver<>(appiumServerURL, desiredCapabilities);
+                    break;
+                default:
+                    LogUtil.error("Platform not found! Choose between ANDROID or IOS");
+                    throw new NotFoundException();
+            }
+        } catch (Exception e) {
+            forceStop();
         }
     }
 
@@ -142,6 +146,26 @@ public class Salad {
         }
     }
 
+    private void forceStop() {
+        try {
+            androidDriver.quit();
+        } catch (Exception e) {
+            System.out.println("Couldn't force quit android driver!");
+        }
+
+        try {
+            iosDriver.quit();
+        } catch (Exception e) {
+            System.out.println("Couldn't force quit ios driver!");
+        }
+
+        try {
+            service.stop();
+        } catch (Exception e) {
+            System.out.println("There is something wrong with appium server!");
+        }
+    }
+
     public AndroidDriver<AndroidElement> getAndroidDriver() {
         return androidDriver;
     }
@@ -157,10 +181,10 @@ public class Salad {
     private void setAndroidCapabilities(Properties capabilitiesProperties) {
         desiredCapabilities.setCapability(MobileCapabilityType.AUTOMATION_NAME, AutomationName.ANDROID_UIAUTOMATOR2);
         desiredCapabilities.setCapability(MobileCapabilityType.PLATFORM_NAME, MobilePlatform.ANDROID);
-        desiredCapabilities.setCapability(MobileCapabilityType.NEW_COMMAND_TIMEOUT, 60);
-        desiredCapabilities.setCapability(AndroidMobileCapabilityType.ANDROID_INSTALL_TIMEOUT, 240000);
-        desiredCapabilities.setCapability("uiautomator2ServerInstallTimeout", 240000);
-        desiredCapabilities.setCapability("uiautomator2ServerLaunchTimeout", 240000);
+        desiredCapabilities.setCapability(MobileCapabilityType.NEW_COMMAND_TIMEOUT, 45);
+        desiredCapabilities.setCapability(AndroidMobileCapabilityType.ANDROID_INSTALL_TIMEOUT, 120000);
+        desiredCapabilities.setCapability("uiautomator2ServerInstallTimeout", 120000);
+        desiredCapabilities.setCapability("uiautomator2ServerLaunchTimeout", 120000);
 
         for (Map.Entry<Object, Object> capability : capabilitiesProperties.entrySet()) {
             desiredCapabilities.setCapability(capability.getKey().toString(), capability.getValue());
@@ -170,8 +194,8 @@ public class Salad {
     private void setEspressoCapabilities(Properties capabilitiesProperties) {
         desiredCapabilities.setCapability(MobileCapabilityType.AUTOMATION_NAME, AutomationName.ESPRESSO);
         desiredCapabilities.setCapability(MobileCapabilityType.PLATFORM_NAME, MobilePlatform.ANDROID);
-        desiredCapabilities.setCapability(MobileCapabilityType.NEW_COMMAND_TIMEOUT, 60);
-        desiredCapabilities.setCapability(AndroidMobileCapabilityType.ANDROID_INSTALL_TIMEOUT, 240000);
+        desiredCapabilities.setCapability(MobileCapabilityType.NEW_COMMAND_TIMEOUT, 45);
+        desiredCapabilities.setCapability(AndroidMobileCapabilityType.ANDROID_INSTALL_TIMEOUT, 120000);
 
         for (Map.Entry<Object, Object> capability : capabilitiesProperties.entrySet()) {
             desiredCapabilities.setCapability(capability.getKey().toString(), capability.getValue());
@@ -181,7 +205,7 @@ public class Salad {
     private void setIosCapabilities(Properties capabilitiesProperties) {
         desiredCapabilities.setCapability(MobileCapabilityType.AUTOMATION_NAME, AutomationName.IOS_XCUI_TEST);
         desiredCapabilities.setCapability(MobileCapabilityType.PLATFORM_NAME, MobilePlatform.IOS);
-        desiredCapabilities.setCapability(MobileCapabilityType.NEW_COMMAND_TIMEOUT, 60);
+        desiredCapabilities.setCapability(MobileCapabilityType.NEW_COMMAND_TIMEOUT, 45);
         desiredCapabilities.setCapability(IOSMobileCapabilityType.USE_NEW_WDA, true);
         desiredCapabilities.setCapability(IOSMobileCapabilityType.WDA_LAUNCH_TIMEOUT, 60);
         desiredCapabilities.setCapability(IOSMobileCapabilityType.AUTO_ACCEPT_ALERTS, true);

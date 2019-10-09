@@ -1,5 +1,6 @@
 plugins {
     id 'java'
+    id 'com.adarshr.test-logger' version '1.7.1'
 }
 
 group 'salad'
@@ -16,9 +17,14 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter:5.4.2'
 }
 
+testlogger {
+    theme 'mocha'
+    showStandardStreams true
+    showPassedStandardStreams false
+    showSkippedStandardStreams false
+    showFailedStandardStreams true
+}
+
 test {
     useJUnitPlatform()
-    testLogging {
-        events "passed", "skipped", "failed"
-    }
 }

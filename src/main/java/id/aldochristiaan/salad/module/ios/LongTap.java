@@ -23,4 +23,16 @@ public class LongTap extends XCUITest {
         TouchAction action = new TouchAction(iosDriver);
         action.longPress(new ElementOption().withElement(iosElement)).release().perform();
     }
+
+    public void pendingElement(String elementLocator, int timeout) {
+        IOSElement iosElement = findElementBy(getLocator(elementLocator), timeout);
+        TouchAction action = new TouchAction(iosDriver);
+        action.longPress(new ElementOption().withElement(iosElement)).release().perform();
+    }
+
+    public void pendingElement(String elementLocator, int timeout, int index) {
+        IOSElement iosElement = (IOSElement) findElementsBy(getLocator(elementLocator), timeout).get(index);
+        TouchAction action = new TouchAction(iosDriver);
+        action.longPress(new ElementOption().withElement(iosElement)).release().perform();
+    }
 }

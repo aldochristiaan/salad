@@ -48,4 +48,12 @@ public class MainPage extends BasePage {
         tap().element(constructLocator("GENERAL_TEXT", "Share"));
         validateDisplayed(constructLocator("GENERAL_TEXT", "This is share Fragment"), 2);
     }
+
+    public void debugElementUsingFlash() {
+        flash().element("ANDROID_FLOATING_ACTION_BUTTON", 500, 4);
+    }
+
+    public void failedMethod() {
+        tap().element(constructLocator("GENERAL_TEXT", "Failed"));
+    }
 }

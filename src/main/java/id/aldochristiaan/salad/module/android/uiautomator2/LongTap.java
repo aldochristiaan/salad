@@ -23,4 +23,16 @@ public class LongTap extends UiAutomator2 {
         TouchAction action = new TouchAction(androidDriver);
         action.longPress(new ElementOption().withElement(androidElement)).release().perform();
     }
+
+    public void pendingElement(String elementLocator, int timeout) {
+        AndroidElement androidElement = findElementBy(getLocator(elementLocator), timeout);
+        TouchAction action = new TouchAction(androidDriver);
+        action.longPress(new ElementOption().withElement(androidElement)).release().perform();
+    }
+
+    public void pendingElement(String elementLocator, int timeout, int index) {
+        AndroidElement androidElement = (AndroidElement) findElementsBy(getLocator(elementLocator), timeout).get(index);
+        TouchAction action = new TouchAction(androidDriver);
+        action.longPress(new ElementOption().withElement(androidElement)).release().perform();
+    }
 }

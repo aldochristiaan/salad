@@ -288,8 +288,8 @@ public class UiAutomator2 extends Mobile {
         validateValue().equalsTrue(isElementChecked(elementLocator), errorMessage);
     }
 
-    protected void validateStaleness(AndroidElement androidElement, int timeoutInSeconds) {
-        validateValue().equalsTrue((new WebDriverWait(androidDriver, timeoutInSeconds)).until(ExpectedConditions.stalenessOf(androidElement)));
+    protected void validateStaleness(AndroidElement androidElement, int timeout) {
+        validateValue().equalsTrue((new WebDriverWait(androidDriver, timeout)).until(ExpectedConditions.stalenessOf(androidElement)));
     }
 
     protected String getText(String elementLocator) {
