@@ -1,5 +1,7 @@
 package android.pages;
 
+import id.aldochristiaan.salad.util.Action;
+import id.aldochristiaan.salad.util.Strategy;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.android.AndroidElement;
 
@@ -26,6 +28,11 @@ public class MainPage extends BasePage {
 
     public void closeDrawer() {
         drawer().close("ANDROID_DRAWER");
+    }
+
+    public void tapOnFABUsingUiAutomator() {
+        uiAutomator().sauce(Strategy.clazz, "com.google.android.material.floatingactionbutton.FloatingActionButton", Action.click);
+        tap().element("ANDROID_FLOATING_ACTION_BUTTON");
     }
 
     public void tapOnFAB() {

@@ -17,6 +17,7 @@ public class AndroidTest extends AndroidFactory {
         android.homePage().validateDrawer();
         android.homePage().closeDrawer();
         android.homePage().goToPages();
+        android.homePage().tapOnFABUsingUiAutomator();
         android.homePage().failedMethod();
     }
 
@@ -29,6 +30,7 @@ public class AndroidTest extends AndroidFactory {
         android.homePage().validateDrawer();
         android.homePage().closeDrawer();
         android.homePage().goToPages();
+        android.homePage().tapOnFABUsingUiAutomator();
         android.homePage().debugElementUsingFlash();
     }
 }

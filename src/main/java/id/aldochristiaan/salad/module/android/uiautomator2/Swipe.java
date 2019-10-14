@@ -38,7 +38,7 @@ public class Swipe extends UiAutomator2 {
         int y1 = (int) (size.height * yEnd);
 
         TouchAction touchAction = new TouchAction(androidDriver);
-        touchAction.press(new PointOption().withCoordinates(x0, y0)).waitAction(new WaitOptions().withDuration(Duration.ofSeconds(1))).moveTo(new PointOption().withCoordinates(x1, y1)).release().perform();
+        touchAction.press(new PointOption().withCoordinates(x0, y0)).waitAction(new WaitOptions().withDuration(Duration.ofMillis(500))).moveTo(new PointOption().withCoordinates(x1, y1)).release().perform();
     }
 
     public void toDirection(Direction direction) {
@@ -69,7 +69,7 @@ public class Swipe extends UiAutomator2 {
         int x = (size.width / 2);
 
         TouchAction touchAction = new TouchAction(androidDriver);
-        touchAction.press(new PointOption().withCoordinates(x, y0)).waitAction(new WaitOptions().withDuration(Duration.ofSeconds(1))).moveTo(new PointOption().withCoordinates(x, y1)).release().perform();
+        touchAction.press(new PointOption().withCoordinates(x, y0)).waitAction(new WaitOptions().withDuration(Duration.ofMillis(500))).moveTo(new PointOption().withCoordinates(x, y1)).release().perform();
     }
 
     public void up(double yStart, double yEnd) {
@@ -81,7 +81,7 @@ public class Swipe extends UiAutomator2 {
         int x = (size.width / 2);
 
         TouchAction touchAction = new TouchAction(androidDriver);
-        touchAction.press(new PointOption().withCoordinates(x, y0)).waitAction(new WaitOptions().withDuration(Duration.ofSeconds(1))).moveTo(new PointOption().withCoordinates(x, y1)).release().perform();
+        touchAction.press(new PointOption().withCoordinates(x, y0)).waitAction(new WaitOptions().withDuration(Duration.ofMillis(500))).moveTo(new PointOption().withCoordinates(x, y1)).release().perform();
     }
 
     public void upAtSpecifiedLocator(String elementLocator) {
@@ -97,7 +97,7 @@ public class Swipe extends UiAutomator2 {
         int x = point.getX();
 
         TouchAction touchAction = new TouchAction(androidDriver);
-        touchAction.press(new PointOption().withCoordinates(x, y0)).waitAction(new WaitOptions().withDuration(Duration.ofSeconds(1))).moveTo(new PointOption().withCoordinates(x, y1)).release().perform();
+        touchAction.press(new PointOption().withCoordinates(x, y0)).waitAction(new WaitOptions().withDuration(Duration.ofMillis(500))).moveTo(new PointOption().withCoordinates(x, y1)).release().perform();
     }
 
     public void down() {
@@ -109,7 +109,7 @@ public class Swipe extends UiAutomator2 {
         int x = (size.width / 2);
 
         TouchAction touchAction = new TouchAction(androidDriver);
-        touchAction.press(new PointOption().withCoordinates(x, y1)).waitAction(new WaitOptions().withDuration(Duration.ofSeconds(1))).moveTo(new PointOption().withCoordinates(x, y0)).release().perform();
+        touchAction.press(new PointOption().withCoordinates(x, y1)).waitAction(new WaitOptions().withDuration(Duration.ofMillis(500))).moveTo(new PointOption().withCoordinates(x, y0)).release().perform();
     }
 
     public void down(double yStart, double yEnd) {
@@ -121,7 +121,7 @@ public class Swipe extends UiAutomator2 {
         int x = (size.width / 2);
 
         TouchAction touchAction = new TouchAction(androidDriver);
-        touchAction.press(new PointOption().withCoordinates(x, y1)).waitAction(new WaitOptions().withDuration(Duration.ofSeconds(1))).moveTo(new PointOption().withCoordinates(x, y0)).release().perform();
+        touchAction.press(new PointOption().withCoordinates(x, y1)).waitAction(new WaitOptions().withDuration(Duration.ofMillis(500))).moveTo(new PointOption().withCoordinates(x, y0)).release().perform();
     }
 
     public void downAtSpecifiedLocator(String elementLocator) {
@@ -137,7 +137,7 @@ public class Swipe extends UiAutomator2 {
         int x = point.getX();
 
         TouchAction touchAction = new TouchAction(androidDriver);
-        touchAction.press(new PointOption().withCoordinates(x, y1)).waitAction(new WaitOptions().withDuration(Duration.ofSeconds(1))).moveTo(new PointOption().withCoordinates(x, y0)).release().perform();
+        touchAction.press(new PointOption().withCoordinates(x, y1)).waitAction(new WaitOptions().withDuration(Duration.ofMillis(500))).moveTo(new PointOption().withCoordinates(x, y0)).release().perform();
     }
 
     public void left() {
@@ -149,7 +149,7 @@ public class Swipe extends UiAutomator2 {
         int y = (size.height / 2);
 
         TouchAction touchAction = new TouchAction(androidDriver);
-        touchAction.press(new PointOption().withCoordinates(x0, y)).waitAction(new WaitOptions().withDuration(Duration.ofSeconds(1))).moveTo(new PointOption().withCoordinates(x1, y)).release().perform();
+        touchAction.press(new PointOption().withCoordinates(x0, y)).waitAction(new WaitOptions().withDuration(Duration.ofMillis(500))).moveTo(new PointOption().withCoordinates(x1, y)).release().perform();
     }
 
     public void left(double xStart, double xEnd) {
@@ -161,7 +161,7 @@ public class Swipe extends UiAutomator2 {
         int y = (size.height / 2);
 
         TouchAction touchAction = new TouchAction(androidDriver);
-        touchAction.press(new PointOption().withCoordinates(x0, y)).waitAction(new WaitOptions().withDuration(Duration.ofSeconds(1))).moveTo(new PointOption().withCoordinates(x1, y)).release().perform();
+        touchAction.press(new PointOption().withCoordinates(x0, y)).waitAction(new WaitOptions().withDuration(Duration.ofMillis(500))).moveTo(new PointOption().withCoordinates(x1, y)).release().perform();
     }
 
     public void leftAtSpecifiedLocator(String elementLocator) {
@@ -177,7 +177,7 @@ public class Swipe extends UiAutomator2 {
         int y = point.getY();
 
         TouchAction touchAction = new TouchAction(androidDriver);
-        touchAction.press(new PointOption().withCoordinates(x0, y)).waitAction(new WaitOptions().withDuration(Duration.ofSeconds(1))).moveTo(new PointOption().withCoordinates(x1, y)).release().perform();
+        touchAction.press(new PointOption().withCoordinates(x0, y)).waitAction(new WaitOptions().withDuration(Duration.ofMillis(500))).moveTo(new PointOption().withCoordinates(x1, y)).release().perform();
     }
 
     public void right() {
@@ -189,7 +189,7 @@ public class Swipe extends UiAutomator2 {
         int y = (size.height / 2);
 
         TouchAction touchAction = new TouchAction(androidDriver);
-        touchAction.press(new PointOption().withCoordinates(x1, y)).waitAction(new WaitOptions().withDuration(Duration.ofSeconds(1))).moveTo(new PointOption().withCoordinates(x0, y)).release().perform();
+        touchAction.press(new PointOption().withCoordinates(x1, y)).waitAction(new WaitOptions().withDuration(Duration.ofMillis(500))).moveTo(new PointOption().withCoordinates(x0, y)).release().perform();
     }
 
     public void right(double xStart, double xEnd) {
@@ -201,7 +201,7 @@ public class Swipe extends UiAutomator2 {
         int y = (size.height / 2);
 
         TouchAction touchAction = new TouchAction(androidDriver);
-        touchAction.press(new PointOption().withCoordinates(x1, y)).waitAction(new WaitOptions().withDuration(Duration.ofSeconds(1))).moveTo(new PointOption().withCoordinates(x0, y)).release().perform();
+        touchAction.press(new PointOption().withCoordinates(x1, y)).waitAction(new WaitOptions().withDuration(Duration.ofMillis(500))).moveTo(new PointOption().withCoordinates(x0, y)).release().perform();
     }
 
     public void rightAtSpecifiedLocator(String elementLocator) {
@@ -216,6 +216,6 @@ public class Swipe extends UiAutomator2 {
         int y = point.getY();
 
         TouchAction touchAction = new TouchAction(androidDriver);
-        touchAction.press(new PointOption().withCoordinates(x1, y)).waitAction(new WaitOptions().withDuration(Duration.ofSeconds(1))).moveTo(new PointOption().withCoordinates(x0, y)).release().perform();
+        touchAction.press(new PointOption().withCoordinates(x1, y)).waitAction(new WaitOptions().withDuration(Duration.ofMillis(500))).moveTo(new PointOption().withCoordinates(x0, y)).release().perform();
     }
 }

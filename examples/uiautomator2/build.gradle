@@ -1,0 +1,30 @@
+plugins {
+    id 'java'
+    id 'com.adarshr.test-logger' version '1.7.1'
+}
+
+group 'salad'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation fileTree(dir: 'libs', include: ['*.jar'])
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.4.2'
+}
+
+testlogger {
+    theme 'mocha'
+    showStandardStreams true
+    showPassedStandardStreams false
+    showSkippedStandardStreams false
+    showFailedStandardStreams true
+}
+
+test {
+    useJUnitPlatform()
+}
