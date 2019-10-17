@@ -181,7 +181,7 @@ public class Salad {
     private void setAndroidCapabilities(Properties capabilitiesProperties) {
         desiredCapabilities.setCapability(MobileCapabilityType.AUTOMATION_NAME, AutomationName.ANDROID_UIAUTOMATOR2);
         desiredCapabilities.setCapability(MobileCapabilityType.PLATFORM_NAME, MobilePlatform.ANDROID);
-        desiredCapabilities.setCapability(MobileCapabilityType.NEW_COMMAND_TIMEOUT, 45);
+        desiredCapabilities.setCapability(MobileCapabilityType.NEW_COMMAND_TIMEOUT, 30);
         desiredCapabilities.setCapability(AndroidMobileCapabilityType.ANDROID_INSTALL_TIMEOUT, 120000);
         desiredCapabilities.setCapability("uiautomator2ServerInstallTimeout", 120000);
         desiredCapabilities.setCapability("uiautomator2ServerLaunchTimeout", 120000);
@@ -194,7 +194,7 @@ public class Salad {
     private void setEspressoCapabilities(Properties capabilitiesProperties) {
         desiredCapabilities.setCapability(MobileCapabilityType.AUTOMATION_NAME, AutomationName.ESPRESSO);
         desiredCapabilities.setCapability(MobileCapabilityType.PLATFORM_NAME, MobilePlatform.ANDROID);
-        desiredCapabilities.setCapability(MobileCapabilityType.NEW_COMMAND_TIMEOUT, 45);
+        desiredCapabilities.setCapability(MobileCapabilityType.NEW_COMMAND_TIMEOUT, 30);
         desiredCapabilities.setCapability(AndroidMobileCapabilityType.ANDROID_INSTALL_TIMEOUT, 120000);
 
         for (Map.Entry<Object, Object> capability : capabilitiesProperties.entrySet()) {
