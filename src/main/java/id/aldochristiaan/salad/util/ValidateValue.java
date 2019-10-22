@@ -101,7 +101,7 @@ public class ValidateValue {
     }
 
     public void contains(String expected, String actual) {
-        Assert.assertTrue(expected + "is not contained in " + actual, actual.contains(expected));
+        Assert.assertTrue(expected + " is not contained in " + actual, actual.contains(expected));
     }
 
     public void contains(String expected, String actual, String message) {
