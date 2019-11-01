@@ -5,11 +5,15 @@ import io.appium.java_client.MobileBy;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static id.aldochristiaan.salad.Salad.ELEMENT_PROPERTIES;
 
 public class Mobile {
 
     protected By getLocator(String elementLocator) {
+
         String elementValue = ELEMENT_PROPERTIES.getProperty(elementLocator);
         if (elementValue == null) {
             LogUtil.error("Couldn't find locator : " + elementLocator + " ! Please check properties file!");

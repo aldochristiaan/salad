@@ -29,3 +29,9 @@ hs_err_pid*
 
 # Build folder
 build/
+
+.iml
+
+# Screenshot folder
+examples/espresso/screenshot/
+examples/uiautomator2/screenshot/

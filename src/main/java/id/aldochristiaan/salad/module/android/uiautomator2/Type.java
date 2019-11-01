@@ -25,4 +25,20 @@ public class Type extends UiAutomator2 {
         androidElement.sendKeys(text);
         hideKeyboard();
     }
+
+    public void pendingElement(String elementLocator, int timeout, String text) {
+        AndroidElement androidElement = findElementBy(getLocator(elementLocator), timeout);
+        androidElement.click();
+        androidElement.clear();
+        androidElement.sendKeys(text);
+        hideKeyboard();
+    }
+
+    public void pendingElement(String elementLocator, int timeout, int index, String text) {
+        AndroidElement androidElement = (AndroidElement) findElementsBy(getLocator(elementLocator), timeout).get(index);
+        androidElement.click();
+        androidElement.clear();
+        androidElement.sendKeys(text);
+        hideKeyboard();
+    }
 }

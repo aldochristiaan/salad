@@ -71,6 +71,10 @@ public class Espresso extends Mobile {
         return new WebAtoms(androidDriver);
     }
 
+    protected Drawer drawer() {
+        return new Drawer(androidDriver);
+    }
+
     protected ValidateToast validateToast() {
         return new ValidateToast(androidDriver);
     }
@@ -136,11 +140,11 @@ public class Espresso extends Mobile {
         }
     }
 
-    protected boolean isElementDisplayed(String elementLocator, int timeoutInSeconds) {
+    protected boolean isElementDisplayed(String elementLocator, int timeout) {
         int screenHeight = androidDriver.manage().window().getSize().getHeight();
         boolean isElementFound = false;
         int yPosition = 0;
-        for (int i = 0; i < timeoutInSeconds * 5; i++) {
+        for (int i = 0; i < timeout * 5; i++) {
             try {
                 yPosition = androidDriver.findElement(getLocator(elementLocator)).getLocation().getY();
                 isElementFound = true;
@@ -156,11 +160,11 @@ public class Espresso extends Mobile {
         }
     }
 
-    protected boolean isElementDisplayed(String elementLocator, int index, int timeoutInSeconds) {
+    protected boolean isElementDisplayed(String elementLocator, int index, int timeout) {
         int screenHeight = androidDriver.manage().window().getSize().getHeight();
         boolean isElementFound = false;
         int yPosition = 0;
-        for (int i = 0; i < timeoutInSeconds * 5; i++) {
+        for (int i = 0; i < timeout * 5; i++) {
             try {
                 yPosition = androidDriver.findElements(getLocator(elementLocator)).get(i).getLocation().getY();
                 isElementFound = true;
@@ -240,20 +244,20 @@ public class Espresso extends Mobile {
         validateValue().equalsFalse(isElementSelected(elementLocator), errorMessage);
     }
 
-    protected void validateDisplayed(String elementLocator, int timeoutInSeconds) {
-        validateValue().equalsTrue(isElementDisplayed(elementLocator, timeoutInSeconds), "Element with locator : " + elementLocator + " is not displayed on screen!");
+    protected void validateDisplayed(String elementLocator, int timeout) {
+        validateValue().equalsTrue(isElementDisplayed(elementLocator, timeout), "Element with locator : " + elementLocator + " is not displayed on screen!");
     }
 
-    protected void validateDisplayed(String elementLocator, int timeoutInSeconds, String errorMessage) {
-        validateValue().equalsTrue(isElementDisplayed(elementLocator, timeoutInSeconds), errorMessage);
+    protected void validateDisplayed(String elementLocator, int timeout, String errorMessage) {
+        validateValue().equalsTrue(isElementDisplayed(elementLocator, timeout), errorMessage);
     }
 
-    protected void validateNotDisplayed(String elementLocator, int timeoutInSeconds) {
-        validateValue().equalsFalse(isElementDisplayed(elementLocator, timeoutInSeconds), "Element with locator : " + elementLocator + " is displayed on screen!");
+    protected void validateNotDisplayed(String elementLocator, int timeout) {
+        validateValue().equalsFalse(isElementDisplayed(elementLocator, timeout), "Element with locator : " + elementLocator + " is displayed on screen!");
     }
 
-    protected void validateNotDisplayed(String elementLocator, int timeoutInSeconds, String errorMessage) {
-        validateValue().equalsFalse(isElementDisplayed(elementLocator, timeoutInSeconds), errorMessage);
+    protected void validateNotDisplayed(String elementLocator, int timeout, String errorMessage) {
+        validateValue().equalsFalse(isElementDisplayed(elementLocator, timeout), errorMessage);
     }
 
     protected void validateExist(String elementLocator) {
@@ -276,8 +280,8 @@ public class Espresso extends Mobile {
         validateValue().equalsTrue(isElementChecked(elementLocator), errorMessage);
     }
 
-    protected void validateStaleness(AndroidElement androidElement, int timeoutInSeconds) {
-        validateValue().equalsTrue((new WebDriverWait(androidDriver, timeoutInSeconds)).until(ExpectedConditions.stalenessOf(androidElement)));
+    protected void validateStaleness(AndroidElement androidElement, int timeout) {
+        validateValue().equalsTrue((new WebDriverWait(androidDriver, timeout)).until(ExpectedConditions.stalenessOf(androidElement)));
     }
 
     protected String getText(String elementLocator) {

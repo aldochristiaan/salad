@@ -289,8 +289,8 @@ public class XCUITest extends Mobile {
         validateValue().equalsTrue(isElementChecked(elementLocator), errorMessage);
     }
 
-    protected void validateStaleness(IOSElement iosElement, int timeoutInSeconds) {
-        validateValue().equalsTrue((new WebDriverWait(iosDriver, timeoutInSeconds)).until(ExpectedConditions.stalenessOf(iosElement)));
+    protected void validateStaleness(IOSElement iosElement, int timeout) {
+        validateValue().equalsTrue((new WebDriverWait(iosDriver, timeout)).until(ExpectedConditions.stalenessOf(iosElement)));
     }
 
     protected void takeScreenshot(String name) {

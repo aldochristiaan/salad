@@ -25,4 +25,20 @@ public class Type extends XCUITest {
         iosElement.sendKeys(text);
         hideKeyboard();
     }
+
+    public void pendingElement(String elementLocator, int timeout, String text) {
+        IOSElement iosElement = findElementBy(getLocator(elementLocator), timeout);
+        iosElement.click();
+        iosElement.clear();
+        iosElement.sendKeys(text);
+        hideKeyboard();
+    }
+
+    public void pendingElement(String elementLocator, int timeout, int index, String text) {
+        IOSElement iosElement = (IOSElement) findElementsBy(getLocator(elementLocator), timeout).get(index);
+        iosElement.click();
+        iosElement.clear();
+        iosElement.sendKeys(text);
+        hideKeyboard();
+    }
 }
