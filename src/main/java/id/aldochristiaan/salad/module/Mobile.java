@@ -12,10 +12,6 @@ import static id.aldochristiaan.salad.Salad.ELEMENT_PROPERTIES;
 
 public class Mobile {
 
-    private void saveTracker(ArrayList<ArrayList<String>> trackerResults){
-
-    }
-
     protected By getLocator(String elementLocator) {
 
         String elementValue = ELEMENT_PROPERTIES.getProperty(elementLocator);
