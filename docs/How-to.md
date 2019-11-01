@@ -38,40 +38,20 @@ deviceName=XXXXXXXXX
 udid=XXXXXXXXX
 platformVersion=8.0.0
 fullReset=false
-netspeed=full
 autoGrantPermissions=true
-skipLogcatCapture=true
-unlockType=pin
-unlockKey=2500
 ```
 
 You can see list of appium capabilities [here](http://appium.io/docs/en/writing-running-appium/caps/)
 
-### Project Structure
+### Example Project
 
-You can create project structure as you want, but I suggest you to follow this following structure to make it easy to work on.
+You can check example project here:
 
-```
-...
-|-libs
-  |- salad-1.0.0.jar
-|-src
-  |- test
-    |- java
-      |- packageName
-        |- pageobject // Contains app's page objects
-          |- HomePage.java
-          |- LoginPage.java
-        |- testcase // Contains test cases
-          |- LoginTest.java
-          |- CreateTransaction.java
-        |- YourApp.java // Contains list of pageObject
-      |- YourAppFactory.java // Automation Factory
-|- capabilities.properties // Automation capabilities
-...
-```
+- [Espresso](https://github.com/aldochristiaan/salad/tree/document/examples/espresso)
+- [UiAutomator2](https://github.com/aldochristiaan/salad/tree/document/examples/uiautomator2)
 
-#### Start writing your code
+We're using sample android application and you can find the APK [here](https://github.com/aldochristiaan/salad/tree/document/examples/apk).
+
+#### Getting deep with salad
 
 Look at this [documentation](https://github.com/aldochristiaan/salad/blob/master/docs/Automation.md) to write your automation code!
-

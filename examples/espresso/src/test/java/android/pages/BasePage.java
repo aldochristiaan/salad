@@ -9,4 +9,6 @@ public class BasePage extends Espresso {
     public BasePage(AndroidDriver<AndroidElement> androidDriver) {
         super(androidDriver);
     }
+
+    // You can define your own general methods here
 }

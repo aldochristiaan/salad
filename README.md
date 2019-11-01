@@ -4,7 +4,7 @@ Salad is an open source, cross-platform test automation wrapper based on [Appium
 
 ### Prerequisites
 
-- Install Node.js 8+
+- Install Node.js 10+
 
 - Install [JDK 8](https://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)
 
@@ -51,7 +51,7 @@ export PATH="/usr/local/bin:$PATH"
 
 ### Build
 
-Run `./gradlew shadowJar` to get jar libs.
+Run `./gradlew clean shadowJar` to get jar libs.
 
 Check output folder `build/libs/salad-<version>.jar`
 
