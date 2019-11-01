@@ -6,7 +6,7 @@ plugins {
 apply plugin: 'com.github.johnrengelman.shadow'
 
 group 'salad'
-version '1.2.0'
+version '1.2.0-rc1'
 
 sourceCompatibility = 1.8
 
