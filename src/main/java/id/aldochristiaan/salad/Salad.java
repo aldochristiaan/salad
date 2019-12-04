@@ -36,6 +36,7 @@ public class Salad {
     private URL appiumServerURL;
     private Integer appiumPort;
     private String elementPropertiesDirectory;
+    private String appiumLogFilePath = System.getProperty("user.dir") + "/appium.log";
     public static Properties CAPABILITIES_PROPERTIES;
     public static Properties ELEMENT_PROPERTIES;
     public static int DEFAULT_TIMEOUT = 60;
@@ -78,6 +79,7 @@ public class Salad {
     }
 
     public void start() {
+        File appiumLogFile = new File(appiumLogFilePath);
         try {
             if (appiumServerURL == null) {
                 builder = new AppiumServiceBuilder();
@@ -88,6 +90,7 @@ public class Salad {
                 }
                 builder.withStartUpTimeOut(DEFAULT_TIMEOUT, TimeUnit.SECONDS);
                 builder.withArgument(GeneralServerFlag.LOG_LEVEL, logLevel.toString().toLowerCase());
+                builder.withLogFile(appiumLogFile);
                 service = AppiumDriverLocalService.buildService(builder);
                 LogUtil.info("Starting Appium Server!");
                 service.start();
