@@ -79,8 +79,8 @@ public class Salad {
     }
 
     public void start() {
-        File appiumLogFile = new File(appiumLogFilePath);
         try {
+            File appiumLogFile = new File(appiumLogFilePath);
             if (appiumServerURL == null) {
                 builder = new AppiumServiceBuilder();
                 if (appiumPort == null) {
