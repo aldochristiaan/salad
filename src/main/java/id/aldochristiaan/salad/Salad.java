@@ -208,11 +208,7 @@ public class Salad {
     private void setIosCapabilities(Properties capabilitiesProperties) {
         desiredCapabilities.setCapability(MobileCapabilityType.AUTOMATION_NAME, AutomationName.IOS_XCUI_TEST);
         desiredCapabilities.setCapability(MobileCapabilityType.PLATFORM_NAME, MobilePlatform.IOS);
-        desiredCapabilities.setCapability(MobileCapabilityType.NEW_COMMAND_TIMEOUT, 45);
         desiredCapabilities.setCapability(IOSMobileCapabilityType.USE_NEW_WDA, true);
-        desiredCapabilities.setCapability(IOSMobileCapabilityType.WDA_LAUNCH_TIMEOUT, 60);
-        desiredCapabilities.setCapability(IOSMobileCapabilityType.AUTO_ACCEPT_ALERTS, true);
-        desiredCapabilities.setCapability("useJSONSource", true);
         desiredCapabilities.setCapability("sendKeyStrategy", "setValue");
 
         for (Map.Entry<Object, Object> capability : capabilitiesProperties.entrySet()) {
