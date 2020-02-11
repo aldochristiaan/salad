@@ -129,7 +129,7 @@ public class XCUITest extends Mobile {
     protected boolean isElementExist(String elementLocator, int timeout) {
         try {
             WebDriverWait wait = new WebDriverWait(iosDriver, timeout);
-            wait.until(ExpectedConditions.presenceOfElementLocated(getLocator(elementLocator)));
+            wait.until(ExpectedConditions.visibilityOfElementLocated(getLocator(elementLocator)));
             return true;
         } catch (Exception e) {
             LogUtil.error("Element with locator : " + elementLocator + " is not present!");
