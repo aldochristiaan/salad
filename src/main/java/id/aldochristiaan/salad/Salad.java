@@ -36,7 +36,7 @@ public class Salad {
     private URL appiumServerURL;
     private Integer appiumPort;
     private String elementPropertiesDirectory;
-    private String appiumLogFilePath = System.getProperty("user.dir") + "/appium.log";
+    private String appiumLogFilePath = System.getProperty("user.dir") + "/target/appium.log";
     public static Properties CAPABILITIES_PROPERTIES;
     public static Properties ELEMENT_PROPERTIES;
     public static int DEFAULT_TIMEOUT = 60;
