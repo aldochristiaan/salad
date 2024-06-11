@@ -35,6 +35,8 @@ jobs:
           npm i -g appium
           appium driver install uiautomator2
           appium driver install espresso
+          appium driver doctor uiautomator2
+          appium driver doctor espresso
 
       - name: Enable KVM
         run: |
