@@ -14,8 +14,7 @@ repositories {
 
 dependencies {
     testImplementation fileTree(dir: 'libs', include: ['*.jar'])
-    testImplementation 'org.junit.jupiter:junit-jupiter:5.4.2'
-    testImplementation 'org.seleniumhq.selenium:selenium-http:4.21.0'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.10.2'
 }
 
 testlogger {
