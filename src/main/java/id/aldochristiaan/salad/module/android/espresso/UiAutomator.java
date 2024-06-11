@@ -4,13 +4,12 @@ import id.aldochristiaan.salad.module.Espresso;
 import id.aldochristiaan.salad.util.Action;
 import id.aldochristiaan.salad.util.Strategy;
 import io.appium.java_client.android.AndroidDriver;
-import io.appium.java_client.android.AndroidElement;
 
 import java.util.HashMap;
 
 public class UiAutomator extends Espresso {
 
-    public UiAutomator(AndroidDriver<AndroidElement> androidDriver) {
+    public UiAutomator(AndroidDriver androidDriver) {
         super(androidDriver);
     }
 

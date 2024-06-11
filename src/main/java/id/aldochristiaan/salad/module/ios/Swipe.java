@@ -4,19 +4,17 @@ import id.aldochristiaan.salad.module.XCUITest;
 import id.aldochristiaan.salad.util.Direction;
 import io.appium.java_client.TouchAction;
 import io.appium.java_client.ios.IOSDriver;
-import io.appium.java_client.ios.IOSElement;
 import io.appium.java_client.touch.WaitOptions;
 import io.appium.java_client.touch.offset.PointOption;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.NotFoundException;
-import org.openqa.selenium.Point;
 
 import java.time.Duration;
 
 public class Swipe extends XCUITest {
 
-    public Swipe(IOSDriver<IOSElement> iosDriver) {
+    public Swipe(IOSDriver iosDriver) {
         super(iosDriver);
     }
 
@@ -90,11 +88,10 @@ public class Swipe extends XCUITest {
 
         Dimension size = iosDriver.findElement(by).getSize();
 
-        Point point = iosDriver.findElement(by).getCenter();
 
         int y0 = (int) (size.height * 0.7);
         int y1 = (int) (size.height * 0.3);
-        int x = point.getX();
+        int x = size.width / 2;
 
         TouchAction touchAction = new TouchAction(iosDriver);
         touchAction.press(new PointOption().withCoordinates(x, y0)).waitAction(new WaitOptions().withDuration(Duration.ofSeconds(1))).moveTo(new PointOption().withCoordinates(x, y1)).release().perform();
@@ -130,11 +127,9 @@ public class Swipe extends XCUITest {
 
         Dimension size = iosDriver.findElement(by).getSize();
 
-        Point point = iosDriver.findElement(by).getCenter();
-
         int y0 = (int) (size.height * 0.7);
         int y1 = (int) (size.height * 0.3);
-        int x = point.getX();
+        int x = size.width / 2;
 
         TouchAction touchAction = new TouchAction(iosDriver);
         touchAction.press(new PointOption().withCoordinates(x, y1)).waitAction(new WaitOptions().withDuration(Duration.ofSeconds(1))).moveTo(new PointOption().withCoordinates(x, y0)).release().perform();
@@ -170,11 +165,9 @@ public class Swipe extends XCUITest {
 
         Dimension size = iosDriver.findElement(by).getSize();
 
-        Point point = iosDriver.findElement(by).getCenter();
-
         int x0 = (int) (size.width * 0.8);
         int x1 = (int) (size.width * 0.2);
-        int y = point.getY();
+        int y = size.height / 2;
 
         TouchAction touchAction = new TouchAction(iosDriver);
         touchAction.press(new PointOption().withCoordinates(x0, y)).waitAction(new WaitOptions().withDuration(Duration.ofSeconds(1))).moveTo(new PointOption().withCoordinates(x1, y)).release().perform();
@@ -209,11 +202,10 @@ public class Swipe extends XCUITest {
         By by = getLocator(elementLocator);
 
         Dimension size = iosDriver.findElement(by).getSize();
-        Point point = iosDriver.findElement(by).getCenter();
 
         int x0 = (int) (size.width * 0.8);
         int x1 = (int) (size.width * 0.2);
-        int y = point.getY();
+        int y = size.height / 2;
 
         TouchAction touchAction = new TouchAction(iosDriver);
         touchAction.press(new PointOption().withCoordinates(x1, y)).waitAction(new WaitOptions().withDuration(Duration.ofSeconds(1))).moveTo(new PointOption().withCoordinates(x0, y)).release().perform();

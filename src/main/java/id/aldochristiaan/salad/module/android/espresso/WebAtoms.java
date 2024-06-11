@@ -5,21 +5,20 @@ import id.aldochristiaan.salad.module.Espresso;
 import id.aldochristiaan.salad.util.AtomAction;
 import id.aldochristiaan.salad.util.WebLocator;
 import io.appium.java_client.android.AndroidDriver;
-import io.appium.java_client.android.AndroidElement;
 import org.openqa.selenium.NoSuchElementException;
 
 import java.util.Arrays;
 
 public class WebAtoms extends Espresso {
 
-    public WebAtoms(AndroidDriver<AndroidElement> androidDriver) {
+    public WebAtoms(AndroidDriver androidDriver) {
         super(androidDriver);
     }
 
     public void click(String webViewLocator, WebLocator locator, String webLocator) {
         try {
             ImmutableMap<String, Object> args = ImmutableMap.of(
-                    "webviewElement", androidDriver.findElement(getLocator(webViewLocator)).getId(),
+                    "webviewElement", androidDriver.findElement(getLocator(webViewLocator)).getDomAttribute("id"),
                     "forceJavascriptEnabled", true,
                     "methodChain", Arrays.asList(
                             ImmutableMap.of(
@@ -46,7 +45,7 @@ public class WebAtoms extends Espresso {
     public void clear(String webViewLocator, WebLocator locator, String webLocator) {
         try {
             ImmutableMap<String, Object> args = ImmutableMap.of(
-                    "webviewElement", androidDriver.findElement(getLocator(webViewLocator)).getId(),
+                    "webviewElement", androidDriver.findElement(getLocator(webViewLocator)).getDomAttribute("id"),
                     "forceJavascriptEnabled", true,
                     "methodChain", Arrays.asList(
                             ImmutableMap.of(
@@ -73,7 +72,7 @@ public class WebAtoms extends Espresso {
     public void type(String webViewLocator, WebLocator locator, String webLocator, String text) {
         try {
             ImmutableMap<String, Object> args = ImmutableMap.of(
-                    "webviewElement", androidDriver.findElement(getLocator(webViewLocator)).getId(),
+                    "webviewElement", androidDriver.findElement(getLocator(webViewLocator)).getDomAttribute("id"),
                     "forceJavascriptEnabled", true,
                     "methodChain", Arrays.asList(
                             ImmutableMap.of(
@@ -104,7 +103,7 @@ public class WebAtoms extends Espresso {
     public void findElement(String webViewLocator, WebLocator locator, String webLocator) {
         try {
             ImmutableMap<String, Object> args = ImmutableMap.of(
-                    "webviewElement", androidDriver.findElement(getLocator(webViewLocator)).getId(),
+                    "webviewElement", androidDriver.findElement(getLocator(webViewLocator)).getDomAttribute("id"),
                     "forceJavascriptEnabled", true,
                     "methodChain", Arrays.asList(
                             ImmutableMap.of(
@@ -127,7 +126,7 @@ public class WebAtoms extends Espresso {
     public void scrollIntoView(String webViewLocator, WebLocator locator, String webLocator) {
         try {
             ImmutableMap<String, Object> args = ImmutableMap.of(
-                    "webviewElement", androidDriver.findElement(getLocator(webViewLocator)).getId(),
+                    "webviewElement", androidDriver.findElement(getLocator(webViewLocator)).getDomAttribute("id"),
                     "forceJavascriptEnabled", true,
                     "methodChain", Arrays.asList(
                             ImmutableMap.of(

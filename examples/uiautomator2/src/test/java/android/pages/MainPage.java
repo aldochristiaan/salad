@@ -1,11 +1,11 @@
 package android.pages;
 
+import id.aldochristiaan.salad.util.Direction;
 import io.appium.java_client.android.AndroidDriver;
-import io.appium.java_client.android.AndroidElement;
 
 public class MainPage extends BasePage {
 
-    public MainPage(AndroidDriver<AndroidElement> androidDriver) {
+    public MainPage(AndroidDriver androidDriver) {
         super(androidDriver);
     }
 
@@ -25,7 +25,7 @@ public class MainPage extends BasePage {
     }
 
     public void closeDrawer() {
-        swipe().left();
+        mobileGesture().swipe(Direction.LEFT, 0.5, 0.5, 0.8);
     }
 
     public void tapOnFAB() {
@@ -55,7 +55,6 @@ public class MainPage extends BasePage {
 //    public void debugElementUsingFlash() {
 //        flash().element("ANDROID_FLOATING_ACTION_BUTTON", 500, 4);
 //    }
-
     public void failedMethod() {
         tap().pendingElement(constructLocator("GENERAL_TEXT", "Failed"), 2);
     }

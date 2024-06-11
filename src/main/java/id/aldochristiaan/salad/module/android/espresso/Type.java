@@ -5,25 +5,25 @@ import id.aldochristiaan.salad.util.Coordinates;
 import id.aldochristiaan.salad.util.PrecisionDescriber;
 import id.aldochristiaan.salad.util.SwipeSpeed;
 import io.appium.java_client.android.AndroidDriver;
-import io.appium.java_client.android.AndroidElement;
 import org.junit.Assert;
 import org.openqa.selenium.InvalidElementStateException;
 import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.WebElement;
 
 import static id.aldochristiaan.salad.Salad.MAX_SWIPE_COUNT;
 
 public class Type extends Espresso {
 
-    public Type(AndroidDriver<AndroidElement> androidDriver) {
+    public Type(AndroidDriver androidDriver) {
         super(androidDriver);
     }
 
     public void element(String elementLocator, String text) {
         try {
-            AndroidElement androidElement = androidDriver.findElement(getLocator(elementLocator));
-            Assert.assertTrue(androidElement.isDisplayed());
-            androidElement.clear();
-            androidElement.sendKeys(text);
+            WebElement webElement = androidDriver.findElement(getLocator(elementLocator));
+            Assert.assertTrue(webElement.isDisplayed());
+            webElement.clear();
+            webElement.sendKeys(text);
             hideKeyboard();
         } catch (InvalidElementStateException e) {
             throw new InvalidElementStateException("Problem at element : " + elementLocator, e);
@@ -36,10 +36,10 @@ public class Type extends Espresso {
 
     public void element(String elementLocator, String text, int index) {
         try {
-            AndroidElement androidElement = androidDriver.findElements(getLocator(elementLocator)).get(index);
-            Assert.assertTrue(androidElement.isDisplayed());
-            androidElement.clear();
-            androidElement.sendKeys(text);
+            WebElement webElement = androidDriver.findElements(getLocator(elementLocator)).get(index);
+            Assert.assertTrue(webElement.isDisplayed());
+            webElement.clear();
+            webElement.sendKeys(text);
             hideKeyboard();
         } catch (InvalidElementStateException e) {
             throw new InvalidElementStateException("Problem at element : " + elementLocator, e);
@@ -53,10 +53,10 @@ public class Type extends Espresso {
     public void element(String elementLocator, String swipeLocator, String text) {
         for (int i = 0; i < MAX_SWIPE_COUNT; i++) {
             try {
-                AndroidElement androidElement = androidDriver.findElement(getLocator(elementLocator));
-                Assert.assertTrue(androidElement.isDisplayed());
-                androidElement.clear();
-                androidElement.sendKeys(text);
+                WebElement webElement = androidDriver.findElement(getLocator(elementLocator));
+                Assert.assertTrue(webElement.isDisplayed());
+                webElement.clear();
+                webElement.sendKeys(text);
                 hideKeyboard();
                 break;
             } catch (InvalidElementStateException | NoSuchElementException | AssertionError e) {
@@ -69,10 +69,10 @@ public class Type extends Espresso {
     public void element(String elementLocator, String swipeLocator, String text, int index) {
         for (int i = 0; i < MAX_SWIPE_COUNT; i++) {
             try {
-                AndroidElement androidElement = androidDriver.findElements(getLocator(elementLocator)).get(index);
-                Assert.assertTrue(androidElement.isDisplayed());
-                androidElement.clear();
-                androidElement.sendKeys(text);
+                WebElement webElement = androidDriver.findElements(getLocator(elementLocator)).get(index);
+                Assert.assertTrue(webElement.isDisplayed());
+                webElement.clear();
+                webElement.sendKeys(text);
                 hideKeyboard();
                 break;
             } catch (InvalidElementStateException | NoSuchElementException | AssertionError e) {

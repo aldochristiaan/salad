@@ -4,15 +4,17 @@ import id.aldochristiaan.salad.util.Driver;
 import id.aldochristiaan.salad.util.LogLevel;
 import id.aldochristiaan.salad.util.LogUtil;
 import io.appium.java_client.android.AndroidDriver;
-import io.appium.java_client.android.AndroidElement;
+import io.appium.java_client.android.options.EspressoOptions;
+import io.appium.java_client.android.options.UiAutomator2Options;
 import io.appium.java_client.ios.IOSDriver;
-import io.appium.java_client.ios.IOSElement;
-import io.appium.java_client.remote.*;
+import io.appium.java_client.ios.options.XCUITestOptions;
+import io.appium.java_client.remote.AutomationName;
+import io.appium.java_client.remote.options.BaseOptions;
 import io.appium.java_client.service.local.AppiumDriverLocalService;
 import io.appium.java_client.service.local.AppiumServiceBuilder;
 import io.appium.java_client.service.local.flags.GeneralServerFlag;
+import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.NotFoundException;
-import org.openqa.selenium.remote.DesiredCapabilities;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -22,15 +24,15 @@ import java.net.URL;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Properties;
-import java.util.concurrent.TimeUnit;
+
 
 public class Salad {
 
-    private AndroidDriver<AndroidElement> androidDriver;
-    private IOSDriver<IOSElement> iosDriver;
+    private AndroidDriver androidDriver;
+    private IOSDriver iosDriver;
     private AppiumDriverLocalService service;
     private AppiumServiceBuilder builder;
-    private DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
+    private Capabilities capabilities;
     private Driver driver;
     private LogLevel logLevel;
     private URL appiumServerURL;
@@ -45,8 +47,8 @@ public class Salad {
     public Salad() {
     }
 
-    public Salad(DesiredCapabilities desiredCapabilities, Driver driver, LogLevel logLevel) {
-        this.desiredCapabilities = desiredCapabilities;
+    public Salad(Capabilities capabilities, Driver driver, LogLevel logLevel) {
+        this.capabilities = capabilities;
         this.driver = driver;
         this.logLevel = logLevel;
     }
@@ -88,7 +90,6 @@ public class Salad {
                 } else {
                     builder.usingPort(appiumPort);
                 }
-                builder.withStartUpTimeOut(DEFAULT_TIMEOUT, TimeUnit.SECONDS);
                 builder.withArgument(GeneralServerFlag.LOG_LEVEL, logLevel.toString().toLowerCase());
                 builder.withLogFile(appiumLogFile);
                 service = AppiumDriverLocalService.buildService(builder);
@@ -96,22 +97,22 @@ public class Salad {
                 service.start();
                 appiumServerURL = service.getUrl();
             } else {
-                LogUtil.info("Using custom appium server : " + appiumServerURL.toString());
+                LogUtil.info("Using custom appium server : " + appiumServerURL);
             }
 
             loadElementProperties(elementPropertiesDirectory);
             switch (driver) {
                 case UIAUTOMATOR2:
                     if (CAPABILITIES_PROPERTIES != null) setAndroidCapabilities(CAPABILITIES_PROPERTIES);
-                    androidDriver = new AndroidDriver<>(appiumServerURL, desiredCapabilities);
+                    androidDriver = new AndroidDriver(appiumServerURL, capabilities);
                     break;
                 case ESPRESSO:
                     if (CAPABILITIES_PROPERTIES != null) setEspressoCapabilities(CAPABILITIES_PROPERTIES);
-                    androidDriver = new AndroidDriver<>(appiumServerURL, desiredCapabilities);
+                    androidDriver = new AndroidDriver(appiumServerURL, capabilities);
                     break;
                 case XCUITEST:
                     if (CAPABILITIES_PROPERTIES != null) setIosCapabilities(CAPABILITIES_PROPERTIES);
-                    iosDriver = new IOSDriver<>(appiumServerURL, desiredCapabilities);
+                    iosDriver = new IOSDriver(appiumServerURL, capabilities);
                     break;
                 default:
                     LogUtil.error("Platform not found! Choose between ANDROID or IOS");
@@ -123,6 +124,7 @@ public class Salad {
     }
 
     public void stop(Driver driver) {
+        appiumServerURL = null;
         switch (driver) {
             case UIAUTOMATOR2:
             case ESPRESSO:
@@ -169,11 +171,11 @@ public class Salad {
         }
     }
 
-    public AndroidDriver<AndroidElement> getAndroidDriver() {
+    public AndroidDriver getAndroidDriver() {
         return androidDriver;
     }
 
-    public IOSDriver<IOSElement> getIosDriver() {
+    public IOSDriver getIosDriver() {
         return iosDriver;
     }
 
@@ -182,38 +184,40 @@ public class Salad {
     }
 
     private void setAndroidCapabilities(Properties capabilitiesProperties) {
-        desiredCapabilities.setCapability(MobileCapabilityType.AUTOMATION_NAME, AutomationName.ANDROID_UIAUTOMATOR2);
-        desiredCapabilities.setCapability(MobileCapabilityType.PLATFORM_NAME, MobilePlatform.ANDROID);
-        desiredCapabilities.setCapability(MobileCapabilityType.NEW_COMMAND_TIMEOUT, 30);
-        desiredCapabilities.setCapability(AndroidMobileCapabilityType.ANDROID_INSTALL_TIMEOUT, 120000);
-        desiredCapabilities.setCapability("uiautomator2ServerInstallTimeout", 120000);
-        desiredCapabilities.setCapability("uiautomator2ServerLaunchTimeout", 120000);
-
+        UiAutomator2Options options = new UiAutomator2Options();
+        options.setCapability(UiAutomator2Options.AUTOMATION_NAME_OPTION, AutomationName.ANDROID_UIAUTOMATOR2);
+        options.setCapability(UiAutomator2Options.AUTO_GRANT_PERMISSIONS_OPTION, true);
+        options.setCapability(BaseOptions.NEW_COMMAND_TIMEOUT_OPTION, 30);
+        options.setCapability("uiautomator2ServerInstallTimeout", 120000);
+        options.setCapability("uiautomator2ServerLaunchTimeout", 120000);
         for (Map.Entry<Object, Object> capability : capabilitiesProperties.entrySet()) {
-            desiredCapabilities.setCapability(capability.getKey().toString(), capability.getValue());
+            options.setCapability(capability.getKey().toString(), capability.getValue());
         }
+        capabilities = options;
     }
 
     private void setEspressoCapabilities(Properties capabilitiesProperties) {
-        desiredCapabilities.setCapability(MobileCapabilityType.AUTOMATION_NAME, AutomationName.ESPRESSO);
-        desiredCapabilities.setCapability(MobileCapabilityType.PLATFORM_NAME, MobilePlatform.ANDROID);
-        desiredCapabilities.setCapability(MobileCapabilityType.NEW_COMMAND_TIMEOUT, 30);
-        desiredCapabilities.setCapability(AndroidMobileCapabilityType.ANDROID_INSTALL_TIMEOUT, 120000);
+        EspressoOptions options = new EspressoOptions();
+        options.setCapability(EspressoOptions.AUTOMATION_NAME_OPTION, AutomationName.ESPRESSO);
+        options.setCapability(EspressoOptions.AUTO_GRANT_PERMISSIONS_OPTION, true);
+        options.setCapability(BaseOptions.NEW_COMMAND_TIMEOUT_OPTION, 30);
 
         for (Map.Entry<Object, Object> capability : capabilitiesProperties.entrySet()) {
-            desiredCapabilities.setCapability(capability.getKey().toString(), capability.getValue());
+            options.setCapability(capability.getKey().toString(), capability.getValue());
         }
+        capabilities = options;
     }
 
     private void setIosCapabilities(Properties capabilitiesProperties) {
-        desiredCapabilities.setCapability(MobileCapabilityType.AUTOMATION_NAME, AutomationName.IOS_XCUI_TEST);
-        desiredCapabilities.setCapability(MobileCapabilityType.PLATFORM_NAME, MobilePlatform.IOS);
-        desiredCapabilities.setCapability(IOSMobileCapabilityType.USE_NEW_WDA, true);
-        desiredCapabilities.setCapability("sendKeyStrategy", "setValue");
+        XCUITestOptions options = new XCUITestOptions();
+        options.setCapability(XCUITestOptions.AUTOMATION_NAME_OPTION, AutomationName.IOS_XCUI_TEST);
+        options.setCapability(XCUITestOptions.USE_NEW_WDA_OPTION, true);
+        options.setCapability("sendKeyStrategy", "setValue");
 
         for (Map.Entry<Object, Object> capability : capabilitiesProperties.entrySet()) {
-            desiredCapabilities.setCapability(capability.getKey().toString(), capability.getValue());
+            options.setCapability(capability.getKey().toString(), capability.getValue());
         }
+        capabilities = options;
     }
 
     private void loadElementProperties(String directory) {
@@ -232,7 +236,4 @@ public class Salad {
         }
     }
 
-    public void setCapability(String capabilityName, String value) {
-        desiredCapabilities.setCapability(capabilityName, value);
-    }
 }

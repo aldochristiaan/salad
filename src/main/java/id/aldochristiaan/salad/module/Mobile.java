@@ -1,12 +1,9 @@
 package id.aldochristiaan.salad.module;
 
 import id.aldochristiaan.salad.util.LogUtil;
-import io.appium.java_client.MobileBy;
+import io.appium.java_client.AppiumBy;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import static id.aldochristiaan.salad.Salad.ELEMENT_PROPERTIES;
 
@@ -25,31 +22,31 @@ public class Mobile {
 
         switch (locatorType) {
             case "id":
-                return MobileBy.id(locatorValue);
+                return AppiumBy.id(locatorValue);
             case "accessibilityId":
-                return MobileBy.AccessibilityId(locatorValue);
+                return AppiumBy.accessibilityId(locatorValue);
             case "contentDescription":
-                return MobileBy.xpath("//*[@content-desc='" + locatorValue + "']");
+                return AppiumBy.xpath("//*[@content-desc='" + locatorValue + "']");
             case "name":
-                return MobileBy.ByIosNsPredicate.iOSNsPredicateString("name == '" + locatorValue + "'");
+                return AppiumBy.ByIosNsPredicate.iOSNsPredicateString("name == '" + locatorValue + "'");
             case "label":
-                return MobileBy.ByIosNsPredicate.iOSNsPredicateString("label == '" + locatorValue + "'");
+                return AppiumBy.ByIosNsPredicate.iOSNsPredicateString("label == '" + locatorValue + "'");
             case "value":
-                return MobileBy.ByIosNsPredicate.iOSNsPredicateString("value == '" + locatorValue + "'");
+                return AppiumBy.ByIosNsPredicate.iOSNsPredicateString("value == '" + locatorValue + "'");
             case "labelcontains":
-                return MobileBy.ByIosNsPredicate.iOSNsPredicateString("label CONTAINS '" + locatorValue + "'");
+                return AppiumBy.ByIosNsPredicate.iOSNsPredicateString("label CONTAINS '" + locatorValue + "'");
             case "viewTag":
-                return MobileBy.AndroidViewTag(locatorValue);
+                return AppiumBy.androidViewTag(locatorValue);
             case "xpath":
-                return MobileBy.xpath(locatorValue);
+                return AppiumBy.xpath(locatorValue);
             case "class":
-                return MobileBy.className(locatorValue);
+                return AppiumBy.className(locatorValue);
             case "text":
-                return MobileBy.xpath("//*[@text='" + locatorValue + "']");
+                return AppiumBy.xpath("//*[@text='" + locatorValue + "']");
             case "containsText":
-                return MobileBy.xpath("//*[contains(@text, '" + locatorValue + "')]");
+                return AppiumBy.xpath("//*[contains(@text, '" + locatorValue + "')]");
             case "translationText":
-                return MobileBy.xpath("//*[contains(@text,'" + locatorValue + "') or contains(@text, " +
+                return AppiumBy.xpath("//*[contains(@text,'" + locatorValue + "') or contains(@text, " +
                         "translate('" + locatorValue + "', 'abcdefghijklmnopqrstuvwxyz', 'ABCDEFGHIJKLMNOPQRSTUVWXYZ')) or " +
                         "contains(@text, translate('" + locatorValue + "', 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'))]");
             default:

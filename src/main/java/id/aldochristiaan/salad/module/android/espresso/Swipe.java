@@ -5,13 +5,13 @@ import id.aldochristiaan.salad.util.Coordinates;
 import id.aldochristiaan.salad.util.PrecisionDescriber;
 import id.aldochristiaan.salad.util.SwipeSpeed;
 import io.appium.java_client.android.AndroidDriver;
-import io.appium.java_client.android.AndroidElement;
+import org.openqa.selenium.WebElement;
 
 import java.util.HashMap;
 
 public class Swipe extends Espresso {
 
-    public Swipe(AndroidDriver<AndroidElement> androidDriver) {
+    public Swipe(AndroidDriver androidDriver) {
         super(androidDriver);
     }
 
@@ -21,9 +21,9 @@ public class Swipe extends Espresso {
             Coordinates startCoordinates,
             Coordinates endCoordinates,
             PrecisionDescriber precisionDescriber) {
-        AndroidElement androidElement = androidDriver.findElement(getLocator(elementLocator));
+        WebElement webElement = androidDriver.findElement(getLocator(elementLocator));
         HashMap<String, Object> args = new HashMap<>();
-        args.put("element", androidElement);
+        args.put("element", webElement);
         args.put("swiper", swipeSpeed.toString());
         args.put("startCoordinates", startCoordinates.toString());
         args.put("endCoordinates", endCoordinates.toString());
@@ -38,9 +38,9 @@ public class Swipe extends Espresso {
             Coordinates endCoordinates,
             PrecisionDescriber precisionDescriber,
             int iteration) {
-        AndroidElement androidElement = androidDriver.findElement(getLocator(elementLocator));
+        WebElement webElement = androidDriver.findElement(getLocator(elementLocator));
         HashMap<String, Object> args = new HashMap<>();
-        args.put("element", androidElement);
+        args.put("element", webElement);
         args.put("swiper", swipeSpeed.toString());
         args.put("startCoordinates", startCoordinates.toString());
         args.put("endCoordinates", endCoordinates.toString());

@@ -1,14 +1,14 @@
 plugins {
     id 'java'
-    id 'com.github.johnrengelman.shadow' version '6.1.0'
+    id 'com.github.johnrengelman.shadow' version '8.1.1'
 }
 
 apply plugin: 'com.github.johnrengelman.shadow'
 
 group 'salad'
-version '1.2.0-rc2'
+version '1.2.0-rc4'
 
-sourceCompatibility = 1.8
+sourceCompatibility = JavaVersion.VERSION_11
 
 repositories {
     mavenCentral()
@@ -24,10 +24,10 @@ shadowJar {
 }
 
 dependencies {
-    implementation 'io.appium:java-client:7.4.1'
+    implementation 'io.appium:java-client:9.2.3'
     implementation 'com.github.javafaker:javafaker:1.0.2'
-    implementation 'commons-io:commons-io:2.8.0'
-    implementation 'org.slf4j:slf4j-simple:1.7.30'
-    implementation 'org.apache.logging.log4j:log4j-core:2.14.0'
-    implementation group: 'junit', name: 'junit', version: '4.12'
+    implementation 'commons-io:commons-io:2.16.1'
+    implementation 'org.slf4j:slf4j-nop:2.0.13'
+    implementation 'org.apache.logging.log4j:log4j-core:2.23.1'
+    implementation group: 'junit', name: 'junit', version: '4.13.2'
 }

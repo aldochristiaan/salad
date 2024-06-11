@@ -3,7 +3,6 @@ package id.aldochristiaan.salad.module;
 import id.aldochristiaan.salad.module.ios.*;
 import id.aldochristiaan.salad.util.*;
 import io.appium.java_client.ios.IOSDriver;
-import io.appium.java_client.ios.IOSElement;
 import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -11,6 +10,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.Duration;
 import java.util.List;
 import java.util.Objects;
 
@@ -18,9 +18,9 @@ import static id.aldochristiaan.salad.Salad.MAX_SWIPE_COUNT;
 
 public class XCUITest extends Mobile {
 
-    protected IOSDriver<IOSElement> iosDriver;
+    protected IOSDriver iosDriver;
 
-    public XCUITest(IOSDriver<IOSElement> iosDriver) {
+    public XCUITest(IOSDriver iosDriver) {
         this.iosDriver = iosDriver;
     }
 
@@ -64,8 +64,8 @@ public class XCUITest extends Mobile {
         return new Deeplink(iosDriver);
     }
 
-    protected IOSElement findElementBy(By by) {
-        IOSElement element = null;
+    protected WebElement findElementBy(By by) {
+        WebElement element = null;
         for (int i = 0; i < MAX_SWIPE_COUNT; i++) {
             try {
                 element = iosDriver.findElement(by);
@@ -77,8 +77,8 @@ public class XCUITest extends Mobile {
         return element;
     }
 
-    protected IOSElement findElementBy(By by, Direction direction) {
-        IOSElement element = null;
+    protected WebElement findElementBy(By by, Direction direction) {
+        WebElement element = null;
         for (int i = 0; i < MAX_SWIPE_COUNT; i++) {
             try {
                 element = iosDriver.findElement(by);
@@ -90,13 +90,13 @@ public class XCUITest extends Mobile {
         return element;
     }
 
-    protected IOSElement findElementBy(By by, int timeout) {
-        return (IOSElement) (new WebDriverWait(iosDriver, timeout))
+    protected WebElement findElementBy(By by, int timeout) {
+        return (WebElement) (new WebDriverWait(iosDriver, Duration.ofSeconds(timeout)))
                 .until(ExpectedConditions.visibilityOfElementLocated(by));
     }
 
-    protected List<IOSElement> findElementsBy(By by) {
-        List<IOSElement> elements = null;
+    protected List<WebElement> findElementsBy(By by) {
+        List<WebElement> elements = null;
         for (int i = 0; i < MAX_SWIPE_COUNT; i++) {
             try {
                 elements = iosDriver.findElements(by);
@@ -108,8 +108,8 @@ public class XCUITest extends Mobile {
         return elements;
     }
 
-    protected List<IOSElement> findElementsBy(By by, Direction direction) {
-        List<IOSElement> elements = null;
+    protected List<WebElement> findElementsBy(By by, Direction direction) {
+        List<WebElement> elements = null;
         for (int i = 0; i < MAX_SWIPE_COUNT; i++) {
             try {
                 elements = iosDriver.findElements(by);
@@ -122,13 +122,13 @@ public class XCUITest extends Mobile {
     }
 
     protected List<WebElement> findElementsBy(By by, int timeout) {
-        return (new WebDriverWait(iosDriver, timeout))
+        return (new WebDriverWait(iosDriver, Duration.ofSeconds(timeout)))
                 .until(ExpectedConditions.visibilityOfAllElementsLocatedBy(by));
     }
 
     protected boolean isElementExist(String elementLocator, int timeout) {
         try {
-            WebDriverWait wait = new WebDriverWait(iosDriver, timeout);
+            WebDriverWait wait = new WebDriverWait(iosDriver, Duration.ofSeconds(timeout));
             wait.until(ExpectedConditions.visibilityOfElementLocated(getLocator(elementLocator)));
             return true;
         } catch (Exception e) {
@@ -289,8 +289,8 @@ public class XCUITest extends Mobile {
         validateValue().equalsTrue(isElementChecked(elementLocator), errorMessage);
     }
 
-    protected void validateStaleness(IOSElement iosElement, int timeout) {
-        validateValue().equalsTrue((new WebDriverWait(iosDriver, timeout)).until(ExpectedConditions.stalenessOf(iosElement)));
+    protected void validateStaleness(WebElement webElement, int timeout) {
+        validateValue().equalsTrue((new WebDriverWait(iosDriver, Duration.ofSeconds(timeout))).until(ExpectedConditions.stalenessOf(webElement)));
     }
 
     protected void takeScreenshot(String name) {

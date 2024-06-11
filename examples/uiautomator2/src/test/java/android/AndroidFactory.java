@@ -1,12 +1,13 @@
 package android;
 
 import id.aldochristiaan.salad.Salad;
+import id.aldochristiaan.salad.module.android.AppManagement;
 import id.aldochristiaan.salad.util.Driver;
 import id.aldochristiaan.salad.util.LogLevel;
 import id.aldochristiaan.salad.util.LogUtil;
 import id.aldochristiaan.salad.util.PropertiesLoader;
 import io.appium.java_client.android.AndroidDriver;
-import io.appium.java_client.android.AndroidElement;
+import io.appium.java_client.service.local.AppiumDriverLocalService;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -20,7 +21,8 @@ import java.util.Properties;
 public class AndroidFactory {
 
     private static Salad salad;
-    private static AndroidDriver<AndroidElement> androidDriver;
+    private static AndroidDriver androidDriver;
+    private static AppiumDriverLocalService service;
     protected static Android android;
 
     @BeforeAll
@@ -34,24 +36,30 @@ public class AndroidFactory {
                 Driver.UIAUTOMATOR2,
                 LogLevel.DEBUG
         );
+        initSession();
+    }
+
+    @AfterAll
+    public static void tearDown() {
+        salad.stop(Driver.UIAUTOMATOR2);
+    }
+
+    public static void initSession() {
         salad.start();
         androidDriver = salad.getAndroidDriver();
         android = new Android(androidDriver);
     }
 
-    @AfterAll
-    public static void tearDown() {
-        salad.stop(Driver.ESPRESSO);
-    }
-
     /**
-     * If test failed, it will automatically take screen shot and reset app state
+     * If test failed, it will automatically take screenshot and reset app state
      * You can modify it too to match your usage
      *
      * @see TestListener
      */
     public static void resetApp() {
-        androidDriver.resetApp();
+        AppManagement appManagement = new AppManagement(androidDriver);
+        appManagement.clearApp("com.example.myapplication");
+        appManagement.activateApp("com.example.myapplication");
     }
 
     public static void takeScreenshot(String name) {

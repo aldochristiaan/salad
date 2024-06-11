@@ -1,9 +1,9 @@
 package id.aldochristiaan.salad.module;
 
+import id.aldochristiaan.salad.module.android.AppManagement;
 import id.aldochristiaan.salad.module.android.uiautomator2.*;
 import id.aldochristiaan.salad.util.*;
 import io.appium.java_client.android.AndroidDriver;
-import io.appium.java_client.android.AndroidElement;
 import io.appium.java_client.android.nativekey.AndroidKey;
 import io.appium.java_client.android.nativekey.KeyEvent;
 import io.appium.java_client.android.nativekey.KeyEventFlag;
@@ -14,6 +14,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.Duration;
 import java.util.List;
 import java.util.Objects;
 
@@ -21,9 +22,9 @@ import static id.aldochristiaan.salad.Salad.MAX_SWIPE_COUNT;
 
 public class UiAutomator2 extends Mobile {
 
-    protected AndroidDriver<AndroidElement> androidDriver;
+    protected AndroidDriver androidDriver;
 
-    public UiAutomator2(AndroidDriver<AndroidElement> androidDriver) {
+    public UiAutomator2(AndroidDriver androidDriver) {
         this.androidDriver = androidDriver;
     }
 
@@ -63,6 +64,14 @@ public class UiAutomator2 extends Mobile {
         return new Toast(androidDriver);
     }
 
+    protected MobileGesture mobileGesture() {
+        return new MobileGesture(androidDriver);
+    }
+
+    protected AppManagement appManagement() {
+        return new AppManagement(androidDriver);
+    }
+
     protected Randomize randomize() {
         return new Randomize();
     }
@@ -71,8 +80,8 @@ public class UiAutomator2 extends Mobile {
         return new FakerUtil();
     }
 
-    protected AndroidElement findElementBy(By by) {
-        AndroidElement element = null;
+    protected WebElement findElementBy(By by) {
+        WebElement element = null;
         for (int i = 0; i < MAX_SWIPE_COUNT; i++) {
             try {
                 element = androidDriver.findElement(by);
@@ -87,8 +96,8 @@ public class UiAutomator2 extends Mobile {
         return element;
     }
 
-    protected AndroidElement findElementBy(By by, Direction direction) {
-        AndroidElement element = null;
+    protected WebElement findElementBy(By by, Direction direction) {
+        WebElement element = null;
         for (int i = 0; i < MAX_SWIPE_COUNT; i++) {
             try {
                 element = androidDriver.findElement(by);
@@ -103,13 +112,13 @@ public class UiAutomator2 extends Mobile {
         return element;
     }
 
-    protected AndroidElement findElementBy(By by, int timeout) {
-        return (AndroidElement) (new WebDriverWait(androidDriver, timeout))
+    protected WebElement findElementBy(By by, int timeout) {
+        return (WebElement) (new WebDriverWait(androidDriver, Duration.ofSeconds(timeout)))
                 .until(ExpectedConditions.visibilityOfElementLocated(by));
     }
 
-    protected List<AndroidElement> findElementsBy(By by) {
-        List<AndroidElement> elements = null;
+    protected List<WebElement> findElementsBy(By by) {
+        List<WebElement> elements = null;
         for (int i = 0; i < MAX_SWIPE_COUNT; i++) {
             try {
                 elements = androidDriver.findElements(by);
@@ -124,8 +133,8 @@ public class UiAutomator2 extends Mobile {
         return elements;
     }
 
-    protected List<AndroidElement> findElementsBy(By by, Direction direction) {
-        List<AndroidElement> elements = null;
+    protected List<WebElement> findElementsBy(By by, Direction direction) {
+        List<WebElement> elements = null;
         for (int i = 0; i < MAX_SWIPE_COUNT; i++) {
             try {
                 elements = androidDriver.findElements(by);
@@ -141,13 +150,13 @@ public class UiAutomator2 extends Mobile {
     }
 
     protected List<WebElement> findElementsBy(By by, int timeout) {
-        return (new WebDriverWait(androidDriver, timeout))
+        return (new WebDriverWait(androidDriver, Duration.ofSeconds(timeout)))
                 .until(ExpectedConditions.visibilityOfAllElementsLocatedBy(by));
     }
 
     protected boolean isElementExist(String elementLocator, int timeout) {
         try {
-            WebDriverWait wait = new WebDriverWait(androidDriver, timeout);
+            WebDriverWait wait = new WebDriverWait(androidDriver, Duration.ofSeconds(timeout));
             wait.until(ExpectedConditions.presenceOfElementLocated(getLocator(elementLocator)));
             return true;
         } catch (Exception e) {
@@ -166,7 +175,7 @@ public class UiAutomator2 extends Mobile {
 
     protected boolean isElementDisplayed(String elementLocator, int timeout) {
         try {
-            WebDriverWait wait = new WebDriverWait(androidDriver, timeout);
+            WebDriverWait wait = new WebDriverWait(androidDriver, Duration.ofSeconds(timeout));
             wait.until(ExpectedConditions.visibilityOfElementLocated(getLocator(elementLocator)));
             return true;
         } catch (Exception e) {
@@ -177,7 +186,7 @@ public class UiAutomator2 extends Mobile {
 
     protected boolean isElementDisplayed(String elementLocator, int timeout, String errorMessage) {
         try {
-            WebDriverWait wait = new WebDriverWait(androidDriver, timeout);
+            WebDriverWait wait = new WebDriverWait(androidDriver, Duration.ofSeconds(timeout));
             wait.until(ExpectedConditions.visibilityOfElementLocated(getLocator(elementLocator)));
             return true;
         } catch (Exception e) {
@@ -338,8 +347,8 @@ public class UiAutomator2 extends Mobile {
         validateValue().equalsFalse(isElementChecked(elementLocator, errorMessage));
     }
 
-    protected void validateStaleness(AndroidElement androidElement, int timeout) {
-        validateValue().equalsTrue((new WebDriverWait(androidDriver, timeout)).until(ExpectedConditions.stalenessOf(androidElement)));
+    protected void validateStaleness(WebElement WebElement, int timeout) {
+        validateValue().equalsTrue((new WebDriverWait(androidDriver, Duration.ofSeconds(timeout))).until(ExpectedConditions.stalenessOf(WebElement)));
     }
 
     protected String getText(String elementLocator) {
