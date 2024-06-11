@@ -1,7 +1,10 @@
 name: Run UI Test
 
 on:
-  workflow_dispatch:
+  push:
+    branches:
+      - master
+      - develop
 
 jobs:
   test:
