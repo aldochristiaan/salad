@@ -2,21 +2,21 @@ package id.aldochristiaan.salad.module.android.espresso;
 
 import id.aldochristiaan.salad.module.Espresso;
 import io.appium.java_client.android.AndroidDriver;
-import io.appium.java_client.android.AndroidElement;
 import org.openqa.selenium.InvalidElementStateException;
 import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.WebElement;
 
 public class MultipleTap extends Espresso {
 
-    public MultipleTap(AndroidDriver<AndroidElement> androidDriver) {
+    public MultipleTap(AndroidDriver androidDriver) {
         super(androidDriver);
     }
 
     public void element(String elementLocator, int count) {
         try {
-            AndroidElement androidElement = androidDriver.findElement(getLocator(elementLocator));
+            WebElement webElement = androidDriver.findElement(getLocator(elementLocator));
             for (int i = 0; i < count; i++) {
-                androidElement.click();
+                webElement.click();
                 delay(150);
             }
         } catch (InvalidElementStateException e) {
@@ -28,9 +28,9 @@ public class MultipleTap extends Espresso {
 
     public void element(String elementLocator, int count, int index) {
         try {
-            AndroidElement androidElement = androidDriver.findElements(getLocator(elementLocator)).get(index);
+            WebElement webElement = androidDriver.findElements(getLocator(elementLocator)).get(index);
             for (int i = 0; i < count; i++) {
-                androidElement.click();
+                webElement.click();
             }
         } catch (InvalidElementStateException e) {
             throw new InvalidElementStateException("Problem at element : " + elementLocator, e);

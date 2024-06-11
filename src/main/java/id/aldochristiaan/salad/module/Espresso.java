@@ -7,27 +7,24 @@ import id.aldochristiaan.salad.util.LogUtil;
 import id.aldochristiaan.salad.util.Randomize;
 import id.aldochristiaan.salad.util.ValidateValue;
 import io.appium.java_client.android.AndroidDriver;
-import io.appium.java_client.android.AndroidElement;
 import io.appium.java_client.android.nativekey.AndroidKey;
 import io.appium.java_client.android.nativekey.KeyEvent;
 import io.appium.java_client.android.nativekey.KeyEventFlag;
 import org.apache.commons.io.FileUtils;
-import org.openqa.selenium.InvalidElementStateException;
-import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.OutputType;
-import org.openqa.selenium.TakesScreenshot;
+import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.Duration;
 import java.util.Objects;
 
 public class Espresso extends Mobile {
 
-    protected AndroidDriver<AndroidElement> androidDriver;
+    protected AndroidDriver androidDriver;
 
-    public Espresso(AndroidDriver<AndroidElement> androidDriver) {
+    public Espresso(AndroidDriver androidDriver) {
         this.androidDriver = androidDriver;
     }
 
@@ -280,8 +277,8 @@ public class Espresso extends Mobile {
         validateValue().equalsTrue(isElementChecked(elementLocator), errorMessage);
     }
 
-    protected void validateStaleness(AndroidElement androidElement, int timeout) {
-        validateValue().equalsTrue((new WebDriverWait(androidDriver, timeout)).until(ExpectedConditions.stalenessOf(androidElement)));
+    protected void validateStaleness(WebElement webElement, int timeout) {
+        validateValue().equalsTrue((new WebDriverWait(androidDriver, Duration.ofSeconds(timeout)).until(ExpectedConditions.stalenessOf(webElement))));
     }
 
     protected String getText(String elementLocator) {

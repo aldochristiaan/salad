@@ -3,23 +3,23 @@ package id.aldochristiaan.salad.module.android.uiautomator2;
 import id.aldochristiaan.salad.module.UiAutomator2;
 import id.aldochristiaan.salad.util.Direction;
 import io.appium.java_client.android.AndroidDriver;
-import io.appium.java_client.android.AndroidElement;
+import org.openqa.selenium.WebElement;
 
 public class GetElement extends UiAutomator2 {
 
-    public GetElement(AndroidDriver<AndroidElement> androidDriver) {
+    public GetElement(AndroidDriver androidDriver) {
         super(androidDriver);
     }
 
-    public AndroidElement withLocator(String elementLocator) {
+    public WebElement withLocator(String elementLocator) {
         return findElementBy(getLocator(elementLocator));
     }
 
-    public AndroidElement withLocator(String elementLocator, int timeout) {
+    public WebElement withLocator(String elementLocator, int timeout) {
         return findElementBy(getLocator(elementLocator), timeout);
     }
 
-    public AndroidElement withLocator(String elementLocator, Direction direction) {
+    public WebElement withLocator(String elementLocator, Direction direction) {
         return findElementBy(getLocator(elementLocator), direction);
     }
 }

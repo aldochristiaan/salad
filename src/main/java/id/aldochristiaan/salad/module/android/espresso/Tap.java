@@ -6,12 +6,12 @@ import id.aldochristiaan.salad.util.PrecisionDescriber;
 import id.aldochristiaan.salad.util.SwipeSpeed;
 import io.appium.java_client.TouchAction;
 import io.appium.java_client.android.AndroidDriver;
-import io.appium.java_client.android.AndroidElement;
 import io.appium.java_client.touch.WaitOptions;
 import io.appium.java_client.touch.offset.PointOption;
 import org.junit.Assert;
 import org.openqa.selenium.InvalidElementStateException;
 import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.WebElement;
 
 import java.time.Duration;
 
@@ -19,7 +19,7 @@ import static id.aldochristiaan.salad.Salad.MAX_SWIPE_COUNT;
 
 public class Tap extends Espresso {
 
-    public Tap(AndroidDriver<AndroidElement> androidDriver) {
+    public Tap(AndroidDriver androidDriver) {
         super(androidDriver);
     }
 
@@ -46,9 +46,9 @@ public class Tap extends Espresso {
     public void element(String elementLocator, String swipeLocator, SwipeSpeed swipeSpeed) {
         for (int i = 0; i < MAX_SWIPE_COUNT; i++) {
             try {
-                AndroidElement androidElement = androidDriver.findElement(getLocator(elementLocator));
-                Assert.assertTrue(androidElement.isDisplayed());
-                androidElement.click();
+                WebElement webElement = androidDriver.findElement(getLocator(elementLocator));
+                Assert.assertTrue(webElement.isDisplayed());
+                webElement.click();
                 break;
             } catch (InvalidElementStateException | NoSuchElementException | AssertionError e) {
                 swipe().element(swipeLocator, swipeSpeed, Coordinates.CENTER, Coordinates.TOP_CENTER, PrecisionDescriber.FINGER);
@@ -60,9 +60,9 @@ public class Tap extends Espresso {
     public void element(String elementLocator, int index, String swipeLocator, SwipeSpeed swipeSpeed) {
         for (int i = 0; i < MAX_SWIPE_COUNT; i++) {
             try {
-                AndroidElement androidElement = androidDriver.findElements(getLocator(elementLocator)).get(index);
-                Assert.assertTrue(androidElement.isDisplayed());
-                androidElement.click();
+                WebElement webElement = androidDriver.findElements(getLocator(elementLocator)).get(index);
+                Assert.assertTrue(webElement.isDisplayed());
+                webElement.click();
                 break;
             } catch (InvalidElementStateException | NoSuchElementException | AssertionError e) {
                 swipe().element(swipeLocator, swipeSpeed, Coordinates.CENTER, Coordinates.TOP_CENTER, PrecisionDescriber.FINGER);

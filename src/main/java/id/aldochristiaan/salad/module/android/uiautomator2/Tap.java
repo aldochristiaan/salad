@@ -3,7 +3,6 @@ package id.aldochristiaan.salad.module.android.uiautomator2;
 import id.aldochristiaan.salad.module.UiAutomator2;
 import io.appium.java_client.TouchAction;
 import io.appium.java_client.android.AndroidDriver;
-import io.appium.java_client.android.AndroidElement;
 import io.appium.java_client.touch.WaitOptions;
 import io.appium.java_client.touch.offset.PointOption;
 
@@ -11,7 +10,7 @@ import java.time.Duration;
 
 public class Tap extends UiAutomator2 {
 
-    public Tap(AndroidDriver<AndroidElement> androidDriver) {
+    public Tap(AndroidDriver androidDriver) {
         super(androidDriver);
     }
 

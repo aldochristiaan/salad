@@ -3,11 +3,10 @@ package android.pages;
 import id.aldochristiaan.salad.util.Action;
 import id.aldochristiaan.salad.util.Strategy;
 import io.appium.java_client.android.AndroidDriver;
-import io.appium.java_client.android.AndroidElement;
 
 public class MainPage extends BasePage {
 
-    public MainPage(AndroidDriver<AndroidElement> androidDriver) {
+    public MainPage(AndroidDriver androidDriver) {
         super(androidDriver);
     }
 

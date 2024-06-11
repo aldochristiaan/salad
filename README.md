@@ -6,13 +6,13 @@ Salad is an open source, cross-platform test automation wrapper based on [Appium
 
 - Install Node.js 10+
 
-- Install [JDK 8](https://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)
+- Install [JDK 11](https://www.oracle.com/java/technologies/downloads/)
 
 - Install Android SDK and AVD Emulators
 
 - Install Xcode and Simulators
 
-- Install appium
+- Install appium (ver 2.x)
 
     ``$ npm install -g appium``
     
