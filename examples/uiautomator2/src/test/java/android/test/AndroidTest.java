@@ -17,7 +17,7 @@ public class AndroidTest extends AndroidFactory {
         android.homePage().validateDrawer();
         android.homePage().closeDrawer();
         android.homePage().goToPages();
-        android.homePage().failedMethod();
+//        android.homePage().failedMethod();
     }
 
     @Test

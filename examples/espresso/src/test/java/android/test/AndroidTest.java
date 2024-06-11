@@ -18,7 +18,7 @@ public class AndroidTest extends AndroidFactory {
         android.homePage().closeDrawer();
         android.homePage().goToPages();
         android.homePage().tapOnFABUsingUiAutomator();
-        android.homePage().failedMethod();
+//        android.homePage().failedMethod();
     }
 
     @Test

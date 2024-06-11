@@ -34,6 +34,8 @@ build/
 
 .DS_Store
 
+*.idsig
+
 # Screenshot folder
 examples/espresso/screenshot/
 examples/espresso/out/
