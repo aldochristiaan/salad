@@ -74,6 +74,7 @@ jobs:
           emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: true
           script: |
+            touch examples/uiautomator2/target/appium.log
             cp examples/apk/app-debug.apk examples/uiautomator2/src/test/resources
             cd examples/uiautomator2 && ./gradlew clean test
 
@@ -85,5 +86,6 @@ jobs:
           emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: true
           script: |
+            touch examples/espresso/target/appium.log
             cp examples/apk/app-debug.apk examples/espresso/src/test/resources
             cd examples/espresso && ./gradlew clean test
