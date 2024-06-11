@@ -73,7 +73,9 @@ jobs:
           force-avd-creation: false
           emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: true
-          script: cd examples/uiautomator2 && ./gradlew clean test
+          script: |
+            cp examples/apk/app-debug.apk examples/uiautomator2/src/test/resources
+            cd examples/uiautomator2 && ./gradlew clean test
 
       - name: Espresso Test
         uses: reactivecircus/android-emulator-runner@v2
@@ -82,4 +84,6 @@ jobs:
           force-avd-creation: false
           emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: true
-          script: cd examples/espresso && ./gradlew clean test
+          script: |
+            cp examples/apk/app-debug.apk examples/espresso/src/test/resources
+            cd examples/espresso && ./gradlew clean test
