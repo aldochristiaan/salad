@@ -19,12 +19,17 @@ shadowJar {
     archiveVersion.set(project.version.toString())
     archiveClassifier.set(null)
     minimize {
-        exclude(dependency('org.apache.logging.log4j:.*:.*'))
+        exclude(dependency('org.seleniumhq.selenium:.*:.*'))
     }
+    exclude '*.aut'
+    exclude '*.yml'
 }
 
 dependencies {
     implementation 'io.appium:java-client:9.2.3'
+    implementation 'org.seleniumhq.selenium:selenium-api:4.21.0'
+    implementation 'org.seleniumhq.selenium:selenium-remote-driver:4.21.0'
+    implementation 'org.seleniumhq.selenium:selenium-support:4.21.0'
     implementation 'com.github.javafaker:javafaker:1.0.2'
     implementation 'commons-io:commons-io:2.16.1'
     implementation 'org.slf4j:slf4j-nop:2.0.13'
