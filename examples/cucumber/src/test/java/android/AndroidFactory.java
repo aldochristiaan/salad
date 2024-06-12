@@ -32,7 +32,7 @@ public class AndroidFactory {
                 capabilitiesProperties,
                 elementPropertiesDirectory,
                 Driver.UIAUTOMATOR2,
-                LogLevel.DEBUG
+                LogLevel.ERROR
         );
         initSession();
     }
