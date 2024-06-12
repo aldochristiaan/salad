@@ -90,7 +90,7 @@ jobs:
             mkdir -p examples/cucumber/target/
             touch examples/cucumber/target/appium.log
             cp examples/apk/app-debug.apk examples/cucumber/src/test/resources
-            cd examples/cucumber && /gradlew cucumber --tags "@Pass"
+            cd examples/cucumber && ./gradlew cucumber --tags "@Pass"
 
       - name: Espresso Test
         uses: reactivecircus/android-emulator-runner@v2
