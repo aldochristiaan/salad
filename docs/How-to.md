@@ -7,10 +7,12 @@ Add salad library to your project's root folder.
 Create `libs` directory and add this to your `build.gradle` file:
 
 ```
+sourceCompatibility = JavaVersion.VERSION_11
+
 dependencies {
     ...
     testImplementation fileTree(dir: 'libs', include: ['*.jar'])
-    testImplementation 'org.junit.jupiter:junit-jupiter:5.4.2'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.10.2'
     ...
 }
 
@@ -33,7 +35,7 @@ You must provide a file contains list of capabilities or you can pass it as a pa
 Place `capabilities.properties` in project root folder:
 
 ```
-app=/Users/aldochristian/Dropbox/APK/app_wholesale-release.apk
+app=/Users/APK/app-debug.apk
 deviceName=XXXXXXXXX
 udid=XXXXXXXXX
 platformVersion=8.0.0
@@ -41,7 +43,7 @@ fullReset=false
 autoGrantPermissions=true
 ```
 
-You can see list of appium capabilities [here](http://appium.io/docs/en/writing-running-appium/caps/)
+You can see list of appium capabilities [here](https://appium.io/docs/en/latest/guides/caps/)
 
 ### Example Project
 

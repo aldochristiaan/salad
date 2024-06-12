@@ -1,0 +1,55 @@
+plugins {
+    id 'java'
+    id "se.thinkcode.cucumber-runner" version "0.0.11"
+    id "com.github.spacialcircumstances.gradle-cucumber-reporting" version "0.1.25"
+}
+
+group 'salad'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = JavaVersion.VERSION_11
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation fileTree(dir: 'libs', include: ['*.jar'])
+    testImplementation(platform("org.junit:junit-bom:5.10.2"))
+    testImplementation(platform("io.cucumber:cucumber-bom:7.18.0"))
+    testImplementation("io.cucumber:cucumber-java")
+    testImplementation("io.cucumber:cucumber-junit-platform-engine")
+    testImplementation("org.junit.platform:junit-platform-suite")
+    testImplementation("org.junit.jupiter:junit-jupiter")
+}
+
+cucumber {
+    main = 'io.cucumber.core.cli.Main'
+    glue = 'classpath:android'
+    plugin = ['pretty', 'json:target/report.json' ]
+}
+
+cucumberReports {
+    outputDir = file('target/report')
+    reports = files('target/report.json')
+}
+
+task rerunCucumber() {
+    doLast {
+        javaexec {
+            systemProperties = System.properties
+            main = "io.cucumber.core.cli.Main"
+            classpath = configurations.testRuntimeClasspath + sourceSets.main.output + sourceSets.test.output
+            args = ['@rerun/failed_scenarios.txt',
+                    '--plugin', 'pretty',
+                    '--plugin', 'json:target/report.json',
+                    '--plugin', 'rerun:rerun/failed_scenarios.txt',
+                    '--glue', 'android'
+            ]
+        }
+    }
+}
+
+test {
+    useJUnitPlatform()
+}

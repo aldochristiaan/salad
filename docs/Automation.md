@@ -33,7 +33,6 @@ public class YourAppFactory {
        salad.stop(Driver.ESPRESSO);
    }
 }
-
 ```
 
 ### List of modules
@@ -196,9 +195,12 @@ public class YourApp {
 
 ### Finally, create your test!
 
-Create test file and extends `YourAppFactory`
+Create test file and extends `YourAppFactory`.
+
+Also you can add custom Listener for your test.
 
 ```
+@ExtendWith(TestListener.class)
 public class AndroidTest extends YourAppFactory {
 
     @Test
