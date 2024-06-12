@@ -79,6 +79,19 @@ jobs:
             cp examples/apk/app-debug.apk examples/uiautomator2/src/test/resources
             cd examples/uiautomator2 && ./gradlew clean test
 
+      - name: Cucumber Test
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: ${{ matrix.api-level }}
+          force-avd-creation: false
+          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          disable-animations: true
+          script: |
+            mkdir -p examples/cucumber/target/
+            touch examples/cucumber/target/appium.log
+            cp examples/apk/app-debug.apk examples/cucumber/src/test/resources
+            cd examples/cucumber && /gradlew cucumber --tags "@Pass"
+
       - name: Espresso Test
         uses: reactivecircus/android-emulator-runner@v2
         with:

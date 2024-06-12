@@ -37,10 +37,7 @@ build/
 *.idsig
 
 # Screenshot folder
-examples/espresso/screenshot/
-examples/espresso/out/
-examples/espresso/target/
-
-examples/uiautomator2/screenshot/
-examples/uiautomator2/out/
-examples/uiautomator2/target/
+*/*/screenshot/
+*/*/out/
+*/*/target/
+*/*/rerun/*
