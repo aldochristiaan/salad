@@ -13,24 +13,23 @@ public class ChangeContext extends UiAutomator2 {
     }
 
     public void toWebView() {
-        Set<String> contextHandles = androidDriver.getContextHandles();
-
-        for (String s : contextHandles) {
-            LogUtil.info("Context : " + s);
-            if (s.contains("WEBVIEW")) {
-                androidDriver.context(s);
-            }
-        }
+        switchContext("WEBVIEW");
     }
 
     public void toNative() {
-        Set<String> contextHandles = androidDriver.getContextHandles();
+        switchContext("NATIVE_APP");
+    }
 
-        for (String s : contextHandles) {
-            LogUtil.info("Context : " + s);
-            if (s.contains("NATIVE_APP")) {
-                androidDriver.context(s);
+    private void switchContext(String targetContextPrefix) {
+        Set<String> contextHandles = androidDriver.getContextHandles();
+        for (String context : contextHandles) {
+            LogUtil.info("Available Context: " + context);
+            if (context.contains(targetContextPrefix)) {
+                LogUtil.info("Switching to context: " + context);
+                androidDriver.context(context);
+                return;
             }
         }
+        throw new IllegalStateException("No context found for: " + targetContextPrefix);
     }
 }

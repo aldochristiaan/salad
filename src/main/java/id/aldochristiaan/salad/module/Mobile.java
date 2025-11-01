@@ -5,78 +5,70 @@ import io.appium.java_client.AppiumBy;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 
+import java.util.Locale;
+import java.util.Optional;
+
 import static id.aldochristiaan.salad.Salad.ELEMENT_PROPERTIES;
 
 public class Mobile {
 
     protected By getLocator(String elementLocator) {
-
         String elementValue = ELEMENT_PROPERTIES.getProperty(elementLocator);
         if (elementValue == null) {
-            LogUtil.error("Couldn't find locator : " + elementLocator + " ! Please check properties file!");
-            throw new NoSuchElementException("Couldn't find locator : " + elementLocator);
+            logMissingLocator(elementLocator);
         }
-        String[] locator = elementValue.split("_");
-        String locatorType = locator[0];
-        String locatorValue = elementValue.substring(elementValue.indexOf("_") + 1);
 
-        switch (locatorType) {
-            case "id":
-                return AppiumBy.id(locatorValue);
-            case "accessibilityId":
-                return AppiumBy.accessibilityId(locatorValue);
-            case "contentDescription":
-                return AppiumBy.xpath("//*[@content-desc='" + locatorValue + "']");
-            case "name":
-                return AppiumBy.ByIosNsPredicate.iOSNsPredicateString("name == '" + locatorValue + "'");
-            case "label":
-                return AppiumBy.ByIosNsPredicate.iOSNsPredicateString("label == '" + locatorValue + "'");
-            case "value":
-                return AppiumBy.ByIosNsPredicate.iOSNsPredicateString("value == '" + locatorValue + "'");
-            case "labelcontains":
-                return AppiumBy.ByIosNsPredicate.iOSNsPredicateString("label CONTAINS '" + locatorValue + "'");
-            case "viewTag":
-                return AppiumBy.androidViewTag(locatorValue);
-            case "xpath":
-                return AppiumBy.xpath(locatorValue);
-            case "class":
-                return AppiumBy.className(locatorValue);
-            case "text":
-                return AppiumBy.xpath("//*[@text='" + locatorValue + "']");
-            case "containsText":
-                return AppiumBy.xpath("//*[contains(@text, '" + locatorValue + "')]");
-            case "translationText":
-                return AppiumBy.xpath("//*[contains(@text,'" + locatorValue + "') or contains(@text, " +
-                        "translate('" + locatorValue + "', 'abcdefghijklmnopqrstuvwxyz', 'ABCDEFGHIJKLMNOPQRSTUVWXYZ')) or " +
-                        "contains(@text, translate('" + locatorValue + "', 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'))]");
-            default:
-                return null;
+        String[] locatorParts = elementValue.split("_", 2);
+        if (locatorParts.length != 2) {
+            LogUtil.error("Invalid locator format for: " + elementLocator);
+            throw new NoSuchElementException("Invalid locator format for: " + elementLocator);
         }
+
+        String locatorType = locatorParts[0];
+        String locatorValue = locatorParts[1];
+
+        return switch (locatorType) {
+            case "id" -> AppiumBy.id(locatorValue);
+            case "accessibilityId" -> AppiumBy.accessibilityId(locatorValue);
+            case "contentDescription" -> AppiumBy.xpath("//*[@content-desc='" + locatorValue + "']");
+            case "name" -> AppiumBy.ByIosNsPredicate.iOSNsPredicateString("name == '" + locatorValue + "'");
+            case "label" -> AppiumBy.ByIosNsPredicate.iOSNsPredicateString("label == '" + locatorValue + "'");
+            case "value" -> AppiumBy.ByIosNsPredicate.iOSNsPredicateString("value == '" + locatorValue + "'");
+            case "labelcontains" -> AppiumBy.ByIosNsPredicate.iOSNsPredicateString("label CONTAINS '" + locatorValue + "'");
+            case "viewTag" -> AppiumBy.androidViewTag(locatorValue);
+            case "xpath" -> AppiumBy.xpath(locatorValue);
+            case "class" -> AppiumBy.className(locatorValue);
+            case "text" -> AppiumBy.xpath("//*[@text='" + locatorValue + "']");
+            case "containsText" -> AppiumBy.xpath("//*[contains(@text, '" + locatorValue + "')]");
+            case "translationText" -> AppiumBy.xpath(
+                    "//*[contains(@text,'" + locatorValue + "') or " +
+                            "contains(@text, translate('" + locatorValue + "', 'abcdefghijklmnopqrstuvwxyz', 'ABCDEFGHIJKLMNOPQRSTUVWXYZ')) or " +
+                            "contains(@text, translate('" + locatorValue + "', 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'))]"
+            );
+            default -> throw new NoSuchElementException("Unsupported locator type: " + locatorType);
+        };
     }
 
     protected String getWebLocator(String webLocator) {
-        String elementValue = ELEMENT_PROPERTIES.getProperty(webLocator);
-        if (elementValue == null) {
-            LogUtil.error("Couldn't find locator : " + webLocator + " ! Please check properties file!");
-            throw new NoSuchElementException("Couldn't find locator : " + webLocator);
-        } else {
-            return elementValue;
-        }
+        return Optional.ofNullable(ELEMENT_PROPERTIES.getProperty(webLocator))
+                .orElseThrow(() -> {
+                    logMissingLocator(webLocator);
+                    return new NoSuchElementException("Couldn't find locator: " + webLocator);
+                });
     }
 
     protected String constructLocator(String elementLocator, Object... args) {
         String elementValue = ELEMENT_PROPERTIES.getProperty(elementLocator);
+        if (elementValue == null) {
+            logMissingLocator(elementLocator);
+        }
+
         String constructedValue = String.format(elementValue, args);
         String constructedLocator = "TEMP_" + elementLocator;
-        try {
-            ELEMENT_PROPERTIES.remove(constructedLocator);
-        } catch (NullPointerException e) {
-            LogUtil.info("No properties key was found!");
-        }
-        ELEMENT_PROPERTIES.setProperty(
-                constructedLocator,
-                constructedValue
-        );
+
+        ELEMENT_PROPERTIES.remove(constructedLocator); // Safe even if key doesn't exist
+        ELEMENT_PROPERTIES.setProperty(constructedLocator, constructedValue);
+
         return constructedLocator;
     }
 
@@ -84,7 +76,12 @@ public class Mobile {
         try {
             Thread.sleep(milliseconds);
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            Thread.currentThread().interrupt();
+            LogUtil.error("Thread was interrupted during delay", e);
         }
+    }
+
+    private void logMissingLocator(String key) {
+        LogUtil.error("Couldn't find locator: " + key + " ! Please check properties file!");
     }
 }

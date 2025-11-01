@@ -1,60 +1,90 @@
-# Salad
+# 🥗 Salad
 
-Salad is an open source, cross-platform test automation wrapper based on [Appium](https://github.com/appium/appium) written in Java and use Page Object Pattern.
+**Salad** is an open-source, cross-platform test automation wrapper built on [Appium](https://github.com/appium/appium), written in Java, and designed around the **Page Object Pattern**.
 
-### Prerequisites
+---
 
-- Install Node.js 10+
+## 🚀 Tech Stack
 
-- Install [JDK 11](https://www.oracle.com/java/technologies/downloads/)
+- Node.js: v25+
+- JDK: v21
+- Appium: v3.x
 
-- Install Android SDK and AVD Emulators
+---
 
-- Install Xcode and Simulators
+## 📦 Prerequisites
 
-- Install appium (ver 2.x)
+Make sure the following tools are installed:
 
-    ``$ npm install -g appium``
-    
-    Check appium by running:
-    
-    ``$ appium -v``
+- [Node.js](https://nodejs.org/) (**v25 or higher**)
+- [JDK 21](https://www.oracle.com/java/technologies/downloads/)
+- Android SDK and AVD Emulators
+- Xcode and iOS Simulators (macOS only)
+- [IntelliJ IDEA](https://www.jetbrains.com/idea/) (recommended IDE)
 
-- Install appium-doctor
+### Appium Setup
 
-    ``$ npm install -g appium-doctor``
-    
-    Check your appium setup by running:
-    
-    ``$ appium-doctor``
-    
-- Install [IntelliJ IDEA](https://www.jetbrains.com/idea/)
+Install Appium v3 globally:
 
-- You can use real device too!
- 
-Later you have to install several optional dependecies. But we are ready to rock now!
+``
+$ npm install -g appium@latest
+``
 
-### Environment Variable
+Verify installation:
 
-To complete our setup you can define PATH for several libraries on our terminal profile e.g: `.bashrc` or `.zshrc`
+``
+$ appium -v
+``
 
-Example:
+Install Appium Doctor:
+
+``
+$ npm install -g appium-doctor
+``
+
+Check your Appium setup:
+
+``
+$ appium-doctor
+``
+
+> ✅ You can also run tests on real devices!
+
+Later, you may need to install additional optional dependencies — but you're ready to rock now!
+
+---
+
+## ⚙️ Environment Variables
+
+To complete the setup, define the following paths in your shell profile (e.g. `.bashrc`, `.zshrc`):
 
 ```
-export JAVA_HOME=$(/usr/libexec/java_home)
-export ANDROID_HOME=/Users/<username>/Library/Android/sdk
-export PATH=$JAVA_HOME/bin:$PATH
-export PATH=$ANDROID_HOME/platform-tools:$PATH
-export PATH=$ANDROID_HOME/tools:$PATH
+export JAVA_HOME=$(/usr/libexec/java_home)  
+export ANDROID_HOME=/Users/<username>/Library/Android/sdk  
+export PATH=$JAVA_HOME/bin:$PATH  
+export PATH=$ANDROID_HOME/platform-tools:$PATH  
+export PATH=$ANDROID_HOME/tools:$PATH  
 export PATH="/usr/local/bin:$PATH"
 ```
 
-### Build
+---
 
-Run `./gradlew clean shadowJar` to get jar libs.
+## 🛠️ Build
 
-Check output folder `build/libs/salad-<version>.jar`
+Generate the JAR library:
 
-### How to use this library
+``
+$ ./gradlew clean shadowJar
+``
 
-Open [HOW-TO](https://github.com/aldochristiaan/salad/blob/master/docs/How-to.md) to start implement this library on your project
+Check the output folder:
+
+``
+build/libs/salad-<version>.jar
+``
+
+---
+
+## 📘 Usage Guide
+
+To start using this library in your project, visit the [HOW-TO guide](https://github.com/aldochristiaan/salad/blob/master/docs/How-to.md).

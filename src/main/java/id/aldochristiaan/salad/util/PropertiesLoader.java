@@ -8,15 +8,11 @@ public class PropertiesLoader {
 
     public static Properties loadCapabilities(String propertiesFileName) {
         Properties capabilitiesProperties = new Properties();
-        try {
-            FileInputStream properties = new FileInputStream("./" + propertiesFileName);
-            capabilitiesProperties.load(properties);
-            properties.close();
+        try (FileInputStream input = new FileInputStream("./" + propertiesFileName)) {
+            capabilitiesProperties.load(input);
         } catch (IOException e) {
-            LogUtil.error("File not found : capabilities.properties");
-            e.printStackTrace();
+            LogUtil.error("Failed to load properties file: " + propertiesFileName, e);
         }
         return capabilitiesProperties;
     }
-
 }

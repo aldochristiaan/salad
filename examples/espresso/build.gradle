@@ -6,7 +6,11 @@ plugins {
 group 'salad'
 version '1.0-SNAPSHOT'
 
-sourceCompatibility = JavaVersion.VERSION_11
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
 
 repositories {
     mavenCentral()

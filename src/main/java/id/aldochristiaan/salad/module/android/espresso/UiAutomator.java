@@ -5,7 +5,7 @@ import id.aldochristiaan.salad.util.Action;
 import id.aldochristiaan.salad.util.Strategy;
 import io.appium.java_client.android.AndroidDriver;
 
-import java.util.HashMap;
+import java.util.Map;
 
 public class UiAutomator extends Espresso {
 
@@ -14,19 +14,26 @@ public class UiAutomator extends Espresso {
     }
 
     public Object sauce(Strategy strategy, String locator, Action action) {
-        HashMap<String, Object> args = new HashMap<>();
-        args.put("strategy", strategy.toString());
-        args.put("locator", locator);
-        args.put("action", action.toString());
-        return androidDriver.executeScript("mobile:uiautomator", args);
+        return executeUiAutomator(strategy, locator, action, null);
     }
 
-    public Object sauce(Strategy strategy, String locator, Action action, int index) {
-        HashMap<String, Object> args = new HashMap<>();
-        args.put("strategy", strategy.toString());
-        args.put("locator", locator);
-        args.put("action", action.toString());
-        args.put("index", index);
+    public Object sauce(Strategy strategy, String locator, Action action, Integer index) {
+        return executeUiAutomator(strategy, locator, action, index);
+    }
+
+    private Object executeUiAutomator(Strategy strategy, String locator, Action action, Integer index) {
+        Map<String, Object> args = Map.of(
+                "strategy", strategy.toString(),
+                "locator", locator,
+                "action", action.toString()
+        );
+
+        // If index is provided, add it to the map
+        if (index != null) {
+            args = new java.util.HashMap<>(args); // convert to mutable map
+            args.put("index", index);
+        }
+
         return androidDriver.executeScript("mobile:uiautomator", args);
     }
 }

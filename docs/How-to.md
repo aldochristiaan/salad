@@ -1,10 +1,11 @@
-# How To Salad
+# 🥗 How To Salad
 
-### Salad library
+## 📦 Salad Library Setup
 
-Add salad library to your project's root folder.
+Add the Salad library to your project's root folder.
 
-Create `libs` directory and add this to your `build.gradle` file:
+1. Create a `libs/` directory.
+2. Add the following to your `build.gradle` file:
 
 ```
 sourceCompatibility = JavaVersion.VERSION_11
@@ -24,15 +25,19 @@ test {
 }
 ```
 
-We are using Junit5 instead of Junit4. To help appium server lifecycle.
+> ✅ Salad uses **JUnit 5** instead of JUnit 4 to better manage the Appium server lifecycle.
 
-### Capabilities Properties
+---
 
-In order to make automation works you have to provide `DesiredCapabilities`.
+## ⚙️ Capabilities Properties
 
-You must provide a file contains list of capabilities or you can pass it as a parameter in your code. 
+To run automation, you must provide `DesiredCapabilities`.
 
-Place `capabilities.properties` in project root folder:
+You can either:
+- Load them from a `.properties` file, or
+- Pass them directly in your code.
+
+Place a `capabilities.properties` file in your project root:
 
 ```
 app=/Users/APK/app-debug.apk
@@ -43,17 +48,23 @@ fullReset=false
 autoGrantPermissions=true
 ```
 
-You can see list of appium capabilities [here](https://appium.io/docs/en/latest/guides/caps/)
+🔗 [View full list of Appium capabilities](https://appium.io/docs/en/latest/guides/caps/)
 
-### Example Project
+---
 
-You can check example project here:
+## 🧪 Example Projects
 
-- [Espresso](https://github.com/aldochristiaan/salad/tree/document/examples/espresso)
-- [UiAutomator2](https://github.com/aldochristiaan/salad/tree/document/examples/uiautomator2)
+Explore working examples here:
 
-We're using sample android application and you can find the APK [here](https://github.com/aldochristiaan/salad/tree/document/examples/apk).
+- [Espresso Example](https://github.com/aldochristiaan/salad/tree/document/examples/espresso)
+- [UiAutomator2 Example](https://github.com/aldochristiaan/salad/tree/document/examples/uiautomator2)
 
-#### Getting deep with salad
+📱 Sample APKs are available [here](https://github.com/aldochristiaan/salad/tree/document/examples/apk)
 
-Look at this [documentation](https://github.com/aldochristiaan/salad/blob/master/docs/Automation.md) to write your automation code!
+---
+
+## 📚 Getting Deep with Salad
+
+Want to write your own automation code?
+
+Check out the full [Salad Automation Guide](https://github.com/aldochristiaan/salad/blob/master/docs/Automation.md)

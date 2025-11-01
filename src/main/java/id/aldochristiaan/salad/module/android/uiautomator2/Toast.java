@@ -11,14 +11,17 @@ import java.time.Duration;
 
 public class Toast extends UiAutomator2 {
 
+    private static final By TOAST_LOCATOR = By.xpath("//android.widget.Toast[1]");
+    private static final Duration DEFAULT_TIMEOUT = Duration.ofSeconds(10);
+
     public Toast(AndroidDriver androidDriver) {
         super(androidDriver);
     }
 
     public String getText() {
-        WebDriverWait wait = new WebDriverWait(androidDriver, Duration.ofSeconds(10));
-        wait.until(ExpectedConditions.presenceOfElementLocated((By.xpath("//android.widget.Toast[1]"))));
-        WebElement toastView = androidDriver.findElement(By.xpath("//android.widget.Toast[1]"));
-        return toastView.getAttribute("name");
+        WebDriverWait wait = new WebDriverWait(androidDriver, DEFAULT_TIMEOUT);
+        wait.until(ExpectedConditions.presenceOfElementLocated(TOAST_LOCATOR));
+        WebElement toastView = androidDriver.findElement(TOAST_LOCATOR);
+        return toastView.getAttribute("text"); // Use "text" instead of "name" for Android
     }
 }

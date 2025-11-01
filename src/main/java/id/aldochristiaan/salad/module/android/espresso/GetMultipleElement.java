@@ -11,16 +11,21 @@ import java.util.List;
 
 public class GetMultipleElement extends Espresso {
 
+    private static final int DEFAULT_TIMEOUT_SECONDS = 0;
+
     public GetMultipleElement(AndroidDriver androidDriver) {
         super(androidDriver);
     }
 
     public List<WebElement> withLocator(String elementLocator) {
-        return androidDriver.findElements(getLocator(elementLocator));
+        return withLocator(elementLocator, DEFAULT_TIMEOUT_SECONDS);
     }
 
-    public List<WebElement> withLocator(String elementLocator, int timeout) {
-        return (new WebDriverWait(androidDriver, Duration.ofSeconds(timeout)))
+    public List<WebElement> withLocator(String elementLocator, int timeoutSeconds) {
+        if (timeoutSeconds <= 0) {
+            return androidDriver.findElements(getLocator(elementLocator));
+        }
+        return new WebDriverWait(androidDriver, Duration.ofSeconds(timeoutSeconds))
                 .until(ExpectedConditions.visibilityOfAllElementsLocatedBy(getLocator(elementLocator)));
     }
 }

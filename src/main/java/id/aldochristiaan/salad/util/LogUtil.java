@@ -1,12 +1,11 @@
 package id.aldochristiaan.salad.util;
 
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public class LogUtil {
 
-    private final static Logger logger = LogManager.getLogger(LogUtil.class);
+    private static final Logger logger = LogManager.getLogger(LogUtil.class);
 
     public static void info(String message) {
         logger.info(message);

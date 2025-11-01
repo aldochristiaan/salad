@@ -5,6 +5,7 @@ import io.appium.java_client.android.AndroidDriver;
 import org.openqa.selenium.WebElement;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public class Drawer extends Espresso {
 
@@ -13,16 +14,17 @@ public class Drawer extends Espresso {
     }
 
     public void open(String elementLocator) {
-        WebElement androidElement = androidDriver.findElement(getLocator(elementLocator));
-        HashMap<String, Object> args = new HashMap<>();
-        args.put("element", androidElement);
-        androidDriver.executeScript("mobile:openDrawer", args);
+        executeDrawerCommand("mobile:openDrawer", elementLocator);
     }
 
     public void close(String elementLocator) {
+        executeDrawerCommand("mobile:closeDrawer", elementLocator);
+    }
+
+    private void executeDrawerCommand(String command, String elementLocator) {
         WebElement androidElement = androidDriver.findElement(getLocator(elementLocator));
-        HashMap<String, Object> args = new HashMap<>();
+        Map<String, Object> args = new HashMap<>();
         args.put("element", androidElement);
-        androidDriver.executeScript("mobile:closeDrawer", args);
+        androidDriver.executeScript(command, args);
     }
 }

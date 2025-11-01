@@ -1,6 +1,5 @@
 package id.aldochristiaan.salad.module;
 
-import id.aldochristiaan.salad.module.android.AppManagement;
 import id.aldochristiaan.salad.module.android.uiautomator2.*;
 import id.aldochristiaan.salad.util.*;
 import io.appium.java_client.android.AndroidDriver;
@@ -22,172 +21,100 @@ import static id.aldochristiaan.salad.Salad.MAX_SWIPE_COUNT;
 
 public class UiAutomator2 extends Mobile {
 
-    protected AndroidDriver androidDriver;
+    protected final AndroidDriver androidDriver;
 
     public UiAutomator2(AndroidDriver androidDriver) {
         this.androidDriver = androidDriver;
     }
 
-    protected GetElement getElement() {
-        return new GetElement(androidDriver);
-    }
+    // === Module Accessors ===
+    protected Tap tap() { return new Tap(androidDriver); }
+    protected Type type() { return new Type(androidDriver); }
+    protected Swipe swipe() { return new Swipe(androidDriver); }
+    protected GetElement getElement() { return new GetElement(androidDriver); }
+    protected GetMultipleElement getMultipleElement() { return new GetMultipleElement(androidDriver); }
+    protected Toast toast() { return new Toast(androidDriver); }
+    protected LongTap longTap() { return new LongTap(androidDriver); }
+    protected MobileGesture mobileGesture() { return new MobileGesture(androidDriver); }
+    protected ChangeContext changeContext() { return new ChangeContext(androidDriver); }
 
-    protected GetMultipleElement getMultipleElement() {
-        return new GetMultipleElement(androidDriver);
-    }
+    // === Utility Accessors ===
+    protected ValidateValue validateValue() { return new ValidateValue(); }
+    protected Randomize randomize() { return new Randomize(); }
+    protected FakerUtil fakerUtil() { return new FakerUtil(); }
 
-    protected LongTap longTap() {
-        return new LongTap(androidDriver);
-    }
-
-    protected Swipe swipe() {
-        return new Swipe(androidDriver);
-    }
-
-    protected Tap tap() {
-        return new Tap(androidDriver);
-    }
-
-    protected ValidateValue validateValue() {
-        return new ValidateValue();
-    }
-
-    protected Type type() {
-        return new Type(androidDriver);
-    }
-
-    protected ChangeContext changeContext() {
-        return new ChangeContext(androidDriver);
-    }
-
-    protected Toast toast() {
-        return new Toast(androidDriver);
-    }
-
-    protected MobileGesture mobileGesture() {
-        return new MobileGesture(androidDriver);
-    }
-
-    protected AppManagement appManagement() {
-        return new AppManagement(androidDriver);
-    }
-
-    protected Randomize randomize() {
-        return new Randomize();
-    }
-
-    protected FakerUtil fakerUtil() {
-        return new FakerUtil();
-    }
-
+    // === Element Finders ===
     protected WebElement findElementBy(By by) {
-        WebElement element = null;
-        for (int i = 0; i < MAX_SWIPE_COUNT; i++) {
-            try {
-                element = androidDriver.findElement(by);
-                break;
-            } catch (NoSuchElementException e) {
-                swipe().up();
-            }
-        }
-        if (element == null) {
-            throw new NoSuchElementException("Couldn't find this element : " + by.toString());
-        }
-        return element;
+        return findElementBy(by, Direction.UP);
     }
 
     protected WebElement findElementBy(By by, Direction direction) {
-        WebElement element = null;
         for (int i = 0; i < MAX_SWIPE_COUNT; i++) {
             try {
-                element = androidDriver.findElement(by);
-                break;
+                return androidDriver.findElement(by);
             } catch (NoSuchElementException e) {
                 swipe().toDirection(direction);
             }
         }
-        if (element == null) {
-            throw new NoSuchElementException("Couldn't find this element : " + by.toString());
-        }
-        return element;
+        throw new NoSuchElementException("Couldn't find this element: " + by);
     }
 
     protected WebElement findElementBy(By by, int timeout) {
-        return (WebElement) (new WebDriverWait(androidDriver, Duration.ofSeconds(timeout)))
+        return new WebDriverWait(androidDriver, Duration.ofSeconds(timeout))
                 .until(ExpectedConditions.visibilityOfElementLocated(by));
     }
 
     protected List<WebElement> findElementsBy(By by) {
-        List<WebElement> elements = null;
-        for (int i = 0; i < MAX_SWIPE_COUNT; i++) {
-            try {
-                elements = androidDriver.findElements(by);
-                break;
-            } catch (NoSuchElementException e) {
-                swipe().up();
-            }
-        }
-        if (elements == null) {
-            throw new NoSuchElementException("Couldn't find this element : " + by.toString());
-        }
-        return elements;
+        return findElementsBy(by, Direction.UP);
     }
 
     protected List<WebElement> findElementsBy(By by, Direction direction) {
-        List<WebElement> elements = null;
         for (int i = 0; i < MAX_SWIPE_COUNT; i++) {
             try {
-                elements = androidDriver.findElements(by);
-                break;
+                return androidDriver.findElements(by);
             } catch (NoSuchElementException e) {
                 swipe().toDirection(direction);
             }
         }
-        if (elements == null) {
-            throw new NoSuchElementException("Couldn't find this element : " + by.toString());
-        }
-        return elements;
+        throw new NoSuchElementException("Couldn't find this element: " + by);
     }
 
     protected List<WebElement> findElementsBy(By by, int timeout) {
-        return (new WebDriverWait(androidDriver, Duration.ofSeconds(timeout)))
+        return new WebDriverWait(androidDriver, Duration.ofSeconds(timeout))
                 .until(ExpectedConditions.visibilityOfAllElementsLocatedBy(by));
     }
 
+    // === Element State Checks ===
     protected boolean isElementExist(String elementLocator, int timeout) {
         try {
-            WebDriverWait wait = new WebDriverWait(androidDriver, Duration.ofSeconds(timeout));
-            wait.until(ExpectedConditions.presenceOfElementLocated(getLocator(elementLocator)));
+            new WebDriverWait(androidDriver, Duration.ofSeconds(timeout))
+                    .until(ExpectedConditions.presenceOfElementLocated(getLocator(elementLocator)));
             return true;
         } catch (Exception e) {
-            LogUtil.error("Element with locator : " + elementLocator + " is not present!");
+            LogUtil.error("Element not present: " + elementLocator);
             return false;
         }
     }
 
     protected boolean isElementDisplayed(String elementLocator) {
-        try {
-            return androidDriver.findElement(getLocator(elementLocator)).isDisplayed();
-        } catch (NoSuchElementException e) {
-            throw new NoSuchElementException("Couldn't find this element : " + elementLocator, e);
-        }
+        return androidDriver.findElement(getLocator(elementLocator)).isDisplayed();
     }
 
     protected boolean isElementDisplayed(String elementLocator, int timeout) {
         try {
-            WebDriverWait wait = new WebDriverWait(androidDriver, Duration.ofSeconds(timeout));
-            wait.until(ExpectedConditions.visibilityOfElementLocated(getLocator(elementLocator)));
+            new WebDriverWait(androidDriver, Duration.ofSeconds(timeout))
+                    .until(ExpectedConditions.visibilityOfElementLocated(getLocator(elementLocator)));
             return true;
         } catch (Exception e) {
-            LogUtil.error("Element with locator : " + elementLocator + " is not present!");
+            LogUtil.error("Element not visible: " + elementLocator);
             return false;
         }
     }
 
     protected boolean isElementDisplayed(String elementLocator, int timeout, String errorMessage) {
         try {
-            WebDriverWait wait = new WebDriverWait(androidDriver, Duration.ofSeconds(timeout));
-            wait.until(ExpectedConditions.visibilityOfElementLocated(getLocator(elementLocator)));
+            new WebDriverWait(androidDriver, Duration.ofSeconds(timeout))
+                    .until(ExpectedConditions.visibilityOfElementLocated(getLocator(elementLocator)));
             return true;
         } catch (Exception e) {
             LogUtil.error(errorMessage);
@@ -196,11 +123,7 @@ public class UiAutomator2 extends Mobile {
     }
 
     protected boolean isElementEnabled(String elementLocator) {
-        try {
-            return Boolean.parseBoolean(androidDriver.findElement(getLocator(elementLocator)).getAttribute("enabled"));
-        } catch (NoSuchElementException e) {
-            throw new NoSuchElementException("Couldn't find this element : " + elementLocator, e);
-        }
+        return Boolean.parseBoolean(androidDriver.findElement(getLocator(elementLocator)).getAttribute("enabled"));
     }
 
     protected boolean isElementEnabled(String elementLocator, String errorMessage) {
@@ -212,11 +135,7 @@ public class UiAutomator2 extends Mobile {
     }
 
     protected boolean isElementSelected(String elementLocator) {
-        try {
-            return Boolean.parseBoolean(androidDriver.findElement(getLocator(elementLocator)).getAttribute("selected"));
-        } catch (NoSuchElementException e) {
-            throw new NoSuchElementException("Couldn't find this element : " + elementLocator, e);
-        }
+        return Boolean.parseBoolean(androidDriver.findElement(getLocator(elementLocator)).getAttribute("selected"));
     }
 
     protected boolean isElementSelected(String elementLocator, String errorMessage) {
@@ -228,87 +147,36 @@ public class UiAutomator2 extends Mobile {
     }
 
     protected boolean isElementChecked(String elementLocator) {
-        try {
-            return Boolean.parseBoolean(androidDriver.findElement(getLocator(elementLocator)).getAttribute("checked"));
-        } catch (NoSuchElementException e) {
-            throw new NoSuchElementException("Couldn't find this element : " + elementLocator, e);
-        }
+        return Boolean.parseBoolean(androidDriver.findElement(getLocator(elementLocator)).getAttribute("checked"));
     }
 
     protected boolean isElementChecked(String elementLocator, String errorMessage) {
         try {
             return Boolean.parseBoolean(androidDriver.findElement(getLocator(elementLocator)).getAttribute("checked"));
         } catch (NoSuchElementException e) {
-            throw new NoSuchElementException("Couldn't find this element : " + elementLocator, e);
+            throw new NoSuchElementException(errorMessage);
         }
     }
 
+    // === Attribute & Text Access ===
     protected String getElementAttributeValue(String elementLocator, int timeout, String attribute) {
         if (isElementDisplayed(elementLocator, timeout)) {
             return androidDriver.findElement(getLocator(elementLocator)).getAttribute(attribute);
-        } else {
-            throw new NoSuchElementException("Couldn't find this element : " + elementLocator);
         }
+        throw new NoSuchElementException("Couldn't find this element: " + elementLocator);
     }
 
-    protected void validateElementDisplayed(String elementLocator, int timeout) {
-        if (isElementDisplayed(elementLocator, timeout)) {
-            validateValue().equalsTrue(isElementDisplayed(elementLocator, timeout));
-        } else {
-            throw new NoSuchElementException("Couldn't find this element : " + elementLocator);
-        }
+    protected String getText(String elementLocator) {
+        return androidDriver.findElement(getLocator(elementLocator)).getText();
     }
 
-    protected void validateElementWithText(String elementLocator, int timeout, String text) {
-        if (isElementDisplayed(elementLocator, timeout)) {
-            validateValue().equals(text, getText(elementLocator));
-        } else {
-            throw new NoSuchElementException("Couldn't find this element : " + elementLocator);
-        }
+    protected String getText(String elementLocator, int index) {
+        return androidDriver.findElements(getLocator(elementLocator)).get(index).getText();
     }
 
-    protected void validateElementContainsText(String elementLocator, int timeout, String text) {
-        if (isElementDisplayed(elementLocator, timeout)) {
-            validateValue().contains(text, getText(elementLocator));
-        } else {
-            throw new NoSuchElementException("Couldn't find this element : " + elementLocator);
-        }
-    }
-
-    protected void validateEnabled(String elementLocator) {
-        validateValue().equalsTrue(isElementEnabled(elementLocator), "Element with locator : " + elementLocator + " is not enabled!");
-    }
-
-    protected void validateEnabled(String elementLocator, String errorMessage) {
-        validateValue().equalsTrue(isElementEnabled(elementLocator, errorMessage));
-    }
-
-    protected void validateDisabled(String elementLocator) {
-        validateValue().equalsFalse(isElementEnabled(elementLocator), "Element with locator : " + elementLocator + " is enabled!");
-    }
-
-    protected void validateDisabled(String elementLocator, String errorMessage) {
-        validateValue().equalsFalse(isElementEnabled(elementLocator, errorMessage));
-    }
-
-    protected void validateSelected(String elementLocator) {
-        validateValue().equalsTrue(isElementSelected(elementLocator), "Element with locator : " + elementLocator + " is not selected!");
-    }
-
-    protected void validateSelected(String elementLocator, String errorMessage) {
-        validateValue().equalsTrue(isElementSelected(elementLocator, errorMessage));
-    }
-
-    protected void validateNotSelected(String elementLocator) {
-        validateValue().equalsFalse(isElementSelected(elementLocator), "Element with locator : " + elementLocator + " is selected!");
-    }
-
-    protected void validateNotSelected(String elementLocator, String errorMessage) {
-        validateValue().equalsFalse(isElementSelected(elementLocator, errorMessage));
-    }
-
+    // === Validation Methods ===
     protected void validateDisplayed(String elementLocator, int timeout) {
-        validateValue().equalsTrue(isElementExist(elementLocator, timeout), "Element with locator : " + elementLocator + " is not displayed on screen!");
+        validateValue().equalsTrue(isElementExist(elementLocator, timeout), "Element not displayed: " + elementLocator);
     }
 
     protected void validateDisplayed(String elementLocator, int timeout, String errorMessage) {
@@ -316,7 +184,7 @@ public class UiAutomator2 extends Mobile {
     }
 
     protected void validateNotDisplayed(String elementLocator, int timeout) {
-        validateValue().equalsFalse(isElementDisplayed(elementLocator, timeout), "Element with locator : " + elementLocator + " is displayed on screen!");
+        validateValue().equalsFalse(isElementDisplayed(elementLocator, timeout), "Element is displayed: " + elementLocator);
     }
 
     protected void validateNotDisplayed(String elementLocator, int timeout, String errorMessage) {
@@ -324,63 +192,48 @@ public class UiAutomator2 extends Mobile {
     }
 
     protected void validateExist(String elementLocator, int timeout) {
-        validateValue().equalsTrue(isElementExist(elementLocator, timeout), "Element with locator : " + elementLocator + " doesn't exist!");
+        validateValue().equalsTrue(isElementExist(elementLocator, timeout), "Element doesn't exist: " + elementLocator);
     }
 
     protected void validateNotExist(String elementLocator, int timeout) {
-        validateValue().equalsFalse(isElementExist(elementLocator, timeout), "Element with locator : " + elementLocator + " do exist!");
+        validateValue().equalsFalse(isElementExist(elementLocator, timeout), "Element exists: " + elementLocator);
+    }
+
+    protected void validateEnabled(String elementLocator) {
+        validateValue().equalsTrue(isElementEnabled(elementLocator), "Element not enabled: " + elementLocator);
+    }
+
+    protected void validateDisabled(String elementLocator) {
+        validateValue().equalsFalse(isElementEnabled(elementLocator), "Element is enabled: " + elementLocator);
+    }
+
+    protected void validateSelected(String elementLocator) {
+        validateValue().equalsTrue(isElementSelected(elementLocator), "Element not selected: " + elementLocator);
+    }
+
+    protected void validateNotSelected(String elementLocator) {
+        validateValue().equalsFalse(isElementSelected(elementLocator), "Element is selected: " + elementLocator);
     }
 
     protected void validateChecked(String elementLocator) {
-        validateValue().equalsTrue(isElementChecked(elementLocator));
-    }
-
-    protected void validateChecked(String elementLocator, String errorMessage) {
-        validateValue().equalsTrue(isElementChecked(elementLocator, errorMessage));
+        validateValue().equalsTrue(isElementChecked(elementLocator), "Element not checked: " + elementLocator);
     }
 
     protected void validateNotChecked(String elementLocator) {
-        validateValue().equalsFalse(isElementChecked(elementLocator));
+        validateValue().equalsFalse(isElementChecked(elementLocator), "Element is checked: " + elementLocator);
     }
 
-    protected void validateNotChecked(String elementLocator, String errorMessage) {
-        validateValue().equalsFalse(isElementChecked(elementLocator, errorMessage));
+    protected void validateStaleness(WebElement element, int timeout) {
+        validateValue().equalsTrue(
+                new WebDriverWait(androidDriver, Duration.ofSeconds(timeout))
+                        .until(ExpectedConditions.stalenessOf(element)),
+                "Element did not become stale within timeout"
+        );
     }
 
-    protected void validateStaleness(WebElement WebElement, int timeout) {
-        validateValue().equalsTrue((new WebDriverWait(androidDriver, Duration.ofSeconds(timeout))).until(ExpectedConditions.stalenessOf(WebElement)));
-    }
-
-    protected String getText(String elementLocator) {
-        try {
-            return androidDriver.findElement(getLocator(elementLocator)).getText();
-        } catch (InvalidElementStateException e) {
-            throw new InvalidElementStateException("Problem at element : " + elementLocator, e);
-        } catch (NoSuchElementException e) {
-            throw new NoSuchElementException("Couldn't find this element : " + elementLocator, e);
-        }
-    }
-
-    protected String getText(String elementLocator, int index) {
-        try {
-            return androidDriver.findElements(getLocator(elementLocator)).get(index).getText();
-        } catch (InvalidElementStateException e) {
-            throw new InvalidElementStateException("Problem at element : " + elementLocator, e);
-        } catch (NoSuchElementException e) {
-            throw new NoSuchElementException("Couldn't find this element : " + elementLocator, e);
-        }
-    }
-
+    // === Screenshot Utilities ===
     protected void takeScreenshot(String name) {
-        File scrFile = ((TakesScreenshot) androidDriver).getScreenshotAs(OutputType.FILE);
-        File imageFile = new File("screenshot/" + name + ".png");
-        try {
-            FileUtils.copyFile(Objects.requireNonNull(scrFile), imageFile);
-            LogUtil.info("Screenshot taken!");
-        } catch (IOException e) {
-            LogUtil.error("Failed to take screenshot!");
-            e.printStackTrace();
-        }
+        takeScreenshot("screenshot", name);
     }
 
     protected void takeScreenshot(String path, String name) {
@@ -388,32 +241,35 @@ public class UiAutomator2 extends Mobile {
         File imageFile = new File(path + "/" + name + ".png");
         try {
             FileUtils.copyFile(Objects.requireNonNull(scrFile), imageFile);
-            LogUtil.info("Screenshot taken!");
+            LogUtil.info("Screenshot taken: " + imageFile.getAbsolutePath());
         } catch (IOException e) {
-            LogUtil.error("Failed to take screenshot!");
+            LogUtil.error("Failed to take screenshot: " + e.getMessage());
         }
     }
 
+    // === System Actions ===
     protected void pressBackButton() {
-        androidDriver.pressKey(new KeyEvent().withKey(AndroidKey.BACK));
+        androidDriver.pressKey(new KeyEvent(AndroidKey.BACK));
     }
 
     protected void pressEnterButton() {
-        androidDriver.pressKey(new KeyEvent().withKey(AndroidKey.ENTER));
+        androidDriver.pressKey(new KeyEvent(AndroidKey.ENTER));
     }
 
     protected void pressSearchButton() {
-        androidDriver.pressKey(new KeyEvent(AndroidKey.ENTER)
-                .withFlag(KeyEventFlag.SOFT_KEYBOARD)
-                .withFlag(KeyEventFlag.KEEP_TOUCH_MODE)
-                .withFlag(KeyEventFlag.EDITOR_ACTION));
+        androidDriver.pressKey(
+                new KeyEvent(AndroidKey.ENTER)
+                        .withFlag(KeyEventFlag.SOFT_KEYBOARD)
+                        .withFlag(KeyEventFlag.KEEP_TOUCH_MODE)
+                        .withFlag(KeyEventFlag.EDITOR_ACTION)
+        );
     }
 
     protected void hideKeyboard() {
         try {
             androidDriver.hideKeyboard();
         } catch (Exception e) {
-            LogUtil.info("No visible keyboard!");
+            LogUtil.info("No visible keyboard to hide.");
         }
     }
 

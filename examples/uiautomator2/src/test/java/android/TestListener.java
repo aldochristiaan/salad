@@ -1,6 +1,7 @@
 package android;
 
 import id.aldochristiaan.salad.util.LogUtil;
+import io.appium.java_client.android.AndroidDriver;
 import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.TestWatcher;
@@ -45,8 +46,14 @@ public class TestListener implements TestWatcher, AfterAllCallback {
     public void testFailed(ExtensionContext context, Throwable cause) {
         LogUtil.error("Test Failed for test : " + context.getDisplayName());
         testResultsStatus.add(TestResultStatus.FAILED);
-        takeScreenshot(context.getDisplayName());
-        resetApp();
+
+        AndroidDriver driver = AndroidFactory.getAndroidDriver();
+        if (driver != null) {
+            takeScreenshot(context.getDisplayName());
+            resetApp();
+        } else {
+            LogUtil.warn("Skipping screenshot and reset: androidDriver is not initialized.");
+        }
     }
 
     @Override

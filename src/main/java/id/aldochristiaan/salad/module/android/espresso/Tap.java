@@ -14,65 +14,77 @@ import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
 
 import java.time.Duration;
+import java.util.List;
 
 import static id.aldochristiaan.salad.Salad.MAX_SWIPE_COUNT;
 
 public class Tap extends Espresso {
+
+    private static final Coordinates DEFAULT_START = Coordinates.CENTER;
+    private static final Coordinates DEFAULT_END = Coordinates.TOP_CENTER;
+    private static final PrecisionDescriber DEFAULT_PRECISION = PrecisionDescriber.FINGER;
+    private static final int DEFAULT_DELAY = 500;
 
     public Tap(AndroidDriver androidDriver) {
         super(androidDriver);
     }
 
     public void element(String elementLocator) {
-        try {
-            androidDriver.findElement(getLocator(elementLocator)).click();
-        } catch (InvalidElementStateException e) {
-            throw new InvalidElementStateException("Problem at element : " + elementLocator, e);
-        } catch (NoSuchElementException e) {
-            throw new NoSuchElementException("Couldn't find this element : " + elementLocator, e);
-        }
+        clickSafely(() -> androidDriver.findElement(getLocator(elementLocator)), elementLocator);
     }
 
     public void element(String elementLocator, int index) {
-        try {
-            androidDriver.findElements(getLocator(elementLocator)).get(index).click();
-        } catch (InvalidElementStateException e) {
-            throw new InvalidElementStateException("Problem at element : " + elementLocator, e);
-        } catch (NoSuchElementException e) {
-            throw new NoSuchElementException("Couldn't find this element : " + elementLocator, e);
-        }
+        clickSafely(() -> {
+            List<WebElement> elements = androidDriver.findElements(getLocator(elementLocator));
+            return elements.get(index);
+        }, elementLocator);
     }
 
     public void element(String elementLocator, String swipeLocator, SwipeSpeed swipeSpeed) {
-        for (int i = 0; i < MAX_SWIPE_COUNT; i++) {
-            try {
-                WebElement webElement = androidDriver.findElement(getLocator(elementLocator));
-                Assert.assertTrue(webElement.isDisplayed());
-                webElement.click();
-                break;
-            } catch (InvalidElementStateException | NoSuchElementException | AssertionError e) {
-                swipe().element(swipeLocator, swipeSpeed, Coordinates.CENTER, Coordinates.TOP_CENTER, PrecisionDescriber.FINGER);
-                delay(500);
-            }
-        }
+        swipeUntilVisible(() -> androidDriver.findElement(getLocator(elementLocator)), elementLocator, swipeLocator, swipeSpeed);
     }
 
     public void element(String elementLocator, int index, String swipeLocator, SwipeSpeed swipeSpeed) {
+        swipeUntilVisible(() -> {
+            List<WebElement> elements = androidDriver.findElements(getLocator(elementLocator));
+            return elements.get(index);
+        }, elementLocator, swipeLocator, swipeSpeed);
+    }
+
+    public void location(int x, int y, Duration time) {
+        new TouchAction(androidDriver)
+                .press(PointOption.point(x, y))
+                .waitAction(WaitOptions.waitOptions(time))
+                .release()
+                .perform();
+    }
+
+    private void clickSafely(ElementSupplier supplier, String locator) {
+        try {
+            supplier.get().click();
+        } catch (InvalidElementStateException e) {
+            throw new InvalidElementStateException("Problem at element: " + locator, e);
+        } catch (NoSuchElementException e) {
+            throw new NoSuchElementException("Couldn't find this element: " + locator, e);
+        }
+    }
+
+    private void swipeUntilVisible(ElementSupplier supplier, String locator, String swipeLocator, SwipeSpeed swipeSpeed) {
         for (int i = 0; i < MAX_SWIPE_COUNT; i++) {
             try {
-                WebElement webElement = androidDriver.findElements(getLocator(elementLocator)).get(index);
-                Assert.assertTrue(webElement.isDisplayed());
-                webElement.click();
+                WebElement element = supplier.get();
+                Assert.assertTrue(element.isDisplayed());
+                element.click();
                 break;
             } catch (InvalidElementStateException | NoSuchElementException | AssertionError e) {
-                swipe().element(swipeLocator, swipeSpeed, Coordinates.CENTER, Coordinates.TOP_CENTER, PrecisionDescriber.FINGER);
-                delay(500);
+                swipe().element(swipeLocator, swipeSpeed, DEFAULT_START, DEFAULT_END, DEFAULT_PRECISION);
+                delay(DEFAULT_DELAY);
             }
         }
     }
 
-    public void location(int x, int y, Duration time) {
-        TouchAction touchAction = new TouchAction(androidDriver);
-        touchAction.press(new PointOption().withCoordinates(x, y)).waitAction(new WaitOptions().withDuration(time)).release().perform();
+    @FunctionalInterface
+    private interface ElementSupplier {
+        WebElement get();
     }
 }

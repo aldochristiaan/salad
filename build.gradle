@@ -1,36 +1,59 @@
 plugins {
     id 'java'
-    id 'com.github.johnrengelman.shadow' version '8.1.1'
+    id 'com.gradleup.shadow' version '9.2.2'
 }
 
-apply plugin: 'com.github.johnrengelman.shadow'
+apply plugin: 'com.gradleup.shadow'
 
 group 'salad'
-version '1.2.0-rc4'
-
-sourceCompatibility = JavaVersion.VERSION_11
+version '1.2.0-rc5'
 
 repositories {
+    google()
     mavenCentral()
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
 }
 
 shadowJar {
     archiveBaseName.set('salad')
     archiveVersion.set(project.version.toString())
     archiveClassifier.set(null)
+
+    // Ensure reproducible builds
+    reproducibleFileOrder = true
+    preserveFileTimestamps = false
+
+    // Minimize output but preserve critical dependencies
     minimize {
         exclude(dependency('org.seleniumhq.selenium:.*:.*'))
     }
+
+    // Clean up unwanted files
     exclude '*.aut'
     exclude '*.yml'
+
+    // Optional: Add metadata to manifest
+    manifest {
+        attributes(
+                'Implementation-Title': 'Salad Automation Framework',
+                'Implementation-Version': archiveVersion.get(),
+                'Built-By': 'Aldo',
+                'Created-By': "${System.properties['java.version']} (${System.properties['java.vendor']})"
+        )
+    }
 }
 
 dependencies {
-    implementation 'io.appium:java-client:9.2.3'
+    implementation 'io.appium:java-client:10.0.0'
     implementation 'org.seleniumhq.selenium:selenium-api:4.21.0'
     implementation 'org.seleniumhq.selenium:selenium-remote-driver:4.21.0'
     implementation 'org.seleniumhq.selenium:selenium-support:4.21.0'
-    implementation 'com.github.javafaker:javafaker:1.0.2'
+    implementation 'net.datafaker:datafaker:2.5.3'
     implementation 'commons-io:commons-io:2.16.1'
     implementation 'org.slf4j:slf4j-nop:2.0.13'
     implementation 'org.apache.logging.log4j:log4j-core:2.23.1'
