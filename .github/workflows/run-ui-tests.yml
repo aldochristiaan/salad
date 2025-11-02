@@ -92,3 +92,31 @@ jobs:
       - name: Cucumber Test
         uses: reactivecircus/android-emulator-runner@v2
         with:
+          api-level: ${{ matrix.api-level }}
+          target: ${{ matrix.target }}
+          arch: ${{ matrix.arch }}
+          channel: ${{ matrix.channel }}
+          force-avd-creation: false
+          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          disable-animations: true
+          script: |
+            mkdir -p examples/cucumber/target/
+            touch examples/cucumber/target/appium.log
+            cp examples/apk/app-debug.apk examples/cucumber/src/test/resources
+            cd examples/cucumber && ./gradlew cucumber --tags "@Pass"
+
+      - name: Espresso Test
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: ${{ matrix.api-level }}
+          target: ${{ matrix.target }}
+          arch: ${{ matrix.arch }}
+          channel: ${{ matrix.channel }}
+          force-avd-creation: false
+          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          disable-animations: true
+          script: |
+            mkdir -p examples/espresso/target/
+            touch examples/espresso/target/appium.log
+            cp examples/apk/app-debug.apk examples/espresso/src/test/resources
+            cd examples/espresso && ./gradlew clean test
