@@ -10,31 +10,45 @@ import static id.aldochristiaan.salad.Salad.MAX_SWIPE_COUNT;
 
 public class SwipeTo extends Espresso {
 
+    private static final Coordinates DEFAULT_START = Coordinates.CENTER;
+    private static final Coordinates DEFAULT_END = Coordinates.TOP_CENTER;
+    private static final PrecisionDescriber DEFAULT_PRECISION = PrecisionDescriber.FINGER;
+
     public SwipeTo(AndroidDriver androidDriver) {
         super(androidDriver);
     }
 
     public void element(String elementLocator, String swipeLocator, SwipeSpeed swipeSpeed) {
-        for (int swipeCount = 0; !isElementDisplayed(elementLocator, 1) && swipeCount <= MAX_SWIPE_COUNT; ++swipeCount) {
-            swipe().element(swipeLocator, swipeSpeed, Coordinates.CENTER, Coordinates.TOP_CENTER, PrecisionDescriber.FINGER);
-        }
+        swipeUntilVisible(() -> isElementDisplayed(elementLocator, 1),
+                swipeLocator, swipeSpeed, DEFAULT_START, DEFAULT_END);
     }
 
-    public void element(String elementLocator, String swipeLocator, SwipeSpeed swipeSpeed, Coordinates startCoordinate, Coordinates endCoordinate) {
-        for (int swipeCount = 0; !isElementDisplayed(elementLocator, 1) && swipeCount <= MAX_SWIPE_COUNT; ++swipeCount) {
-            swipe().element(swipeLocator, swipeSpeed, startCoordinate, endCoordinate, PrecisionDescriber.FINGER);
-        }
+    public void element(String elementLocator, String swipeLocator, SwipeSpeed swipeSpeed,
+                        Coordinates startCoordinate, Coordinates endCoordinate) {
+        swipeUntilVisible(() -> isElementDisplayed(elementLocator, 1),
+                swipeLocator, swipeSpeed, startCoordinate, endCoordinate);
     }
 
     public void element(String elementLocator, int index, String swipeLocator, SwipeSpeed swipeSpeed) {
-        for (int swipeCount = 0; !isElementDisplayed(elementLocator, index, 1) && swipeCount <= MAX_SWIPE_COUNT; ++swipeCount) {
-            swipe().element(swipeLocator, swipeSpeed, Coordinates.CENTER, Coordinates.TOP_CENTER, PrecisionDescriber.FINGER);
+        swipeUntilVisible(() -> isElementDisplayed(elementLocator, index, 1),
+                swipeLocator, swipeSpeed, DEFAULT_START, DEFAULT_END);
+    }
+
+    public void element(String elementLocator, int index, String swipeLocator, SwipeSpeed swipeSpeed,
+                        Coordinates startCoordinate, Coordinates endCoordinate) {
+        swipeUntilVisible(() -> isElementDisplayed(elementLocator, index, 1),
+                swipeLocator, swipeSpeed, startCoordinate, endCoordinate);
+    }
+
+    private void swipeUntilVisible(SwipeCondition condition, String swipeLocator,
+                                   SwipeSpeed swipeSpeed, Coordinates start, Coordinates end) {
+        for (int swipeCount = 0; !condition.check() && swipeCount <= MAX_SWIPE_COUNT; ++swipeCount) {
+            swipe().element(swipeLocator, swipeSpeed, start, end, DEFAULT_PRECISION);
         }
     }
 
-    public void element(String elementLocator, int index, String swipeLocator, SwipeSpeed swipeSpeed, Coordinates startCoordinate, Coordinates endCoordinate) {
-        for (int swipeCount = 0; !isElementDisplayed(elementLocator, index, 1) && swipeCount <= MAX_SWIPE_COUNT; ++swipeCount) {
-            swipe().element(swipeLocator, swipeSpeed, startCoordinate, endCoordinate, PrecisionDescriber.FINGER);
-        }
+    @FunctionalInterface
+    private interface SwipeCondition {
+        boolean check();
     }
 }

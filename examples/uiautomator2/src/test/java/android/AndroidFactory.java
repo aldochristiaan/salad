@@ -20,23 +20,26 @@ import java.util.Properties;
 
 public class AndroidFactory {
 
+    private static final String ELEMENTS_DIR = "src/test/resources/elements/";
+    private static final String CAPABILITIES_FILE = "capabilities.properties";
+    private static final String APP_PACKAGE = "com.example.myapplication";
+
     private static Salad salad;
     private static AndroidDriver androidDriver;
     private static AppiumDriverLocalService service;
     protected static Android android;
 
+    // === Lifecycle Hooks ===
     @BeforeAll
     public static void setUp() {
-        String elementPropertiesDirectory = "src/test/resources/elements/";
-        String capabilitiesFileName = "capabilities.properties";
-        Properties capabilitiesProperties = PropertiesLoader.loadCapabilities(capabilitiesFileName);
+        Properties capabilities = PropertiesLoader.loadCapabilities(CAPABILITIES_FILE);
         salad = new Salad(
-                capabilitiesProperties,
-                elementPropertiesDirectory,
+                capabilities,
+                ELEMENTS_DIR,
                 Driver.UIAUTOMATOR2,
                 LogLevel.ERROR
         );
-        initSession();
+        startSession();
     }
 
     @AfterAll
@@ -44,32 +47,33 @@ public class AndroidFactory {
         salad.stop(Driver.UIAUTOMATOR2);
     }
 
-    public static void initSession() {
+    // === Session Management ===
+    public static void startSession() {
         salad.start();
         androidDriver = salad.getAndroidDriver();
         android = new Android(androidDriver);
     }
 
-    /**
-     * If test failed, it will automatically take screenshot and reset app state
-     * You can modify it too to match your usage
-     *
-     * @see TestListener
-     */
-    public static void resetApp() {
-        AppManagement appManagement = new AppManagement(androidDriver);
-        appManagement.clearApp("com.example.myapplication");
-        appManagement.activateApp("com.example.myapplication");
+    public static AndroidDriver getAndroidDriver() {
+        return androidDriver;
     }
 
+    // === App Recovery ===
+    public static void resetApp() {
+        AppManagement app = new AppManagement(androidDriver);
+        app.clearApp(APP_PACKAGE);
+        app.activateApp(APP_PACKAGE);
+    }
+
+    // === Screenshot Utility ===
     public static void takeScreenshot(String name) {
-        File srcFile = ((TakesScreenshot) androidDriver).getScreenshotAs(OutputType.FILE);
-        File imageFile = new File("screenshot/" + name + ".png");
         try {
-            FileUtils.copyFile(Objects.requireNonNull(srcFile), imageFile);
-            LogUtil.info("Screenshot taken");
+            File src = ((TakesScreenshot) androidDriver).getScreenshotAs(OutputType.FILE);
+            File dest = new File("screenshot/" + name + ".png");
+            FileUtils.copyFile(Objects.requireNonNull(src), dest);
+            LogUtil.info("Screenshot taken: " + dest.getAbsolutePath());
         } catch (Exception e) {
-            LogUtil.error("Exception while taking screenshot", e);
+            LogUtil.error("Failed to take screenshot", e);
         }
     }
 }

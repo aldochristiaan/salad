@@ -11,14 +11,14 @@ public class MainPage extends BasePage {
     }
 
     public void isOnMainPage() {
-        validateDisplayed("ANDROID_TOOLBAR", 5);
+        validateDisplayed("ANDROID_TOOLBAR", 5, "");
     }
 
     public void validateDrawer() {
-        validateDisplayed(constructLocator("GENERAL_TEXT", "android.studio@android.com"), 2);
-        validateDisplayed(constructLocator("GENERAL_CONTAINS_TEXT", "Home"), 2);
-        validateDisplayed(constructLocator("GENERAL_TRANSLATION_TEXT", "Gallery"), 2);
-        validateDisplayed(constructLocator("GENERAL_XPATH", "//*[@text='Slideshow']"), 2);
+        validateDisplayed(constructLocator("GENERAL_TEXT", "android.studio@android.com"), 2, "");
+        validateDisplayed(constructLocator("GENERAL_CONTAINS_TEXT", "Home"), 2, "");
+        validateDisplayed(constructLocator("GENERAL_TRANSLATION_TEXT", "Gallery"), 2, "");
+        validateDisplayed(constructLocator("GENERAL_XPATH", "//*[@text='Slideshow']"), 2, "");
     }
 
     public void openDrawer() {
@@ -46,13 +46,13 @@ public class MainPage extends BasePage {
     public void goToPages() {
         openDrawer();
         tap().element(constructLocator("GENERAL_TEXT", "Home"));
-        validateDisplayed(constructLocator("GENERAL_TEXT", "This is home Fragment"), 2);
+        validateDisplayed(constructLocator("GENERAL_TEXT", "This is home Fragment"), 2, "");
         openDrawer();
         tap().element(constructLocator("GENERAL_TEXT", "Gallery"));
-        validateDisplayed(constructLocator("GENERAL_TEXT", "This is gallery Fragment"), 2);
+        validateDisplayed(constructLocator("GENERAL_TEXT", "This is gallery Fragment"), 2, "");
         openDrawer();
         tap().element(constructLocator("GENERAL_TEXT", "Share"));
-        validateDisplayed(constructLocator("GENERAL_TEXT", "This is share Fragment"), 2);
+        validateDisplayed(constructLocator("GENERAL_TEXT", "This is share Fragment"), 2, "");
     }
 
     public void debugElementUsingFlash() {

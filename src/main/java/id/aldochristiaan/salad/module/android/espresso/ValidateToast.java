@@ -4,6 +4,7 @@ import id.aldochristiaan.salad.module.Espresso;
 import io.appium.java_client.android.AndroidDriver;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public class ValidateToast extends Espresso {
 
@@ -12,9 +13,11 @@ public class ValidateToast extends Espresso {
     }
 
     public void exist(String text, boolean isRegexp) {
-        HashMap<String, Object> args = new HashMap<>();
+        Map<String, Object> args = new HashMap<>();
         args.put("text", text);
-        if (isRegexp) args.put("isRegexp", true);
+        if (isRegexp) {
+            args.put("isRegexp", true);
+        }
         androidDriver.executeScript("mobile:isToastVisible", args);
     }
 }

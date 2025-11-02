@@ -1,59 +1,69 @@
-# Automate your test
+# 🧪 Salad Automation Framework
 
-### Create Application Factory
+Salad is a modular mobile automation framework designed to be flexible, scalable, and easy to integrate with any test strategy. It supports multiple drivers, dynamic element locators, and reusable page object patterns.
 
-First of all, you have to make `YourAppFactory.java` to make it as your automation engine that control how your automation works.
+---
 
-P.S: You can change `<YourApp>` with your application name. Ex: `FacebookFactory.java`
+## 🚀 Getting Started
 
-```
+### 🏗️ Create Your Application Factory
+
+Create a factory class to initialize your automation engine and register your app modules.
+
+> Replace `YourApp` with your actual app name (e.g., `FacebookFactory`).
+
+```java
 public class YourAppFactory {
 
-   private static Salad salad; // Automation Engine
-   protected static YourApp yourApp;
+    private static Salad salad;
+    protected static YourApp yourApp;
 
-   @BeforeAll
-   public static void setUp() {
-       String elementPropertiesDirectory = "src/test/resources/elements/";
-       String capabilitiesFileName = "capabilities.properties";
-       Properties capabilitiesProperties = PropertiesLoader.loadCapabilities(capabilitiesFileName);
-       salad = new Salad(
-               capabilitiesProperties,
-               elementPropertiesDirectory,
-               Driver.ESPRESSO,
-               LogLevel.ERROR
-       );
-       salad.start();
-       androidDriver = salad.getAndroidDriver();
-       yourApp = new YourApp(androidDriver);
-   }
-   
-   @AfterAll
-   public static void tearDown() {
-       salad.stop(Driver.ESPRESSO);
-   }
+    @BeforeAll
+    public static void setUp() {
+        String elementPropertiesDirectory = "src/test/resources/elements/";
+        String capabilitiesFileName = "capabilities.properties";
+        Properties capabilitiesProperties = PropertiesLoader.loadCapabilities(capabilitiesFileName);
+
+        salad = new Salad(
+            capabilitiesProperties,
+            elementPropertiesDirectory,
+            Driver.ESPRESSO,
+            LogLevel.ERROR
+        );
+
+        salad.start();
+        AndroidDriver<AndroidElement> androidDriver = salad.getAndroidDriver();
+        yourApp = new YourApp(androidDriver);
+    }
+
+    @AfterAll
+    public static void tearDown() {
+        salad.stop(Driver.ESPRESSO);
+    }
 }
 ```
 
-### List of modules
+---
 
-You can use modules provided based on mobile driver :
+## 📦 Supported Modules
 
-- [Espresso](https://github.com/aldochristiaan/salad/tree/document/src/main/java/id/aldochristiaan/salad/module/android/espresso)
-- [UiAutomator2](https://github.com/aldochristiaan/salad/tree/document/src/main/java/id/aldochristiaan/salad/module/android/uiautomator2)
-- [XCUITest](https://github.com/aldochristiaan/salad/tree/document/src/main/java/id/aldochristiaan/salad/module/ios)
+Salad supports multiple mobile drivers:
 
-Feel free to add more methods if it can be used generally. Just create a PR :)
+- [Espresso](src/main/java/id/aldochristiaan/salad/module/android/espresso)
+- [UiAutomator2](src/main/java/id/aldochristiaan/salad/module/android/uiautomator2)
+- [XCUITest](src/main/java/id/aldochristiaan/salad/module/ios)
 
-### Provide Element Properties and Page Object
+Feel free to contribute new modules or methods via pull requests!
 
-In general, Page Object Pattern define its element inside the file.
+---
 
-But we will use another approach by using element properties to make it cleaner and reusable.
+## 📄 Page Object with Element Properties
 
-Example:
+Instead of hardcoding locators, Salad uses `.properties` files for cleaner and reusable element definitions.
 
-```
+### Example: `MainPage.java`
+
+```java
 public class MainPage extends BasePage {
 
     public MainPage(AndroidDriver<AndroidElement> androidDriver) {
@@ -115,9 +125,11 @@ public class MainPage extends BasePage {
 }
 ```
 
-Page properties : 
+---
 
-- `General.properties`
+## 🧩 Element Properties
+
+### `General.properties`
 
 ```
 GENERAL_TEXT=text_%s
@@ -128,7 +140,7 @@ GENERAL_CONTENT_DESCRIPTION=contentDescription_%s
 GENERAL_XPATH=xpath_%s
 ```
 
-- `MainPage.properties`
+### `MainPage.properties`
 
 ```
 ANDROID_DRAWER=id_drawer_layout
@@ -137,14 +149,18 @@ ANDROID_FLOATING_ACTION_BUTTON=xpath_//com.google.android.material.floatingactio
 ANDROID_MORE_OPTIONS=contentDescription_More options
 ```
 
-List of locator:
+---
+
+## 🔍 Locator Strategies
+
+Supported locator types:
+
 - id
 - accessibilityId
 - contentDescription
 - text
 - containsText
 - translationText
-- accessibilityId
 - name
 - label
 - value
@@ -153,35 +169,22 @@ List of locator:
 - xpath
 - viewTag
 
-In case you need general text locator, you can use `constructLocator()` that will provide dynamic arguments to find the element.
-
-Example:
+Use `constructLocator()` to dynamically build locators:
 
 ```
-GENERAL_TEXT=text_%s
-GENERAL_LABEL=label_%s
-DYMAMIC_BUTTON_XPATH=xpath_//android.widget.Button[@text='%s']
+tap().element(constructLocator("GENERAL_TEXT", "Waiting..."));
+tap().element(constructLocator("DYMAMIC_BUTTON_XPATH", "Search"));
 ```
 
-And use it like these:
+---
 
-```
-String textToSearch = "Waiting..."
-tap().element(constructLocator("GENERAL_TEXT", textToSearch));
+## 🧭 Register Page Objects
 
-String buttonText = "Search"
-tap().element(constructLocator("DYMAMIC_BUTTON_XPATH", buttonText));
-```
-
-### Register all of Page Object in YourApp.java
-
-Register all of page object you've created into `YourApp.java`
-
-```
+```java
 public class YourApp {
 
     private AndroidDriver<AndroidElement> androidDriver;
-    
+
     public YourApp(AndroidDriver<AndroidElement> androidDriver) {
         this.androidDriver = androidDriver;
     }
@@ -190,16 +193,15 @@ public class YourApp {
         return new MainPage(androidDriver);
     }
 }
-
 ```
 
-### Finally, create your test!
+---
 
-Create test file and extends `YourAppFactory`.
+## 🧪 Write Your Tests
 
-Also you can add custom Listener for your test.
+Extend your factory and use page objects to write expressive tests.
 
-```
+```java
 @ExtendWith(TestListener.class)
 public class AndroidTest extends YourAppFactory {
 
@@ -213,8 +215,7 @@ public class AndroidTest extends YourAppFactory {
         yourApp.homePage().closeDrawer();
         yourApp.homePage().goToPages();
         yourApp.homePage().tapOnFABUsingUiAutomator();
-        // This method will make automation test fail
-        yourApp.homePage().failedMethod();
+        yourApp.homePage().failedMethod(); // Expected to fail
     }
 
     @Test
@@ -232,8 +233,19 @@ public class AndroidTest extends YourAppFactory {
 }
 ```
 
-### Implement with another Framework ?
+---
 
-Don't worry and Yes, you can!
+## 🔗 Framework Integration
 
-You can integrate this library with cucumber, testNG, or anything you want!
+Salad works seamlessly with:
+
+- ✅ **JUnit 5**
+- ✅ **TestNG**
+- ✅ **Cucumber**
+- ✅ **Custom runners and listeners**
+
+---
+
+## 🤝 Contribute
+
+Found something reusable or want to extend a module? Submit a pull request and help improve the framework!

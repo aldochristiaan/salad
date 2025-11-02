@@ -6,6 +6,8 @@ import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.touch.offset.ElementOption;
 import org.openqa.selenium.WebElement;
 
+import java.util.List;
+
 public class LongTap extends UiAutomator2 {
 
     public LongTap(AndroidDriver androidDriver) {
@@ -13,26 +15,35 @@ public class LongTap extends UiAutomator2 {
     }
 
     public void element(String elementLocator) {
-        WebElement webElement = findElementBy(getLocator(elementLocator));
-        TouchAction action = new TouchAction(androidDriver);
-        action.longPress(new ElementOption().withElement(webElement)).release().perform();
+        performLongTap(findElementBy(getLocator(elementLocator)));
     }
 
     public void element(String elementLocator, int index) {
-        WebElement webElement = findElementsBy(getLocator(elementLocator)).get(index);
-        TouchAction action = new TouchAction(androidDriver);
-        action.longPress(new ElementOption().withElement(webElement)).release().perform();
+        List<WebElement> elements = findElementsBy(getLocator(elementLocator));
+        if (index < elements.size()) {
+            performLongTap(elements.get(index));
+        } else {
+            throw new IndexOutOfBoundsException("No element at index " + index);
+        }
     }
 
     public void pendingElement(String elementLocator, int timeout) {
-        WebElement webElement = findElementBy(getLocator(elementLocator), timeout);
-        TouchAction action = new TouchAction(androidDriver);
-        action.longPress(new ElementOption().withElement(webElement)).release().perform();
+        performLongTap(findElementBy(getLocator(elementLocator), timeout));
     }
 
     public void pendingElement(String elementLocator, int timeout, int index) {
-        WebElement webElement = findElementsBy(getLocator(elementLocator), timeout).get(index);
-        TouchAction action = new TouchAction(androidDriver);
-        action.longPress(new ElementOption().withElement(webElement)).release().perform();
+        List<WebElement> elements = findElementsBy(getLocator(elementLocator), timeout);
+        if (index < elements.size()) {
+            performLongTap(elements.get(index));
+        } else {
+            throw new IndexOutOfBoundsException("No element at index " + index + " after waiting " + timeout + " seconds");
+        }
+    }
+
+    private void performLongTap(WebElement element) {
+        new TouchAction<>(androidDriver)
+                .longPress(ElementOption.element(element))
+                .release()
+                .perform();
     }
 }

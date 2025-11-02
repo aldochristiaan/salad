@@ -4,6 +4,8 @@ import id.aldochristiaan.salad.module.UiAutomator2;
 import io.appium.java_client.android.AndroidDriver;
 import org.openqa.selenium.WebElement;
 
+import java.util.List;
+
 public class Type extends UiAutomator2 {
 
     public Type(AndroidDriver androidDriver) {
@@ -11,34 +13,31 @@ public class Type extends UiAutomator2 {
     }
 
     public void element(String elementLocator, String text) {
-        WebElement webElement = findElementBy(getLocator(elementLocator));
-        webElement.click();
-        webElement.clear();
-        webElement.sendKeys(text);
-        hideKeyboard();
+        typeInto(findElementBy(getLocator(elementLocator)), text);
     }
 
     public void element(String elementLocator, int index, String text) {
-        WebElement webElement = findElementsBy(getLocator(elementLocator)).get(index);
-        webElement.click();
-        webElement.clear();
-        webElement.sendKeys(text);
-        hideKeyboard();
+        List<WebElement> elements = findElementsBy(getLocator(elementLocator));
+        if (index < elements.size()) {
+            typeInto(elements.get(index), text);
+        }
     }
 
     public void pendingElement(String elementLocator, int timeout, String text) {
-        WebElement webElement = findElementBy(getLocator(elementLocator), timeout);
-        webElement.click();
-        webElement.clear();
-        webElement.sendKeys(text);
-        hideKeyboard();
+        typeInto(findElementBy(getLocator(elementLocator), timeout), text);
     }
 
     public void pendingElement(String elementLocator, int timeout, int index, String text) {
-        WebElement webElement = (WebElement) findElementsBy(getLocator(elementLocator), timeout).get(index);
-        webElement.click();
-        webElement.clear();
-        webElement.sendKeys(text);
+        List<WebElement> elements = findElementsBy(getLocator(elementLocator), timeout);
+        if (index < elements.size()) {
+            typeInto(elements.get(index), text);
+        }
+    }
+
+    private void typeInto(WebElement element, String text) {
+        element.click();
+        element.clear();
+        element.sendKeys(text);
         hideKeyboard();
     }
 }

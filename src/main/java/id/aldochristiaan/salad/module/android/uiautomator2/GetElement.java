@@ -12,14 +12,24 @@ public class GetElement extends UiAutomator2 {
     }
 
     public WebElement withLocator(String elementLocator) {
-        return findElementBy(getLocator(elementLocator));
+        return find(elementLocator, null, null);
     }
 
     public WebElement withLocator(String elementLocator, int timeout) {
-        return findElementBy(getLocator(elementLocator), timeout);
+        return find(elementLocator, timeout, null);
     }
 
     public WebElement withLocator(String elementLocator, Direction direction) {
-        return findElementBy(getLocator(elementLocator), direction);
+        return find(elementLocator, null, direction);
+    }
+
+    private WebElement find(String elementLocator, Integer timeout, Direction direction) {
+        if (timeout != null) {
+            return findElementBy(getLocator(elementLocator), timeout);
+        } else if (direction != null) {
+            return findElementBy(getLocator(elementLocator), direction);
+        } else {
+            return findElementBy(getLocator(elementLocator));
+        }
     }
 }

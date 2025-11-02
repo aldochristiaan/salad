@@ -13,10 +13,18 @@ public class GetMultipleElement extends UiAutomator2 {
     }
 
     public List<WebElement> withLocator(String elementLocator) {
-        return findElementsBy(getLocator(elementLocator));
+        return find(elementLocator, null);
     }
 
     public List<WebElement> withLocator(String elementLocator, int timeout) {
-        return findElementsBy(getLocator(elementLocator), timeout);
+        return find(elementLocator, timeout);
+    }
+
+    private List<WebElement> find(String elementLocator, Integer timeout) {
+        if (timeout != null) {
+            return findElementsBy(getLocator(elementLocator), timeout);
+        } else {
+            return findElementsBy(getLocator(elementLocator));
+        }
     }
 }

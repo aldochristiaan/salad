@@ -10,16 +10,21 @@ import java.time.Duration;
 
 public class GetElement extends Espresso {
 
+    private static final int DEFAULT_TIMEOUT_SECONDS = 0;
+
     public GetElement(AndroidDriver androidDriver) {
         super(androidDriver);
     }
 
     public WebElement withLocator(String elementLocator) {
-        return androidDriver.findElement(getLocator(elementLocator));
+        return withLocator(elementLocator, DEFAULT_TIMEOUT_SECONDS);
     }
 
-    public WebElement withLocator(String elementLocator, int timeout) {
-        return new WebDriverWait(androidDriver, Duration.ofSeconds(timeout))
+    public WebElement withLocator(String elementLocator, int timeoutSeconds) {
+        if (timeoutSeconds <= 0) {
+            return androidDriver.findElement(getLocator(elementLocator));
+        }
+        return new WebDriverWait(androidDriver, Duration.ofSeconds(timeoutSeconds))
                 .until(ExpectedConditions.visibilityOfElementLocated(getLocator(elementLocator)));
     }
 }

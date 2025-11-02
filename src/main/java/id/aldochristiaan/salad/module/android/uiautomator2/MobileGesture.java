@@ -8,6 +8,9 @@ import org.openqa.selenium.Dimension;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.remote.RemoteWebElement;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class MobileGesture extends UiAutomator2 {
 
     public MobileGesture(AndroidDriver androidDriver) {
@@ -15,164 +18,125 @@ public class MobileGesture extends UiAutomator2 {
     }
 
     public void tap(String elementLocator) {
-        ((JavascriptExecutor) androidDriver).executeScript("mobile: clickGesture", ImmutableMap.of(
-                "elementId", ((RemoteWebElement) androidDriver.findElement(getLocator(elementLocator))).getId()
-        ));
+        executeGesture("clickGesture", ImmutableMap.of("elementId", getElementId(elementLocator)));
     }
 
     public void doubleTap(String elementLocator) {
-        ((JavascriptExecutor) androidDriver).executeScript("mobile: doubleClickGesture", ImmutableMap.of(
-                "elementId", ((RemoteWebElement) androidDriver.findElement(getLocator(elementLocator))).getId()
-        ));
+        executeGesture("doubleClickGesture", ImmutableMap.of("elementId", getElementId(elementLocator)));
     }
 
     public void longTap(String elementLocator) {
-        ((JavascriptExecutor) androidDriver).executeScript("mobile: longClickGesture", ImmutableMap.of(
-                "elementId", ((RemoteWebElement) androidDriver.findElement(getLocator(elementLocator))).getId()
-        ));
+        executeGesture("longClickGesture", ImmutableMap.of("elementId", getElementId(elementLocator)));
     }
 
     public void pinchOpen(String elementLocator) {
-        ((JavascriptExecutor) androidDriver).executeScript("mobile: pinchOpenGesture", ImmutableMap.of(
-                "elementId", ((RemoteWebElement) androidDriver.findElement(getLocator(elementLocator))).getId(),
-                "percent", 0.75
-        ));
+        pinchOpen(elementLocator, 0.75);
     }
 
     public void pinchOpen(String elementLocator, double percent) {
-        ((JavascriptExecutor) androidDriver).executeScript("mobile: pinchOpenGesture", ImmutableMap.of(
-                "elementId", ((RemoteWebElement) androidDriver.findElement(getLocator(elementLocator))).getId(),
+        executeGesture("pinchOpenGesture", ImmutableMap.of(
+                "elementId", getElementId(elementLocator),
                 "percent", percent
         ));
     }
 
     public void pinchClose(String elementLocator) {
-        ((JavascriptExecutor) androidDriver).executeScript("mobile: pinchCloseGesture", ImmutableMap.of(
-                "elementId", ((RemoteWebElement) androidDriver.findElement(getLocator(elementLocator))).getId(),
-                "percent", 0.75
-        ));
+        pinchClose(elementLocator, 0.75);
     }
 
     public void pinchClose(String elementLocator, double percent) {
-        ((JavascriptExecutor) androidDriver).executeScript("mobile: pinchCloseGesture", ImmutableMap.of(
-                "elementId", ((RemoteWebElement) androidDriver.findElement(getLocator(elementLocator))).getId(),
+        executeGesture("pinchCloseGesture", ImmutableMap.of(
+                "elementId", getElementId(elementLocator),
                 "percent", percent
         ));
     }
 
     public void swipe(Direction direction, double xStart, double yStart, double percent) {
-
-        Dimension size = androidDriver.manage().window().getSize();
-
-        int x = (int) (size.width * xStart);
-        int y = (int) (size.height * yStart);
-
-        ((JavascriptExecutor) androidDriver).executeScript("mobile: swipeGesture", ImmutableMap.of(
-                "left", x, "top", y, "width", 200, "height", 200,
-                "direction", direction.toString(),
-                "percent", percent
-        ));
+        swipe(direction, xStart, yStart, 200, 200, percent);
     }
 
     public void swipe(Direction direction, double xStart, double yStart, int width, int height, double percent) {
-
-        Dimension size = androidDriver.manage().window().getSize();
-
-        int x = (int) (size.width * xStart);
-        int y = (int) (size.height * yStart);
-
-        ((JavascriptExecutor) androidDriver).executeScript("mobile: swipeGesture", ImmutableMap.of(
-                "left", x, "top", y, "width", width, "height", height,
-                "direction", direction.toString(),
-                "percent", percent
-        ));
+        Map<String, Object> area = getArea(xStart, yStart, width, height);
+        area.put("direction", direction.toString());
+        area.put("percent", percent);
+        executeGesture("swipeGesture", area);
     }
 
     public boolean scroll(String elementLocator, Direction direction, double xStart, double yStart, double percent) {
-        Dimension size = androidDriver.manage().window().getSize();
-
-        int x = (int) (size.width * xStart);
-        int y = (int) (size.height * yStart);
-
-        return (Boolean) ((JavascriptExecutor) androidDriver).executeScript("mobile: scrollGesture", ImmutableMap.of(
-                "elementId", ((RemoteWebElement) androidDriver.findElement(getLocator(elementLocator))).getId(),
-                "left", x, "top", y, "width", 200, "height", 200,
-                "direction", direction.toString(),
-                "percent", percent
-        ));
+        return scroll(elementLocator, direction, xStart, yStart, 200, 200, percent);
     }
 
     public boolean scroll(Direction direction, double xStart, double yStart, double percent) {
-        Dimension size = androidDriver.manage().window().getSize();
-
-        int x = (int) (size.width * xStart);
-        int y = (int) (size.height * yStart);
-
-        return (Boolean) ((JavascriptExecutor) androidDriver).executeScript("mobile: scrollGesture", ImmutableMap.of(
-                "left", x, "top", y, "width", 200, "height", 200,
-                "direction", direction.toString(),
-                "percent", percent
-        ));
+        return scroll(null, direction, xStart, yStart, 200, 200, percent);
     }
 
     public boolean scroll(Direction direction, double xStart, double yStart, double width, double height, double percent) {
-        Dimension size = androidDriver.manage().window().getSize();
+        return scroll(null, direction, xStart, yStart, width, height, percent);
+    }
 
-        int x = (int) (size.width * xStart);
-        int y = (int) (size.height * yStart);
-
-        return (Boolean) ((JavascriptExecutor) androidDriver).executeScript("mobile: scrollGesture", ImmutableMap.of(
-                "left", x, "top", y, "width", width, "height", height,
-                "direction", direction.toString(),
-                "percent", percent
-        ));
+    private boolean scroll(String elementLocator, Direction direction, double xStart, double yStart, double width, double height, double percent) {
+        Map<String, Object> area = getArea(xStart, yStart, width, height);
+        area.put("direction", direction.toString());
+        area.put("percent", percent);
+        if (elementLocator != null) {
+            area.put("elementId", getElementId(elementLocator));
+        }
+        return (Boolean) executeGesture("scrollGesture", area);
     }
 
     public void drag(String elementLocator, double xEnd, double yEnd) {
-
         Dimension size = androidDriver.manage().window().getSize();
-
-        int x = (int) (size.width * xEnd);
-        int y = (int) (size.height * yEnd);
-
-        ((JavascriptExecutor) androidDriver).executeScript("mobile: dragGesture", ImmutableMap.of(
-                "elementId", ((RemoteWebElement) androidDriver.findElement(getLocator(elementLocator))).getId(),
-                "endX", x,
-                "endY", y
+        executeGesture("dragGesture", ImmutableMap.of(
+                "elementId", getElementId(elementLocator),
+                "endX", (int) (size.width * xEnd),
+                "endY", (int) (size.height * yEnd)
         ));
     }
 
     public void drag(String elementLocator, double xStart, double xEnd, double yStart, double yEnd) {
-
         Dimension size = androidDriver.manage().window().getSize();
-
-        int x0 = (int) (size.width * xStart);
-        int x1 = (int) (size.width * xEnd);
-        int y0 = (int) (size.height * yStart);
-        int y1 = (int) (size.height * yEnd);
-
-        ((JavascriptExecutor) androidDriver).executeScript("mobile: dragGesture", ImmutableMap.of(
-                "elementId", ((RemoteWebElement) androidDriver.findElement(getLocator(elementLocator))).getId(),
-                "startX", x0,
-                "startY", y0,
-                "endX", x1,
-                "endY", y1
+        executeGesture("dragGesture", ImmutableMap.of(
+                "elementId", getElementId(elementLocator),
+                "startX", (int) (size.width * xStart),
+                "startY", (int) (size.height * yStart),
+                "endX", (int) (size.width * xEnd),
+                "endY", (int) (size.height * yEnd)
         ));
     }
 
     public boolean fling(String elementLocator, Direction direction) {
-        return (Boolean) ((JavascriptExecutor) androidDriver).executeScript("mobile: flingGesture", ImmutableMap.of(
-                "elementId", ((RemoteWebElement) androidDriver.findElement(getLocator(elementLocator))).getId(),
-                "direction", direction.toString(),
-                "speed", 500
-        ));
+        return fling(elementLocator, direction, 500);
     }
 
     public boolean fling(String elementLocator, Direction direction, int speed) {
-        return (Boolean) ((JavascriptExecutor) androidDriver).executeScript("mobile: flingGesture", ImmutableMap.of(
-                "elementId", ((RemoteWebElement) androidDriver.findElement(getLocator(elementLocator))).getId(),
+        return (Boolean) executeGesture("flingGesture", ImmutableMap.of(
+                "elementId", getElementId(elementLocator),
                 "direction", direction.toString(),
                 "speed", speed
         ));
+    }
+
+    // Utility methods
+
+    private Object executeGesture(String gesture, Map<String, Object> args) {
+        return ((JavascriptExecutor) androidDriver).executeScript("mobile:" + gesture, args);
+    }
+
+    private String getElementId(String locator) {
+        return ((RemoteWebElement) androidDriver.findElement(getLocator(locator))).getId();
+    }
+
+    private Map<String, Object> getArea(double xStart, double yStart, double width, double height) {
+        Dimension size = androidDriver.manage().window().getSize();
+        int x = (int) (size.width * xStart);
+        int y = (int) (size.height * yStart);
+
+        Map<String, Object> area = new HashMap<>();
+        area.put("left", x);
+        area.put("top", y);
+        area.put("width", (int) width);
+        area.put("height", (int) height);
+
+        return area;
     }
 }

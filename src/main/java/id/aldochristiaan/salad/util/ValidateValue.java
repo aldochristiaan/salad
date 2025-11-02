@@ -5,7 +5,7 @@ import org.junit.Assert;
 public class ValidateValue {
 
     public void equals(String expected, String actual) {
-        Assert.assertEquals("Actual value : " + actual + " is different with expected : " + expected + " !", expected, actual);
+        Assert.assertEquals("Expected: " + expected + ", but got: " + actual, expected, actual);
     }
 
     public void equals(String expected, String actual, String message) {
@@ -13,7 +13,7 @@ public class ValidateValue {
     }
 
     public void equals(boolean expected, boolean actual) {
-        Assert.assertEquals("Actual value : " + actual + " is different with expected : " + expected + " !", expected, actual);
+        Assert.assertEquals("Expected: " + expected + ", but got: " + actual, expected, actual);
     }
 
     public void equals(boolean expected, boolean actual, String message) {
@@ -21,7 +21,7 @@ public class ValidateValue {
     }
 
     public void equals(int expected, int actual) {
-        Assert.assertEquals("Actual value : " + actual + " is different with expected : " + expected + " !", expected, actual);
+        Assert.assertEquals("Expected: " + expected + ", but got: " + actual, expected, actual);
     }
 
     public void equals(int expected, int actual, String message) {
@@ -29,7 +29,7 @@ public class ValidateValue {
     }
 
     public void equals(long expected, long actual) {
-        Assert.assertEquals("Actual value : " + actual + " is different with expected : " + expected + " !", expected, actual);
+        Assert.assertEquals("Expected: " + expected + ", but got: " + actual, expected, actual);
     }
 
     public void equals(long expected, long actual, String message) {
@@ -37,7 +37,7 @@ public class ValidateValue {
     }
 
     public void equals(double expected, double actual, double delta) {
-        Assert.assertEquals("Actual value : " + actual + " is different with expected : " + expected + " !", expected, actual, delta);
+        Assert.assertEquals("Expected: " + expected + ", but got: " + actual, expected, actual, delta);
     }
 
     public void equals(double expected, double actual, double delta, String message) {
@@ -45,7 +45,7 @@ public class ValidateValue {
     }
 
     public void notEquals(String expected, String actual) {
-        Assert.assertNotEquals("Actual value : " + actual + " is equals with expected : " + expected + " !", expected, actual);
+        Assert.assertNotEquals("Expected not to be: " + expected + ", but got: " + actual, expected, actual);
     }
 
     public void notEquals(String expected, String actual, String message) {
@@ -53,7 +53,7 @@ public class ValidateValue {
     }
 
     public void notEquals(boolean expected, boolean actual) {
-        Assert.assertNotEquals("Actual value : " + actual + " is equals with expected : " + expected + " !", expected, actual);
+        Assert.assertNotEquals("Expected not to be: " + expected + ", but got: " + actual, expected, actual);
     }
 
     public void notEquals(boolean expected, boolean actual, String message) {
@@ -61,7 +61,7 @@ public class ValidateValue {
     }
 
     public void notEquals(int expected, int actual) {
-        Assert.assertNotEquals("Actual value : " + actual + " is equals with expected : " + expected + " !", expected, actual);
+        Assert.assertNotEquals("Expected not to be: " + expected + ", but got: " + actual, expected, actual);
     }
 
     public void notEquals(int expected, int actual, String message) {
@@ -69,7 +69,7 @@ public class ValidateValue {
     }
 
     public void notEquals(long expected, long actual) {
-        Assert.assertNotEquals("Actual value : " + actual + " is equals with expected : " + expected + " !", expected, actual);
+        Assert.assertNotEquals("Expected not to be: " + expected + ", but got: " + actual, expected, actual);
     }
 
     public void notEquals(long expected, long actual, String message) {
@@ -77,7 +77,7 @@ public class ValidateValue {
     }
 
     public void notEquals(double expected, double actual, double delta) {
-        Assert.assertNotEquals("Actual value : " + actual + " is equals with expected : " + expected + " !", expected, actual, delta);
+        Assert.assertNotEquals("Expected not to be: " + expected + ", but got: " + actual, expected, actual, delta);
     }
 
     public void notEquals(double expected, double actual, double delta, String message) {
@@ -85,7 +85,7 @@ public class ValidateValue {
     }
 
     public void equalsTrue(boolean condition) {
-        Assert.assertTrue("This condition is false!", condition);
+        Assert.assertTrue("Expected condition to be true, but it was false", condition);
     }
 
     public void equalsTrue(boolean condition, String message) {
@@ -93,7 +93,7 @@ public class ValidateValue {
     }
 
     public void equalsFalse(boolean condition) {
-        Assert.assertFalse("This condition is true!", condition);
+        Assert.assertFalse("Expected condition to be false, but it was true", condition);
     }
 
     public void equalsFalse(boolean condition, String message) {
@@ -101,7 +101,7 @@ public class ValidateValue {
     }
 
     public void contains(String expected, String actual) {
-        Assert.assertTrue(expected + " is not contained in " + actual, actual.contains(expected));
+        Assert.assertTrue(expected + " was not found in: " + actual, actual.contains(expected));
     }
 
     public void contains(String expected, String actual, String message) {

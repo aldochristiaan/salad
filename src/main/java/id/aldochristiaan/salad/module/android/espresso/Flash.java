@@ -4,7 +4,7 @@ import id.aldochristiaan.salad.module.Espresso;
 import io.appium.java_client.android.AndroidDriver;
 import org.openqa.selenium.WebElement;
 
-import java.util.HashMap;
+import java.util.Map;
 
 public class Flash extends Espresso {
 
@@ -14,10 +14,11 @@ public class Flash extends Espresso {
 
     public void element(String elementLocator, int durationMillis, int repeatCount) {
         WebElement webElement = androidDriver.findElement(getLocator(elementLocator));
-        HashMap<String, Object> args = new HashMap<>();
-        args.put("element", webElement);
-        args.put("durationMillis", durationMillis);
-        args.put("repeatCount", repeatCount);
+        Map<String, Object> args = Map.of(
+                "element", webElement,
+                "durationMillis", durationMillis,
+                "repeatCount", repeatCount
+        );
         androidDriver.executeScript("mobile:flashElement", args);
     }
 }

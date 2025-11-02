@@ -18,23 +18,25 @@ import java.util.Properties;
 
 public class AndroidFactory {
 
+    private static final String APP_PACKAGE = "com.example.myapplication";
+    private static final String ELEMENTS_DIR = "src/test/resources/elements/";
+    private static final String CAPABILITIES_FILE = "capabilities.properties";
+
     private static Salad salad;
     private static AndroidDriver androidDriver;
-    private static AppManagement appManagement;
+    private static AppManagement appManager;
     public static Android android;
 
     @BeforeAll
     public static void setUp() {
-        String elementPropertiesDirectory = "src/test/resources/elements/";
-        String capabilitiesFileName = "capabilities.properties";
-        Properties capabilitiesProperties = PropertiesLoader.loadCapabilities(capabilitiesFileName);
+        Properties capabilities = PropertiesLoader.loadCapabilities(CAPABILITIES_FILE);
         salad = new Salad(
-                capabilitiesProperties,
-                elementPropertiesDirectory,
+                capabilities,
+                ELEMENTS_DIR,
                 Driver.UIAUTOMATOR2,
                 LogLevel.ERROR
         );
-        initSession();
+        startSession();
     }
 
     @AfterAll
@@ -44,32 +46,32 @@ public class AndroidFactory {
 
     @Before
     public static void beforeScenario() {
-        appManagement.activateApp("com.example.myapplication");
+        appManager.activateApp(APP_PACKAGE);
     }
 
     @After
     public static void afterScenario(Scenario scenario) {
         if (scenario.isFailed()) {
-            takeScreenshot(scenario.getName());
+            captureScreenshot(scenario.getName());
         }
-        appManagement.clearApp("com.example.myapplication");
+        appManager.clearApp(APP_PACKAGE);
     }
 
-    public static void initSession() {
+    private static void startSession() {
         salad.start();
         androidDriver = salad.getAndroidDriver();
-        appManagement = new AppManagement(androidDriver);
+        appManager = new AppManagement(androidDriver);
         android = new Android(androidDriver);
     }
 
-    public static void takeScreenshot(String name) {
-        File srcFile = ((TakesScreenshot) androidDriver).getScreenshotAs(OutputType.FILE);
-        File imageFile = new File("screenshot/" + name + ".png");
+    private static void captureScreenshot(String scenarioName) {
         try {
-            FileUtils.copyFile(Objects.requireNonNull(srcFile), imageFile);
-            LogUtil.info("Screenshot taken");
+            File src = ((TakesScreenshot) androidDriver).getScreenshotAs(OutputType.FILE);
+            File dest = new File("screenshot/" + scenarioName + ".png");
+            FileUtils.copyFile(Objects.requireNonNull(src), dest);
+            LogUtil.info("Screenshot saved: " + dest.getPath());
         } catch (Exception e) {
-            LogUtil.error("Exception while taking screenshot", e);
+            LogUtil.error("Failed to capture screenshot", e);
         }
     }
 }

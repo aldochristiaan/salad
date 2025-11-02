@@ -4,6 +4,7 @@ import id.aldochristiaan.salad.module.UiAutomator2;
 import io.appium.java_client.android.AndroidDriver;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public class AppManagement extends UiAutomator2 {
 
@@ -12,44 +13,40 @@ public class AppManagement extends UiAutomator2 {
     }
 
     public void installApp(String appPath) {
-        HashMap<String, Object> args = new HashMap<>();
-        args.put("appPath", appPath);
-        androidDriver.executeScript("mobile:installApp", args);
+        executeMobileCommand("installApp", mapOf("appPath", appPath));
     }
 
     public void uninstallApp(String packageName) {
-        HashMap<String, Object> args = new HashMap<>();
-        args.put("appId", packageName);
-        androidDriver.executeScript("mobile:removeApp", args);
+        executeMobileCommand("removeApp", mapOf("appId", packageName));
     }
 
     public void clearApp(String packageName) {
-        HashMap<String, Object> args = new HashMap<>();
-        args.put("appId", packageName);
-        androidDriver.executeScript("mobile:clearApp", args);
+        executeMobileCommand("clearApp", mapOf("appId", packageName));
     }
 
     public void terminateApp(String packageName) {
-        HashMap<String, Object> args = new HashMap<>();
-        args.put("appId", packageName);
-        androidDriver.executeScript("mobile:terminateApp", args);
+        executeMobileCommand("terminateApp", mapOf("appId", packageName));
     }
 
     public void activateApp(String packageName) {
-        HashMap<String, Object> args = new HashMap<>();
-        args.put("appId", packageName);
-        androidDriver.executeScript("mobile:activateApp", args);
+        executeMobileCommand("activateApp", mapOf("appId", packageName));
     }
 
     public void startActivity(String fullActivityIntent) {
-        HashMap<String, Object> args = new HashMap<>();
-        args.put("intent", fullActivityIntent);
-        androidDriver.executeScript("mobile:startActivity", args);
+        executeMobileCommand("startActivity", mapOf("intent", fullActivityIntent));
     }
 
     public void startActivityEspresso(String appActivity) {
-        HashMap<String, Object> args = new HashMap<>();
-        args.put("appActivity", appActivity);
-        androidDriver.executeScript("mobile:startActivity", args);
+        executeMobileCommand("startActivity", mapOf("appActivity", appActivity));
+    }
+
+    private void executeMobileCommand(String command, Map<String, Object> args) {
+        androidDriver.executeScript("mobile:" + command, args);
+    }
+
+    private Map<String, Object> mapOf(String key, Object value) {
+        Map<String, Object> map = new HashMap<>();
+        map.put(key, value);
+        return map;
     }
 }
