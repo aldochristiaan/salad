@@ -18,20 +18,22 @@ import java.util.Properties;
 
 public class AndroidFactory {
 
+    private static final String ELEMENTS_DIR = "src/test/resources/elements/";
+    private static final String CAPABILITIES_FILE = "capabilities.properties";
+    private static final String APP_PACKAGE = "com.example.myapplication";
+
     private static Salad salad;
     private static AndroidDriver androidDriver;
     protected static Android android;
 
     @BeforeAll
     public static void setUp() {
-        String elementPropertiesDirectory = "src/test/resources/elements/";
-        String capabilitiesFileName = "capabilities.properties";
-        Properties capabilitiesProperties = PropertiesLoader.loadCapabilities(capabilitiesFileName);
+        Properties capabilities = PropertiesLoader.loadCapabilities(CAPABILITIES_FILE);
         salad = new Salad(
-                capabilitiesProperties,
-                elementPropertiesDirectory,
+                capabilities,
+                ELEMENTS_DIR,
                 Driver.ESPRESSO,
-                LogLevel.DEBUG
+                LogLevel.ERROR
         );
         initSession();
     }
@@ -48,23 +50,23 @@ public class AndroidFactory {
     }
 
     /**
-     * If test failed, it will automatically take screenshot, uninstall, and start a new session
-     * You can modify it too to match your usage
+     * Resets the app by uninstalling and restarting the session.
+     * Automatically triggered after test failure.
      *
      * @see TestListener
      */
     public static void resetApp() {
-        androidDriver.removeApp("com.example.myapplication");
+        androidDriver.removeApp(APP_PACKAGE);
         salad.stop(Driver.ESPRESSO);
         initSession();
     }
 
     public static void takeScreenshot(String name) {
-        File srcFile = ((TakesScreenshot) androidDriver).getScreenshotAs(OutputType.FILE);
-        File imageFile = new File("screenshot/" + name + ".png");
         try {
-            FileUtils.copyFile(Objects.requireNonNull(srcFile), imageFile);
-            LogUtil.info("Screenshot taken");
+            File src = ((TakesScreenshot) androidDriver).getScreenshotAs(OutputType.FILE);
+            File dest = new File("screenshot/" + name + ".png");
+            FileUtils.copyFile(Objects.requireNonNull(src), dest);
+            LogUtil.info("Screenshot taken: " + dest.getPath());
         } catch (Exception e) {
             LogUtil.error("Exception while taking screenshot", e);
         }

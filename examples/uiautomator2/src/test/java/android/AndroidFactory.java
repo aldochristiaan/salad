@@ -20,6 +20,10 @@ import java.util.Properties;
 
 public class AndroidFactory {
 
+    private static final String ELEMENTS_DIR = "src/test/resources/elements/";
+    private static final String CAPABILITIES_FILE = "capabilities.properties";
+    private static final String APP_PACKAGE = "com.example.myapplication";
+
     private static Salad salad;
     private static AndroidDriver androidDriver;
     private static AppiumDriverLocalService service;
@@ -28,10 +32,10 @@ public class AndroidFactory {
     // === Lifecycle Hooks ===
     @BeforeAll
     public static void setUp() {
-        Properties capabilities = PropertiesLoader.loadCapabilities("capabilities.properties");
+        Properties capabilities = PropertiesLoader.loadCapabilities(CAPABILITIES_FILE);
         salad = new Salad(
                 capabilities,
-                "src/test/resources/elements/",
+                ELEMENTS_DIR,
                 Driver.UIAUTOMATOR2,
                 LogLevel.ERROR
         );
@@ -50,22 +54,22 @@ public class AndroidFactory {
         android = new Android(androidDriver);
     }
 
-    // === App Recovery ===
-    public static void resetApp() {
-        AppManagement app = new AppManagement(androidDriver);
-        app.clearApp("com.example.myapplication");
-        app.activateApp("com.example.myapplication");
-    }
-
     public static AndroidDriver getAndroidDriver() {
         return androidDriver;
     }
 
+    // === App Recovery ===
+    public static void resetApp() {
+        AppManagement app = new AppManagement(androidDriver);
+        app.clearApp(APP_PACKAGE);
+        app.activateApp(APP_PACKAGE);
+    }
+
     // === Screenshot Utility ===
     public static void takeScreenshot(String name) {
-        File src = ((TakesScreenshot) androidDriver).getScreenshotAs(OutputType.FILE);
-        File dest = new File("screenshot/" + name + ".png");
         try {
+            File src = ((TakesScreenshot) androidDriver).getScreenshotAs(OutputType.FILE);
+            File dest = new File("screenshot/" + name + ".png");
             FileUtils.copyFile(Objects.requireNonNull(src), dest);
             LogUtil.info("Screenshot taken: " + dest.getAbsolutePath());
         } catch (Exception e) {
