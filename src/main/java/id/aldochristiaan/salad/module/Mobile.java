@@ -5,7 +5,6 @@ import io.appium.java_client.AppiumBy;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 
-import java.util.Locale;
 import java.util.Optional;
 
 import static id.aldochristiaan.salad.Salad.ELEMENT_PROPERTIES;
@@ -34,7 +33,8 @@ public class Mobile {
             case "name" -> AppiumBy.ByIosNsPredicate.iOSNsPredicateString("name == '" + locatorValue + "'");
             case "label" -> AppiumBy.ByIosNsPredicate.iOSNsPredicateString("label == '" + locatorValue + "'");
             case "value" -> AppiumBy.ByIosNsPredicate.iOSNsPredicateString("value == '" + locatorValue + "'");
-            case "labelcontains" -> AppiumBy.ByIosNsPredicate.iOSNsPredicateString("label CONTAINS '" + locatorValue + "'");
+            case "labelcontains" ->
+                    AppiumBy.ByIosNsPredicate.iOSNsPredicateString("label CONTAINS '" + locatorValue + "'");
             case "viewTag" -> AppiumBy.androidViewTag(locatorValue);
             case "xpath" -> AppiumBy.xpath(locatorValue);
             case "class" -> AppiumBy.className(locatorValue);

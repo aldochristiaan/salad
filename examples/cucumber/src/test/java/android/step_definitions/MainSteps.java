@@ -26,6 +26,5 @@ public class MainSteps {
     public void userIsFacingAnError() {
         android.mainPage().goToPages();
         android.mainPage().failedMethod();
-
     }
 }

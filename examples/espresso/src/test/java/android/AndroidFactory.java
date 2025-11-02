@@ -31,7 +31,7 @@ public class AndroidFactory {
                 capabilitiesProperties,
                 elementPropertiesDirectory,
                 Driver.ESPRESSO,
-                LogLevel.ERROR
+                LogLevel.DEBUG
         );
         initSession();
     }

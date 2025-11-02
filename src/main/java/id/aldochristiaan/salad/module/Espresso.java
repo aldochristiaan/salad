@@ -3,22 +3,30 @@ package id.aldochristiaan.salad.module;
 import com.google.common.collect.ImmutableMap;
 import id.aldochristiaan.salad.module.android.espresso.*;
 import id.aldochristiaan.salad.module.android.uiautomator2.Toast;
-import id.aldochristiaan.salad.util.*;
+import id.aldochristiaan.salad.util.FakerUtil;
+import id.aldochristiaan.salad.util.LogUtil;
+import id.aldochristiaan.salad.util.Randomize;
+import id.aldochristiaan.salad.util.ValidateValue;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.android.nativekey.AndroidKey;
 import io.appium.java_client.android.nativekey.KeyEvent;
 import io.appium.java_client.android.nativekey.KeyEventFlag;
 import org.apache.commons.io.FileUtils;
-import org.openqa.selenium.*;
 import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.interactions.*;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Pause;
+import org.openqa.selenium.interactions.PointerInput;
+import org.openqa.selenium.interactions.Sequence;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.io.File;
 import java.io.IOException;
 import java.time.Duration;
-import java.util.*;
+import java.util.Collections;
+import java.util.Objects;
 
 public class Espresso extends Mobile {
 
@@ -32,21 +40,65 @@ public class Espresso extends Mobile {
     }
 
     // === Modules ===
-    protected Tap tap() { return new Tap(androidDriver); }
-    protected Type type() { return new Type(androidDriver); }
-    protected Swipe swipe() { return new Swipe(androidDriver); }
-    protected SwipeTo swipeTo() { return new SwipeTo(androidDriver); }
-    protected MultipleTap multipleTap() { return new MultipleTap(androidDriver); }
-    protected Flash flash() { return new Flash(androidDriver); }
-    protected GetElement getElement() { return new GetElement(androidDriver); }
-    protected GetMultipleElement getMultipleElement() { return new GetMultipleElement(androidDriver); }
-    protected Toast toast() { return new Toast(androidDriver); }
-    protected Drawer drawer() { return new Drawer(androidDriver); }
-    protected Navigate navigate() { return new Navigate(androidDriver); }
-    protected ViewPager viewPager() { return new ViewPager(androidDriver); }
-    protected ValidateToast validateToast() { return new ValidateToast(androidDriver); }
-    protected WebAtoms webAtoms() { return new WebAtoms(androidDriver); }
-    protected UiAutomator uiAutomator() { return new UiAutomator(androidDriver); }
+    protected Tap tap() {
+        return new Tap(androidDriver);
+    }
+
+    protected Type type() {
+        return new Type(androidDriver);
+    }
+
+    protected Swipe swipe() {
+        return new Swipe(androidDriver);
+    }
+
+    protected SwipeTo swipeTo() {
+        return new SwipeTo(androidDriver);
+    }
+
+    protected MultipleTap multipleTap() {
+        return new MultipleTap(androidDriver);
+    }
+
+    protected Flash flash() {
+        return new Flash(androidDriver);
+    }
+
+    protected GetElement getElement() {
+        return new GetElement(androidDriver);
+    }
+
+    protected GetMultipleElement getMultipleElement() {
+        return new GetMultipleElement(androidDriver);
+    }
+
+    protected Toast toast() {
+        return new Toast(androidDriver);
+    }
+
+    protected Drawer drawer() {
+        return new Drawer(androidDriver);
+    }
+
+    protected Navigate navigate() {
+        return new Navigate(androidDriver);
+    }
+
+    protected ViewPager viewPager() {
+        return new ViewPager(androidDriver);
+    }
+
+    protected ValidateToast validateToast() {
+        return new ValidateToast(androidDriver);
+    }
+
+    protected WebAtoms webAtoms() {
+        return new WebAtoms(androidDriver);
+    }
+
+    protected UiAutomator uiAutomator() {
+        return new UiAutomator(androidDriver);
+    }
 
 
     // === Validation ===
@@ -233,7 +285,15 @@ public class Espresso extends Mobile {
     }
 
     // === Utilities ===
-    protected ValidateValue validateValue() { return validateValue; }
-    protected Randomize randomize() { return randomize; }
-    protected FakerUtil fakerUtil() { return fakerUtil; }
+    protected ValidateValue validateValue() {
+        return validateValue;
+    }
+
+    protected Randomize randomize() {
+        return randomize;
+    }
+
+    protected FakerUtil fakerUtil() {
+        return fakerUtil;
+    }
 }

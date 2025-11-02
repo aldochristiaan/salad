@@ -28,20 +28,54 @@ public class UiAutomator2 extends Mobile {
     }
 
     // === Module Accessors ===
-    protected Tap tap() { return new Tap(androidDriver); }
-    protected Type type() { return new Type(androidDriver); }
-    protected Swipe swipe() { return new Swipe(androidDriver); }
-    protected GetElement getElement() { return new GetElement(androidDriver); }
-    protected GetMultipleElement getMultipleElement() { return new GetMultipleElement(androidDriver); }
-    protected Toast toast() { return new Toast(androidDriver); }
-    protected LongTap longTap() { return new LongTap(androidDriver); }
-    protected MobileGesture mobileGesture() { return new MobileGesture(androidDriver); }
-    protected ChangeContext changeContext() { return new ChangeContext(androidDriver); }
+    protected Tap tap() {
+        return new Tap(androidDriver);
+    }
+
+    protected Type type() {
+        return new Type(androidDriver);
+    }
+
+    protected Swipe swipe() {
+        return new Swipe(androidDriver);
+    }
+
+    protected GetElement getElement() {
+        return new GetElement(androidDriver);
+    }
+
+    protected GetMultipleElement getMultipleElement() {
+        return new GetMultipleElement(androidDriver);
+    }
+
+    protected Toast toast() {
+        return new Toast(androidDriver);
+    }
+
+    protected LongTap longTap() {
+        return new LongTap(androidDriver);
+    }
+
+    protected MobileGesture mobileGesture() {
+        return new MobileGesture(androidDriver);
+    }
+
+    protected ChangeContext changeContext() {
+        return new ChangeContext(androidDriver);
+    }
 
     // === Utility Accessors ===
-    protected ValidateValue validateValue() { return new ValidateValue(); }
-    protected Randomize randomize() { return new Randomize(); }
-    protected FakerUtil fakerUtil() { return new FakerUtil(); }
+    protected ValidateValue validateValue() {
+        return new ValidateValue();
+    }
+
+    protected Randomize randomize() {
+        return new Randomize();
+    }
+
+    protected FakerUtil fakerUtil() {
+        return new FakerUtil();
+    }
 
     // === Element Finders ===
     protected WebElement findElementBy(By by) {

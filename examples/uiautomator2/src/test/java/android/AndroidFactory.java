@@ -60,7 +60,8 @@ public class AndroidFactory {
     public static AndroidDriver getAndroidDriver() {
         return androidDriver;
     }
-        // === Screenshot Utility ===
+
+    // === Screenshot Utility ===
     public static void takeScreenshot(String name) {
         File src = ((TakesScreenshot) androidDriver).getScreenshotAs(OutputType.FILE);
         File dest = new File("screenshot/" + name + ".png");

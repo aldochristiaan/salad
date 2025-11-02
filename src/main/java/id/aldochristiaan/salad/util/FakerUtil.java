@@ -2,8 +2,6 @@ package id.aldochristiaan.salad.util;
 
 import net.datafaker.Faker;
 
-import java.util.Locale;
-
 public class FakerUtil {
 
     private final Faker defaultFaker;
