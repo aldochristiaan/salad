@@ -1,2 +1,18 @@
-rootProject.name = 'salad'
+pluginManagement {
+    repositories {
+        maven {
+            url "https://p-nexus-3.development.nl.eu.abnamro.com:8443/repository/android-group/"
+        }
+    }
+}
 
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.PREFER_SETTINGS)
+    repositories {
+        maven {
+            url "https://p-nexus-3.development.nl.eu.abnamro.com:8443/repository/android-group/"
+        }
+    }
+}
+
+rootProject.name = "salad"

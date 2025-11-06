@@ -1,5 +1,6 @@
 package id.aldochristiaan.salad.module.android.espresso;
 
+import id.aldochristiaan.salad.config.SaladConfig;
 import id.aldochristiaan.salad.module.Espresso;
 import id.aldochristiaan.salad.util.Coordinates;
 import id.aldochristiaan.salad.util.PrecisionDescriber;
@@ -12,7 +13,6 @@ import org.openqa.selenium.WebElement;
 
 import java.util.List;
 
-import static id.aldochristiaan.salad.Salad.MAX_SWIPE_COUNT;
 
 public class Type extends Espresso {
 
@@ -63,7 +63,7 @@ public class Type extends Espresso {
     }
 
     private void swipeAndType(ElementSupplier supplier, String locator, String swipeLocator, String text) {
-        for (int i = 0; i < MAX_SWIPE_COUNT; i++) {
+        for (int i = 0; i < SaladConfig.MAX_SWIPE_COUNT; i++) {
             try {
                 WebElement element = supplier.get();
                 Assert.assertTrue(element.isDisplayed());

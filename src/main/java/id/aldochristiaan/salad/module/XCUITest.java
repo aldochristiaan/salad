@@ -1,5 +1,6 @@
 package id.aldochristiaan.salad.module;
 
+import id.aldochristiaan.salad.config.SaladConfig;
 import id.aldochristiaan.salad.module.ios.*;
 import id.aldochristiaan.salad.util.*;
 import io.appium.java_client.ios.IOSDriver;
@@ -14,7 +15,6 @@ import java.time.Duration;
 import java.util.List;
 import java.util.Objects;
 
-import static id.aldochristiaan.salad.Salad.MAX_SWIPE_COUNT;
 
 public class XCUITest extends Mobile {
 
@@ -57,7 +57,7 @@ public class XCUITest extends Mobile {
     }
 
     protected FakerUtil fakerUtil() {
-        return new FakerUtil();
+        return FakerUtil.getInstance();
     }
 
     protected Deeplink deeplink() {
@@ -66,7 +66,7 @@ public class XCUITest extends Mobile {
 
     protected WebElement findElementBy(By by) {
         WebElement element = null;
-        for (int i = 0; i < MAX_SWIPE_COUNT; i++) {
+        for (int i = 0; i < SaladConfig.MAX_SWIPE_COUNT; i++) {
             try {
                 element = iosDriver.findElement(by);
                 break;
@@ -79,7 +79,7 @@ public class XCUITest extends Mobile {
 
     protected WebElement findElementBy(By by, Direction direction) {
         WebElement element = null;
-        for (int i = 0; i < MAX_SWIPE_COUNT; i++) {
+        for (int i = 0; i < SaladConfig.MAX_SWIPE_COUNT; i++) {
             try {
                 element = iosDriver.findElement(by);
                 break;
@@ -97,7 +97,7 @@ public class XCUITest extends Mobile {
 
     protected List<WebElement> findElementsBy(By by) {
         List<WebElement> elements = null;
-        for (int i = 0; i < MAX_SWIPE_COUNT; i++) {
+        for (int i = 0; i < SaladConfig.MAX_SWIPE_COUNT; i++) {
             try {
                 elements = iosDriver.findElements(by);
                 break;
@@ -110,7 +110,7 @@ public class XCUITest extends Mobile {
 
     protected List<WebElement> findElementsBy(By by, Direction direction) {
         List<WebElement> elements = null;
-        for (int i = 0; i < MAX_SWIPE_COUNT; i++) {
+        for (int i = 0; i < SaladConfig.MAX_SWIPE_COUNT; i++) {
             try {
                 elements = iosDriver.findElements(by);
                 break;

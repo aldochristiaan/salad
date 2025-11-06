@@ -1,12 +1,12 @@
 package id.aldochristiaan.salad.module.android.espresso;
 
+import id.aldochristiaan.salad.config.SaladConfig;
 import id.aldochristiaan.salad.module.Espresso;
 import id.aldochristiaan.salad.util.Coordinates;
 import id.aldochristiaan.salad.util.PrecisionDescriber;
 import id.aldochristiaan.salad.util.SwipeSpeed;
 import io.appium.java_client.android.AndroidDriver;
 
-import static id.aldochristiaan.salad.Salad.MAX_SWIPE_COUNT;
 
 public class SwipeTo extends Espresso {
 
@@ -42,7 +42,7 @@ public class SwipeTo extends Espresso {
 
     private void swipeUntilVisible(SwipeCondition condition, String swipeLocator,
                                    SwipeSpeed swipeSpeed, Coordinates start, Coordinates end) {
-        for (int swipeCount = 0; !condition.check() && swipeCount <= MAX_SWIPE_COUNT; ++swipeCount) {
+        for (int swipeCount = 0; !condition.check() && swipeCount <= SaladConfig.MAX_SWIPE_COUNT; ++swipeCount) {
             swipe().element(swipeLocator, swipeSpeed, start, end, DEFAULT_PRECISION);
         }
     }
