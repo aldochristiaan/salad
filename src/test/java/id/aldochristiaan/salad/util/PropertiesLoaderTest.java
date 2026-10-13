@@ -149,6 +149,29 @@ class PropertiesLoaderTest {
                 () -> loader.loadFromDirectory("/definitely/not/a/directory"));
     }
 
+    @Test
+    @DisplayName("loadCapabilities loads a file from the working directory (backward compat)")
+    void loadCapabilities() throws IOException {
+        File file = new File("./loadcaps-test.properties");
+        file.deleteOnExit();
+        try (FileOutputStream fos = new FileOutputStream(file)) {
+            fos.write("platformName=Android\n".getBytes());
+        }
+
+        Properties caps = PropertiesLoader.loadCapabilities("loadcaps-test.properties");
+
+        assertEquals("Android", caps.getProperty("platformName"));
+    }
+
+    @Test
+    @DisplayName("loadCapabilities returns empty Properties when the file is missing")
+    void loadCapabilitiesMissingFile() {
+        Properties caps = PropertiesLoader.loadCapabilities("does-not-exist.properties");
+
+        assertNotNull(caps);
+        assertTrue(caps.isEmpty());
+    }
+
     private static void writeProps(File file, String content) throws IOException {
         try (FileOutputStream fos = new FileOutputStream(file)) {
             fos.write(content.getBytes());

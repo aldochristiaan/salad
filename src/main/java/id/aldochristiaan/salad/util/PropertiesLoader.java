@@ -22,6 +22,28 @@ public class PropertiesLoader {
     }
 
     /**
+     * Load capabilities from a properties file in the working directory.
+     * <p>
+     * Kept for backward compatibility with existing setups and the example projects:
+     * <pre>{@code
+     * Properties caps = PropertiesLoader.loadCapabilities("capabilities.properties");
+     * }</pre>
+     * On failure an error is logged and an empty {@code Properties} is returned.
+     *
+     * @param fileName properties file name (resolved against {@code ./})
+     * @return the loaded properties, or an empty instance when loading fails
+     */
+    public static Properties loadCapabilities(String fileName) {
+        Properties props = new Properties();
+        try (FileInputStream fis = new FileInputStream("./" + fileName)) {
+            props.load(fis);
+        } catch (IOException e) {
+            LogUtil.error("Failed to load properties file: " + fileName, e);
+        }
+        return props;
+    }
+
+    /**
      * Get singleton instance
      */
     public static PropertiesLoader getInstance() {

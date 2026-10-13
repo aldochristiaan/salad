@@ -12,6 +12,12 @@
   `Salad.start()` fell through to the deprecated `CAPABILITIES_PROPERTIES` field).
 - Now returns a flat, independent snapshot copy. Covered by a regression test.
 
+#### Restored `PropertiesLoader.loadCapabilities(String)`
+- The 1.3.0-rc1 refactoring accidentally removed this public static method, breaking every
+  example project and any consumer following the docs (`PropertiesLoader.loadCapabilities("capabilities.properties")`).
+  It is restored with the original behaviour: load `./<fileName>`, log an error and return
+  empty `Properties` on failure.
+
 ### 🗑️ Removed
 
 #### JUnit 4 runtime dependency
@@ -24,8 +30,8 @@
 
 ### ✅ Testing
 
-- Added the first unit test suite (44 tests, all passing) using JUnit 5:
-  - `PropertiesLoaderTest` — includes the `getProperties()` regression test
+- Added the first unit test suite (46 tests, all passing) using JUnit 5:
+  - `PropertiesLoaderTest` — includes the `getProperties()` regression test and `loadCapabilities`
   - `ValidateValueTest`, `DriverUtilsTest`, `SaladConfigTest`, `ElementValidatorTest`
   - `MobileLocatorTest` — covers the `type_value` locator parsing in `Mobile`
 - `./gradlew test` now runs as part of the build workflow.
@@ -41,10 +47,15 @@
 - **Consolidated six overlapping refactoring docs** at the repo root
   (`REFACTORING_SUMMARY.md`, `QUICK_REFERENCE.md`, `ADDITIONAL_REFACTORING.md`,
   `COMPLETE_REFACTORING_SUMMARY.md`, `REFACTORING_COMPLETE.md`, `BUILD_COMMANDS.md`)
-  into a single `REFACTORING.md` covering the technical summary, module API additions,
-  migration guide, FAQ, troubleshooting and build commands. `CHANGELOG.md` references updated.
-- `docs/How-to.md`: corrected the JUnit statement (Salad itself has no JUnit dependency since
-  1.3.0-rc1) and fixed example links that pointed at the stale `document` branch.
+  into the `docs/` guides:
+  - `docs/How-to.md` — setup, build commands, capabilities, migration guide, FAQ/troubleshooting
+  - `docs/Automation.md` — framework concepts, page objects, `SaladConfig`/validation utilities
+  - `docs/Espresso.md` — updated with the new module methods (`withDefaultTimeout`, `count`, …)
+  - `docs/UiAutomator2.md` and `docs/XCUITest.md` — **new**, documenting the Android and iOS
+    module APIs (previously undocumented)
+- Fixed `docs/How-to.md` and `docs/Automation.md` examples: corrected the JUnit statement,
+  fixed example links that pointed at the stale `document` branch, and removed the obsolete
+  `AndroidDriver<AndroidElement>` generic (dropped in Appium java-client 8.x).
 
 ---
 
@@ -159,7 +170,7 @@ This release includes a comprehensive refactoring of the Salad framework to impr
 
 ### 📚 Documentation
 
-- Added refactoring documentation (now consolidated into `REFACTORING.md`)
+- Added refactoring documentation (now consolidated into the `docs/` guides)
 - Added `CHANGELOG.md` - This file
 - Enhanced inline JavaDoc comments for all new classes
 
@@ -178,7 +189,7 @@ import id.aldochristiaan.salad.config.SaladConfig;
 int timeout = SaladConfig.DEFAULT_TIMEOUT;
 ```
 
-See `REFACTORING.md` for more migration patterns.
+See [docs/How-to.md](docs/How-to.md) for more migration patterns.
 
 ### 🏗️ Build
 
@@ -219,7 +230,7 @@ src/main/java/id/aldochristiaan/salad/
     └── ElementValidator.java      (NEW)
 
 Documentation:
-├── REFACTORING.md                  (NEW - now consolidated into this file)
+├── docs/                          (expanded - see current docs/ folder)
 └── CHANGELOG.md                   (NEW)
 ```
 
@@ -272,5 +283,5 @@ src/main/java/id/aldochristiaan/salad/
 
 ---
 
-**Note**: For detailed technical information and the migration guide, see `REFACTORING.md`
+**Note**: For detailed technical information and the migration guide, see the `docs/` folder
 

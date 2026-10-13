@@ -32,7 +32,7 @@ public class YourAppFactory {
         );
 
         salad.start();
-        AndroidDriver<AndroidElement> androidDriver = salad.getAndroidDriver();
+        AndroidDriver androidDriver = salad.getAndroidDriver();
         yourApp = new YourApp(androidDriver);
     }
 
@@ -42,6 +42,9 @@ public class YourAppFactory {
     }
 }
 ```
+
+> ℹ️ `AndroidDriver` is not generic since Appium java-client 8.x — do not use the old
+> `AndroidDriver<AndroidElement>` form.
 
 ---
 
@@ -66,7 +69,7 @@ Instead of hardcoding locators, Salad uses `.properties` files for cleaner and r
 ```java
 public class MainPage extends BasePage {
 
-    public MainPage(AndroidDriver<AndroidElement> androidDriver) {
+    public MainPage(AndroidDriver androidDriver) {
         super(androidDriver);
     }
 
@@ -183,9 +186,9 @@ tap().element(constructLocator("DYMAMIC_BUTTON_XPATH", "Search"));
 ```java
 public class YourApp {
 
-    private AndroidDriver<AndroidElement> androidDriver;
+    private AndroidDriver androidDriver;
 
-    public YourApp(AndroidDriver<AndroidElement> androidDriver) {
+    public YourApp(AndroidDriver androidDriver) {
         this.androidDriver = androidDriver;
     }
 
@@ -231,6 +234,47 @@ public class AndroidTest extends YourAppFactory {
         yourApp.homePage().debugElementUsingFlash();
     }
 }
+```
+
+---
+
+## ⚙️ Framework Utilities
+
+### Configuration — `SaladConfig`
+
+All framework constants live in `id.aldochristiaan.salad.config.SaladConfig`:
+
+| Constant | Value | Purpose |
+|---|---|---|
+| `DEFAULT_TIMEOUT` | 30 | Default element wait (seconds) |
+| `DURATION_TIMEOUT` | 60 | Server operation timeout (seconds) |
+| `MAX_SWIPE_COUNT` | 15 | Max swipes when searching for elements |
+| `DEFAULT_POLLING_INTERVAL_MS` | 200 | Element polling interval |
+| `DEFAULT_SCREENSHOT_DIR` | `"screenshot"` | Default screenshot directory |
+| `APPIUM_LOG_FILE_PATH` | `target/appium.log` | Appium server log location |
+
+```java
+import id.aldochristiaan.salad.config.SaladConfig;
+
+WebDriverWait wait = new WebDriverWait(driver, SaladConfig.toDuration(SaladConfig.DEFAULT_TIMEOUT));
+```
+
+### Validation — `ElementValidator`
+
+Available on every page object (via `Espresso`/`UiAutomator2`/`XCUITest`):
+
+```java
+validateElementVisible("ANDROID_TOOLBAR");
+validateElementText("GENERAL_TEXT", "Welcome", true);   // exact match
+validateEnabled("logoutButton", "Logout should be enabled");
+validateExist("spinner", 5);
+```
+
+### Test data
+
+```java
+String name = fakerUtil().getFakeFirstName();
+int number = randomize().randomNumeric(6);
 ```
 
 ---

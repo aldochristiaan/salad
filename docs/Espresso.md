@@ -14,6 +14,10 @@
 
 ### 🔹 Flash
 
+- `element(String elementLocator)`  
+  Flash with defaults (500ms, 3 times)  
+  `flash().element("ANDROID_ELEMENT");`
+
 - `element(String elementLocator, int durationMillis, int repeatCount)`  
   Flash an element to ensure it's visible  
   `flash().element("ANDROID_ELEMENT", 500, 4);`
@@ -23,24 +27,36 @@
 ### 🔹 Get Element
 
 - `withLocator(String elementLocator)`  
-  Return `AndroidElement` with given locator  
+  Return `WebElement` with given locator  
   `getElement().withLocator("ANDROID_ELEMENT");`
 
 - `withLocator(String elementLocator, int timeout)`  
-  Return `AndroidElement` with timeout  
+  Return `WebElement` with timeout  
   `getElement().withLocator("ANDROID_ELEMENT", 5);`
+
+- `withDefaultTimeout(String elementLocator)`  
+  Return `WebElement` using `SaladConfig.DEFAULT_TIMEOUT` (30s)  
+  `getElement().withDefaultTimeout("ANDROID_ELEMENT");`
 
 ---
 
 ### 🔹 Get Multiple Element
 
 - `withLocator(String elementLocator)`  
-  Return `List<AndroidElement>` with given locator  
+  Return `List<WebElement>` with given locator  
   `getMultipleElement().withLocator("ANDROID_DRAWER");`
 
 - `withLocator(String elementLocator, int timeout)`  
-  Return `List<AndroidElement>` with timeout  
+  Return `List<WebElement>` with timeout  
   `getMultipleElement().withLocator("ANDROID_DRAWER", 5);`
+
+- `withDefaultTimeout(String elementLocator)`  
+  Return `List<WebElement>` using the default timeout  
+  `getMultipleElement().withDefaultTimeout("ANDROID_DRAWER");`
+
+- `count(String elementLocator)`  
+  Return the number of matching elements  
+  `int n = getMultipleElement().count("LIST_ITEM");`
 
 ---
 
@@ -49,6 +65,14 @@
 - `element(String elementLocator, int count)`  
   Tap element multiple times  
   `multipleTap().element("ANDROID_FLOATING_ACTION_BUTTON", 5);`
+
+- `element(String elementLocator, int count, int delayMillis)`  
+  Tap with a custom delay between taps  
+  `multipleTap().element("ANDROID_FLOATING_ACTION_BUTTON", 5, 250);`
+
+- `elementAtIndex(String elementLocator, int index, int count)`  
+  Tap the element at `index` multiple times  
+  `multipleTap().elementAtIndex("LIST_ITEM", 2, 3);`
 
 ---
 
