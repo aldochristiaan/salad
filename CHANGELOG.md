@@ -38,6 +38,11 @@
 
 ### 📚 Documentation
 
+- **Consolidated six overlapping refactoring docs** at the repo root
+  (`REFACTORING_SUMMARY.md`, `QUICK_REFERENCE.md`, `ADDITIONAL_REFACTORING.md`,
+  `COMPLETE_REFACTORING_SUMMARY.md`, `REFACTORING_COMPLETE.md`, `BUILD_COMMANDS.md`)
+  into a single `REFACTORING.md` covering the technical summary, module API additions,
+  migration guide, FAQ, troubleshooting and build commands. `CHANGELOG.md` references updated.
 - `docs/How-to.md`: corrected the JUnit statement (Salad itself has no JUnit dependency since
   1.3.0-rc1) and fixed example links that pointed at the stale `document` branch.
 
@@ -154,8 +159,7 @@ This release includes a comprehensive refactoring of the Salad framework to impr
 
 ### 📚 Documentation
 
-- Added `REFACTORING_SUMMARY.md` - Comprehensive technical documentation
-- Added `QUICK_REFERENCE.md` - Developer quick start guide
+- Added refactoring documentation (now consolidated into `REFACTORING.md`)
 - Added `CHANGELOG.md` - This file
 - Enhanced inline JavaDoc comments for all new classes
 
@@ -174,7 +178,7 @@ import id.aldochristiaan.salad.config.SaladConfig;
 int timeout = SaladConfig.DEFAULT_TIMEOUT;
 ```
 
-See `QUICK_REFERENCE.md` for more migration patterns.
+See `REFACTORING.md` for more migration patterns.
 
 ### 🏗️ Build
 
@@ -215,8 +219,7 @@ src/main/java/id/aldochristiaan/salad/
     └── ElementValidator.java      (NEW)
 
 Documentation:
-├── REFACTORING_SUMMARY.md         (NEW)
-├── QUICK_REFERENCE.md             (NEW)
+├── REFACTORING.md                  (NEW - now consolidated into this file)
 └── CHANGELOG.md                   (NEW)
 ```
 
@@ -269,6 +272,5 @@ src/main/java/id/aldochristiaan/salad/
 
 ---
 
-**Note**: For detailed technical information, see `REFACTORING_SUMMARY.md`  
-**Note**: For quick start guide, see `QUICK_REFERENCE.md`
+**Note**: For detailed technical information and the migration guide, see `REFACTORING.md`
 
