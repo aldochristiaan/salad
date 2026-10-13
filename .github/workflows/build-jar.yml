@@ -18,5 +18,12 @@ jobs:
           distribution: 'temurin'
           java-version: '21'
 
-      - name: Build with Gradle
-        run: ./gradlew clean shadowJar
+      - name: Build and test with Gradle
+        run: ./gradlew clean test shadowJar
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: build/reports/tests/test/

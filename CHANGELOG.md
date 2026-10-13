@@ -1,5 +1,48 @@
 # Changelog - Salad Framework
 
+## [Unreleased]
+
+### 🐛 Bug Fixes
+
+#### `PropertiesLoader.getProperties()` returned an unusable `Properties`
+- Previously returned `new Properties(properties)`, which stored the loaded values in the
+  `defaults` slot. Values in that slot are invisible to `isEmpty()`, `size()`, `entrySet()`,
+  `forEach()` and `stringPropertyNames()`-based iteration, so **loaded capabilities could be
+  silently ignored** by callers iterating or checking the returned object (e.g.
+  `Salad.start()` fell through to the deprecated `CAPABILITIES_PROPERTIES` field).
+- Now returns a flat, independent snapshot copy. Covered by a regression test.
+
+### 🗑️ Removed
+
+#### JUnit 4 runtime dependency
+- The library no longer depends on JUnit. `ValidateValue` now raises `AssertionError` directly
+  instead of delegating to `org.junit.Assert` (JUnit's `AssertionFailedError` extends
+  `AssertionError`, so JUnit 4/5 and TestNG still report these as normal assertion failures).
+- `Tap` and `Type` (Espresso) no longer import `org.junit.Assert`.
+- Consumers are no longer forced to pull JUnit 4 into their classpath; the shadow JAR no longer
+  bundles it.
+
+### ✅ Testing
+
+- Added the first unit test suite (44 tests, all passing) using JUnit 5:
+  - `PropertiesLoaderTest` — includes the `getProperties()` regression test
+  - `ValidateValueTest`, `DriverUtilsTest`, `SaladConfigTest`, `ElementValidatorTest`
+  - `MobileLocatorTest` — covers the `type_value` locator parsing in `Mobile`
+- `./gradlew test` now runs as part of the build workflow.
+
+### 🏗️ Build
+
+- `settings.gradle` no longer points at an internal corporate Nexus repository; it uses
+  `gradlePluginPortal()`, `google()` and `mavenCentral()` so the project builds publicly.
+- CI (`build-jar.yml`) now runs `./gradlew clean test shadowJar` and uploads the test report.
+
+### 📚 Documentation
+
+- `docs/How-to.md`: corrected the JUnit statement (Salad itself has no JUnit dependency since
+  1.3.0-rc1) and fixed example links that pointed at the stale `document` branch.
+
+---
+
 ## [1.3.0-rc1] - 2025-11-05
 
 ### 🎉 Major Refactoring

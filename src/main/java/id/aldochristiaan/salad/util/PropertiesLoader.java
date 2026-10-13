@@ -110,10 +110,19 @@ public class PropertiesLoader {
     }
 
     /**
-     * Get all properties
+     * Get all properties as an independent snapshot copy.
+     * <p>
+     * Note: this intentionally copies the entries into the returned instance instead of using
+     * {@code new Properties(properties)}, which would store the loaded values in the
+     * {@code defaults} slot. Values in the defaults slot are invisible to
+     * {@link Properties#isEmpty()}, {@link Properties#forEach}, {@link Properties#entrySet()}
+     * and {@link Properties#size()}, which previously caused loaded capabilities to be
+     * silently ignored by callers.
      */
     public Properties getProperties() {
-        return new Properties(properties);
+        Properties copy = new Properties();
+        copy.putAll(properties);
+        return copy;
     }
 
     /**

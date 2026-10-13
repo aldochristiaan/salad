@@ -9,7 +9,6 @@ import io.appium.java_client.TouchAction;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.touch.WaitOptions;
 import io.appium.java_client.touch.offset.PointOption;
-import org.junit.Assert;
 import org.openqa.selenium.InvalidElementStateException;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
@@ -73,7 +72,11 @@ public class Tap extends Espresso {
         for (int i = 0; i < SaladConfig.MAX_SWIPE_COUNT; i++) {
             try {
                 WebElement element = supplier.get();
-                Assert.assertTrue(element.isDisplayed());
+                if (!element.isDisplayed()) {
+                    // AssertionError is intentionally used here: the catch block below
+                    // treats a not-yet-visible element as a signal to swipe and retry.
+                    throw new AssertionError("Element is not visible: " + locator);
+                }
                 element.click();
                 break;
             } catch (InvalidElementStateException | NoSuchElementException | AssertionError e) {

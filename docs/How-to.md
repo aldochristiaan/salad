@@ -25,7 +25,9 @@ test {
 }
 ```
 
-> ✅ Salad uses **JUnit 5** instead of JUnit 4 to better manage the Appium server lifecycle.
+> ✅ As of v1.3.0-rc1 the Salad library itself has **no JUnit dependency at all** (it throws plain
+> `AssertionError` on validation failures). The example projects use **JUnit 5** to manage the
+> Appium server lifecycle, but you are free to use JUnit 4, JUnit 5, or TestNG in your own tests.
 
 ---
 
@@ -56,10 +58,11 @@ autoGrantPermissions=true
 
 Explore working examples here:
 
-- [Espresso Example](https://github.com/aldochristiaan/salad/tree/document/examples/espresso)
-- [UiAutomator2 Example](https://github.com/aldochristiaan/salad/tree/document/examples/uiautomator2)
+- [Espresso Example](https://github.com/aldochristiaan/salad/tree/master/examples/espresso)
+- [UiAutomator2 Example](https://github.com/aldochristiaan/salad/tree/master/examples/uiautomator2)
+- [Cucumber Example](https://github.com/aldochristiaan/salad/tree/master/examples/cucumber)
 
-📱 Sample APKs are available [here](https://github.com/aldochristiaan/salad/tree/document/examples/apk)
+📱 Sample APKs are available [here](https://github.com/aldochristiaan/salad/tree/master/examples/apk)
 
 ---
 

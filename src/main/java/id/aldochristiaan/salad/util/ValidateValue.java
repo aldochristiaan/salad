@@ -1,114 +1,153 @@
 package id.aldochristiaan.salad.util;
 
-import org.junit.Assert;
+import java.util.Objects;
 
+/**
+ * Validation helper that throws {@link AssertionError} on mismatch.
+ * <p>
+ * Historically this class delegated to {@code org.junit.Assert}, which forced a JUnit 4
+ * runtime dependency onto every consumer of the Salad library. It now raises
+ * {@code AssertionError} directly. Since JUnit's {@code AssertionFailedError} extends
+ * {@code AssertionError}, test runners (JUnit 4/5, TestNG) still report these as
+ * ordinary assertion failures, so existing behaviour is preserved.
+ */
 public class ValidateValue {
 
+    private static void fail(String message) {
+        throw new AssertionError(message);
+    }
+
     public void equals(String expected, String actual) {
-        Assert.assertEquals("Expected: " + expected + ", but got: " + actual, expected, actual);
+        equals(expected, actual, "Expected: " + expected + ", but got: " + actual);
     }
 
     public void equals(String expected, String actual, String message) {
-        Assert.assertEquals(message, expected, actual);
+        if (!Objects.equals(expected, actual)) {
+            fail(message);
+        }
     }
 
     public void equals(boolean expected, boolean actual) {
-        Assert.assertEquals("Expected: " + expected + ", but got: " + actual, expected, actual);
+        equals(expected, actual, "Expected: " + expected + ", but got: " + actual);
     }
 
     public void equals(boolean expected, boolean actual, String message) {
-        Assert.assertEquals(message, expected, actual);
+        if (expected != actual) {
+            fail(message);
+        }
     }
 
     public void equals(int expected, int actual) {
-        Assert.assertEquals("Expected: " + expected + ", but got: " + actual, expected, actual);
+        equals(expected, actual, "Expected: " + expected + ", but got: " + actual);
     }
 
     public void equals(int expected, int actual, String message) {
-        Assert.assertEquals(message, expected, actual);
+        if (expected != actual) {
+            fail(message);
+        }
     }
 
     public void equals(long expected, long actual) {
-        Assert.assertEquals("Expected: " + expected + ", but got: " + actual, expected, actual);
+        equals(expected, actual, "Expected: " + expected + ", but got: " + actual);
     }
 
     public void equals(long expected, long actual, String message) {
-        Assert.assertEquals(message, expected, actual);
+        if (expected != actual) {
+            fail(message);
+        }
     }
 
     public void equals(double expected, double actual, double delta) {
-        Assert.assertEquals("Expected: " + expected + ", but got: " + actual, expected, actual, delta);
+        equals(expected, actual, delta, "Expected: " + expected + ", but got: " + actual);
     }
 
     public void equals(double expected, double actual, double delta, String message) {
-        Assert.assertEquals(message, expected, actual, delta);
+        if (Double.compare(expected, actual) != 0 && Math.abs(expected - actual) > delta) {
+            fail(message);
+        }
     }
 
     public void notEquals(String expected, String actual) {
-        Assert.assertNotEquals("Expected not to be: " + expected + ", but got: " + actual, expected, actual);
+        notEquals(expected, actual, "Expected not to be: " + expected + ", but got: " + actual);
     }
 
     public void notEquals(String expected, String actual, String message) {
-        Assert.assertNotEquals(message, expected, actual);
+        if (Objects.equals(expected, actual)) {
+            fail(message);
+        }
     }
 
     public void notEquals(boolean expected, boolean actual) {
-        Assert.assertNotEquals("Expected not to be: " + expected + ", but got: " + actual, expected, actual);
+        notEquals(expected, actual, "Expected not to be: " + expected + ", but got: " + actual);
     }
 
     public void notEquals(boolean expected, boolean actual, String message) {
-        Assert.assertNotEquals(message, expected, actual);
+        if (expected == actual) {
+            fail(message);
+        }
     }
 
     public void notEquals(int expected, int actual) {
-        Assert.assertNotEquals("Expected not to be: " + expected + ", but got: " + actual, expected, actual);
+        notEquals(expected, actual, "Expected not to be: " + expected + ", but got: " + actual);
     }
 
     public void notEquals(int expected, int actual, String message) {
-        Assert.assertNotEquals(message, expected, actual);
+        if (expected == actual) {
+            fail(message);
+        }
     }
 
     public void notEquals(long expected, long actual) {
-        Assert.assertNotEquals("Expected not to be: " + expected + ", but got: " + actual, expected, actual);
+        notEquals(expected, actual, "Expected not to be: " + expected + ", but got: " + actual);
     }
 
     public void notEquals(long expected, long actual, String message) {
-        Assert.assertNotEquals(message, expected, actual);
+        if (expected == actual) {
+            fail(message);
+        }
     }
 
     public void notEquals(double expected, double actual, double delta) {
-        Assert.assertNotEquals("Expected not to be: " + expected + ", but got: " + actual, expected, actual, delta);
+        notEquals(expected, actual, delta, "Expected not to be: " + expected + ", but got: " + actual);
     }
 
     public void notEquals(double expected, double actual, double delta, String message) {
-        Assert.assertNotEquals(message, expected, actual, delta);
+        if (Double.compare(expected, actual) == 0 || Math.abs(expected - actual) <= delta) {
+            fail(message);
+        }
     }
 
     public void equalsTrue(boolean condition) {
-        Assert.assertTrue("Expected condition to be true, but it was false", condition);
+        equalsTrue(condition, "Expected condition to be true, but it was false");
     }
 
     public void equalsTrue(boolean condition, String message) {
-        Assert.assertTrue(message, condition);
+        if (!condition) {
+            fail(message);
+        }
     }
 
     public void equalsFalse(boolean condition) {
-        Assert.assertFalse("Expected condition to be false, but it was true", condition);
+        equalsFalse(condition, "Expected condition to be false, but it was true");
     }
 
     public void equalsFalse(boolean condition, String message) {
-        Assert.assertFalse(message, condition);
+        if (condition) {
+            fail(message);
+        }
     }
 
     public void contains(String expected, String actual) {
-        Assert.assertTrue(expected + " was not found in: " + actual, actual.contains(expected));
+        contains(expected, actual, expected + " was not found in: " + actual);
     }
 
     public void contains(String expected, String actual, String message) {
-        Assert.assertTrue(message, actual.contains(expected));
+        if (actual == null || !actual.contains(expected)) {
+            fail(message);
+        }
     }
 
     public boolean isContains(String expected, String actual) {
-        return actual.contains(expected);
+        return actual != null && actual.contains(expected);
     }
 }
