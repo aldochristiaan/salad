@@ -1,12 +1,10 @@
 package id.aldochristiaan.salad.module;
 
 import com.google.common.collect.ImmutableMap;
+import id.aldochristiaan.salad.config.SaladConfig;
 import id.aldochristiaan.salad.module.android.espresso.*;
 import id.aldochristiaan.salad.module.android.uiautomator2.Toast;
-import id.aldochristiaan.salad.util.FakerUtil;
-import id.aldochristiaan.salad.util.LogUtil;
-import id.aldochristiaan.salad.util.Randomize;
-import id.aldochristiaan.salad.util.ValidateValue;
+import id.aldochristiaan.salad.util.*;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.android.nativekey.AndroidKey;
 import io.appium.java_client.android.nativekey.KeyEvent;
@@ -28,76 +26,145 @@ import java.time.Duration;
 import java.util.Collections;
 import java.util.Objects;
 
+/**
+ * Espresso automation module with lazy initialization
+ */
 public class Espresso extends Mobile {
 
     protected final AndroidDriver androidDriver;
-    private final ValidateValue validateValue = new ValidateValue();
-    private final Randomize randomize = new Randomize();
-    private final FakerUtil fakerUtil = new FakerUtil();
+    private final ElementValidator elementValidator;
+
+    // Lazy-initialized modules
+    private Tap tapModule;
+    private Type typeModule;
+    private Swipe swipeModule;
+    private SwipeTo swipeToModule;
+    private MultipleTap multipleTapModule;
+    private Flash flashModule;
+    private GetElement getElementModule;
+    private GetMultipleElement getMultipleElementModule;
+    private Toast toastModule;
+    private Drawer drawerModule;
+    private Navigate navigateModule;
+    private ViewPager viewPagerModule;
+    private ValidateToast validateToastModule;
+    private WebAtoms webAtomsModule;
+    private UiAutomator uiAutomatorModule;
+
+    // Lazy-initialized utilities
+    private ValidateValue validateValueUtil;
+    private Randomize randomizeUtil;
+    private FakerUtil fakerUtilInstance;
 
     public Espresso(AndroidDriver androidDriver) {
         this.androidDriver = androidDriver;
+        this.elementValidator = new ElementValidator();
     }
 
-    // === Modules ===
+    // === Modules (Lazy Initialization) ===
     protected Tap tap() {
-        return new Tap(androidDriver);
+        if (tapModule == null) {
+            tapModule = new Tap(androidDriver);
+        }
+        return tapModule;
     }
 
     protected Type type() {
-        return new Type(androidDriver);
+        if (typeModule == null) {
+            typeModule = new Type(androidDriver);
+        }
+        return typeModule;
     }
 
     protected Swipe swipe() {
-        return new Swipe(androidDriver);
+        if (swipeModule == null) {
+            swipeModule = new Swipe(androidDriver);
+        }
+        return swipeModule;
     }
 
     protected SwipeTo swipeTo() {
-        return new SwipeTo(androidDriver);
+        if (swipeToModule == null) {
+            swipeToModule = new SwipeTo(androidDriver);
+        }
+        return swipeToModule;
     }
 
     protected MultipleTap multipleTap() {
-        return new MultipleTap(androidDriver);
+        if (multipleTapModule == null) {
+            multipleTapModule = new MultipleTap(androidDriver);
+        }
+        return multipleTapModule;
     }
 
     protected Flash flash() {
-        return new Flash(androidDriver);
+        if (flashModule == null) {
+            flashModule = new Flash(androidDriver);
+        }
+        return flashModule;
     }
 
     protected GetElement getElement() {
-        return new GetElement(androidDriver);
+        if (getElementModule == null) {
+            getElementModule = new GetElement(androidDriver);
+        }
+        return getElementModule;
     }
 
     protected GetMultipleElement getMultipleElement() {
-        return new GetMultipleElement(androidDriver);
+        if (getMultipleElementModule == null) {
+            getMultipleElementModule = new GetMultipleElement(androidDriver);
+        }
+        return getMultipleElementModule;
     }
 
     protected Toast toast() {
-        return new Toast(androidDriver);
+        if (toastModule == null) {
+            toastModule = new Toast(androidDriver);
+        }
+        return toastModule;
     }
 
     protected Drawer drawer() {
-        return new Drawer(androidDriver);
+        if (drawerModule == null) {
+            drawerModule = new Drawer(androidDriver);
+        }
+        return drawerModule;
     }
 
     protected Navigate navigate() {
-        return new Navigate(androidDriver);
+        if (navigateModule == null) {
+            navigateModule = new Navigate(androidDriver);
+        }
+        return navigateModule;
     }
 
     protected ViewPager viewPager() {
-        return new ViewPager(androidDriver);
+        if (viewPagerModule == null) {
+            viewPagerModule = new ViewPager(androidDriver);
+        }
+        return viewPagerModule;
     }
 
     protected ValidateToast validateToast() {
-        return new ValidateToast(androidDriver);
+        if (validateToastModule == null) {
+            validateToastModule = new ValidateToast(androidDriver);
+        }
+        return validateToastModule;
     }
 
     protected WebAtoms webAtoms() {
-        return new WebAtoms(androidDriver);
+        if (webAtomsModule == null) {
+            webAtomsModule = new WebAtoms(androidDriver);
+        }
+        return webAtomsModule;
     }
 
     protected UiAutomator uiAutomator() {
-        return new UiAutomator(androidDriver);
+        if (uiAutomatorModule == null) {
+            uiAutomatorModule = new UiAutomator(androidDriver);
+        }
+        return uiAutomatorModule;
     }
 
 
@@ -112,60 +179,77 @@ public class Espresso extends Mobile {
     }
 
     protected boolean getBooleanAttribute(String locator, String attribute) {
-        if (!isElementExist(locator)) throw new NoSuchElementException("Element not found: " + locator);
-        return Boolean.parseBoolean(androidDriver.findElement(getLocator(locator)).getAttribute(attribute));
+        if (!isElementExist(locator)) {
+            throw new NoSuchElementException("Element not found: " + locator);
+        }
+        WebElement element = androidDriver.findElement(getLocator(locator));
+        return DriverUtils.getBooleanAttribute(element, attribute);
     }
 
     protected void validateElementVisible(String locator) {
-        validateValue.equalsTrue(getBooleanAttribute(locator, "visible"), "Element not visible: " + locator);
+        elementValidator.validateVisible(
+            androidDriver.findElement(getLocator(locator)),
+            locator
+        );
     }
 
     protected void validateElementText(String locator, String expected, boolean exactMatch) {
-        if (!isElementExist(locator)) throw new NoSuchElementException("Element not found: " + locator);
+        if (!isElementExist(locator)) {
+            throw new NoSuchElementException("Element not found: " + locator);
+        }
         String actual = getText(locator);
-        if (exactMatch) validateValue.equals(expected, actual);
-        else validateValue.contains(expected, actual);
+        elementValidator.validateText(expected, actual, exactMatch, locator);
     }
 
     protected void validateEnabled(String locator, String msg) {
-        validateValue.equalsTrue(getBooleanAttribute(locator, "enabled"), msg);
+        WebElement element = androidDriver.findElement(getLocator(locator));
+        elementValidator.validateEnabled(element, msg);
     }
 
     protected void validateDisabled(String locator, String msg) {
-        validateValue.equalsFalse(getBooleanAttribute(locator, "enabled"), msg);
+        WebElement element = androidDriver.findElement(getLocator(locator));
+        elementValidator.validateDisabled(element, msg);
     }
 
     protected void validateSelected(String locator, String msg) {
-        validateValue.equalsTrue(getBooleanAttribute(locator, "selected"), msg);
+        WebElement element = androidDriver.findElement(getLocator(locator));
+        elementValidator.validateSelected(element, msg);
     }
 
     protected void validateNotSelected(String locator, String msg) {
-        validateValue.equalsFalse(getBooleanAttribute(locator, "selected"), msg);
+        WebElement element = androidDriver.findElement(getLocator(locator));
+        elementValidator.validateNotSelected(element, msg);
     }
 
     protected void validateChecked(String locator, String msg) {
-        validateValue.equalsTrue(getBooleanAttribute(locator, "checked"), msg);
+        WebElement element = androidDriver.findElement(getLocator(locator));
+        elementValidator.validateChecked(element, msg);
     }
 
     protected void validateExist(String locator, String msg) {
-        validateValue.equalsTrue(isElementExist(locator), msg);
+        elementValidator.validateExist(isElementExist(locator), msg);
     }
 
     protected void validateNotExist(String locator, String msg) {
-        validateValue.equalsFalse(isElementExist(locator), msg);
+        elementValidator.validateNotExist(isElementExist(locator), msg);
     }
 
     protected void validateDisplayed(String locator, int timeout, String msg) {
-        validateValue.equalsTrue(isElementDisplayed(locator, timeout), msg);
+        elementValidator.getValidateValue().equalsTrue(
+            isElementDisplayed(locator, timeout),
+            msg
+        );
     }
 
     protected void validateNotDisplayed(String locator, int timeout, String msg) {
-        validateValue.equalsFalse(isElementDisplayed(locator, timeout), msg);
+        elementValidator.getValidateValue().equalsFalse(
+            isElementDisplayed(locator, timeout),
+            msg
+        );
     }
 
     protected void validateStaleness(WebElement element, int timeout) {
-        validateValue.equalsTrue(new WebDriverWait(androidDriver, Duration.ofSeconds(timeout))
-                .until(ExpectedConditions.stalenessOf(element)));
+        elementValidator.validateStaleness(androidDriver, element, timeout);
     }
 
     // === Element Display Polling ===
@@ -178,18 +262,25 @@ public class Espresso extends Mobile {
     }
 
     private boolean waitForElementPosition(String locator, int index, int timeout) {
-        int screenHeight = androidDriver.manage().window().getSize().getHeight();
-        for (int i = 0; i < timeout * 5; i++) {
+        DriverUtils.Dimension dimension = DriverUtils.getScreenDimension(androidDriver);
+        int screenHeight = dimension.getHeight();
+        int iterations = timeout * SaladConfig.POLLING_MULTIPLIER;
+
+        for (int i = 0; i < iterations; i++) {
             try {
-                int y = (index >= 0)
-                        ? androidDriver.findElements(getLocator(locator)).get(index).getLocation().getY()
-                        : androidDriver.findElement(getLocator(locator)).getLocation().getY();
+                int y = getElementYPosition(locator, index);
                 return screenHeight >= y;
             } catch (Exception e) {
-                delay(200);
+                delay(SaladConfig.DEFAULT_POLLING_INTERVAL_MS);
             }
         }
         return false;
+    }
+
+    private int getElementYPosition(String locator, int index) {
+        return (index >= 0)
+            ? androidDriver.findElements(getLocator(locator)).get(index).getLocation().getY()
+            : androidDriver.findElement(getLocator(locator)).getLocation().getY();
     }
 
     // === Text & Attribute ===
@@ -263,19 +354,23 @@ public class Espresso extends Mobile {
 
     // === Screenshot ===
     protected void takeScreenshot(String name) {
-        takeScreenshot("screenshot", name);
+        takeScreenshot(SaladConfig.DEFAULT_SCREENSHOT_DIR, name);
     }
 
     protected void takeScreenshot(String path, String name) {
         File dir = new File(path);
-        if (!dir.exists()) dir.mkdirs();
-        File scrFile = ((TakesScreenshot) androidDriver).getScreenshotAs(OutputType.FILE);
-        File imageFile = new File(dir, name + ".png");
+        if (!dir.exists() && !dir.mkdirs()) {
+            LogUtil.error("Failed to create screenshot directory: " + path);
+            return;
+        }
+
         try {
+            File scrFile = ((TakesScreenshot) androidDriver).getScreenshotAs(OutputType.FILE);
+            File imageFile = new File(dir, name + SaladConfig.SCREENSHOT_EXTENSION);
             FileUtils.copyFile(Objects.requireNonNull(scrFile), imageFile);
             LogUtil.info("Screenshot saved: " + imageFile.getAbsolutePath());
         } catch (IOException e) {
-            LogUtil.error("Failed to save screenshot: " + e.getMessage());
+            LogUtil.error("Failed to save screenshot: " + e.getMessage(), e);
         }
     }
 
@@ -286,14 +381,23 @@ public class Espresso extends Mobile {
 
     // === Utilities ===
     protected ValidateValue validateValue() {
-        return validateValue;
+        if (validateValueUtil == null) {
+            validateValueUtil = new ValidateValue();
+        }
+        return validateValueUtil;
     }
 
     protected Randomize randomize() {
-        return randomize;
+        if (randomizeUtil == null) {
+            randomizeUtil = new Randomize();
+        }
+        return randomizeUtil;
     }
 
     protected FakerUtil fakerUtil() {
-        return fakerUtil;
+        if (fakerUtilInstance == null) {
+            fakerUtilInstance = FakerUtil.getInstance();
+        }
+        return fakerUtilInstance;
     }
 }

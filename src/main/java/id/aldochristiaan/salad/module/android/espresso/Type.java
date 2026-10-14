@@ -1,18 +1,17 @@
 package id.aldochristiaan.salad.module.android.espresso;
 
+import id.aldochristiaan.salad.config.SaladConfig;
 import id.aldochristiaan.salad.module.Espresso;
 import id.aldochristiaan.salad.util.Coordinates;
 import id.aldochristiaan.salad.util.PrecisionDescriber;
 import id.aldochristiaan.salad.util.SwipeSpeed;
 import io.appium.java_client.android.AndroidDriver;
-import org.junit.Assert;
 import org.openqa.selenium.InvalidElementStateException;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
 
 import java.util.List;
 
-import static id.aldochristiaan.salad.Salad.MAX_SWIPE_COUNT;
 
 public class Type extends Espresso {
 
@@ -49,7 +48,9 @@ public class Type extends Espresso {
     private void typeSafely(ElementSupplier supplier, String locator, String text) {
         try {
             WebElement element = supplier.get();
-            Assert.assertTrue(element.isDisplayed());
+            if (!element.isDisplayed()) {
+                throw new AssertionError("Element is not visible: " + locator);
+            }
             element.clear();
             element.sendKeys(text);
             hideKeyboard();
@@ -63,10 +64,13 @@ public class Type extends Espresso {
     }
 
     private void swipeAndType(ElementSupplier supplier, String locator, String swipeLocator, String text) {
-        for (int i = 0; i < MAX_SWIPE_COUNT; i++) {
+        for (int i = 0; i < SaladConfig.MAX_SWIPE_COUNT; i++) {
             try {
                 WebElement element = supplier.get();
-                Assert.assertTrue(element.isDisplayed());
+                if (!element.isDisplayed()) {
+                    // AssertionError signals "swipe and retry" in the catch block below.
+                    throw new AssertionError("Element is not visible: " + locator);
+                }
                 element.clear();
                 element.sendKeys(text);
                 hideKeyboard();

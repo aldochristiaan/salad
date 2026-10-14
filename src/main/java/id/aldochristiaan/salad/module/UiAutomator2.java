@@ -1,5 +1,6 @@
 package id.aldochristiaan.salad.module;
 
+import id.aldochristiaan.salad.config.SaladConfig;
 import id.aldochristiaan.salad.module.android.uiautomator2.*;
 import id.aldochristiaan.salad.util.*;
 import io.appium.java_client.android.AndroidDriver;
@@ -17,64 +18,119 @@ import java.time.Duration;
 import java.util.List;
 import java.util.Objects;
 
-import static id.aldochristiaan.salad.Salad.MAX_SWIPE_COUNT;
-
+/**
+ * UiAutomator2 automation module with lazy initialization
+ */
 public class UiAutomator2 extends Mobile {
 
     protected final AndroidDriver androidDriver;
+    private final ElementValidator elementValidator;
+
+    // Lazy-initialized modules
+    private Tap tapModule;
+    private Type typeModule;
+    private Swipe swipeModule;
+    private GetElement getElementModule;
+    private GetMultipleElement getMultipleElementModule;
+    private Toast toastModule;
+    private LongTap longTapModule;
+    private MobileGesture mobileGestureModule;
+    private ChangeContext changeContextModule;
+
+    // Lazy-initialized utilities
+    private ValidateValue validateValueUtil;
+    private Randomize randomizeUtil;
+    private FakerUtil fakerUtilInstance;
 
     public UiAutomator2(AndroidDriver androidDriver) {
         this.androidDriver = androidDriver;
+        this.elementValidator = new ElementValidator();
     }
 
-    // === Module Accessors ===
+    // === Module Accessors (Lazy Initialization) ===
     protected Tap tap() {
-        return new Tap(androidDriver);
+        if (tapModule == null) {
+            tapModule = new Tap(androidDriver);
+        }
+        return tapModule;
     }
 
     protected Type type() {
-        return new Type(androidDriver);
+        if (typeModule == null) {
+            typeModule = new Type(androidDriver);
+        }
+        return typeModule;
     }
 
     protected Swipe swipe() {
-        return new Swipe(androidDriver);
+        if (swipeModule == null) {
+            swipeModule = new Swipe(androidDriver);
+        }
+        return swipeModule;
     }
 
     protected GetElement getElement() {
-        return new GetElement(androidDriver);
+        if (getElementModule == null) {
+            getElementModule = new GetElement(androidDriver);
+        }
+        return getElementModule;
     }
 
     protected GetMultipleElement getMultipleElement() {
-        return new GetMultipleElement(androidDriver);
+        if (getMultipleElementModule == null) {
+            getMultipleElementModule = new GetMultipleElement(androidDriver);
+        }
+        return getMultipleElementModule;
     }
 
     protected Toast toast() {
-        return new Toast(androidDriver);
+        if (toastModule == null) {
+            toastModule = new Toast(androidDriver);
+        }
+        return toastModule;
     }
 
     protected LongTap longTap() {
-        return new LongTap(androidDriver);
+        if (longTapModule == null) {
+            longTapModule = new LongTap(androidDriver);
+        }
+        return longTapModule;
     }
 
     protected MobileGesture mobileGesture() {
-        return new MobileGesture(androidDriver);
+        if (mobileGestureModule == null) {
+            mobileGestureModule = new MobileGesture(androidDriver);
+        }
+        return mobileGestureModule;
     }
 
     protected ChangeContext changeContext() {
-        return new ChangeContext(androidDriver);
+        if (changeContextModule == null) {
+            changeContextModule = new ChangeContext(androidDriver);
+        }
+        return changeContextModule;
     }
 
-    // === Utility Accessors ===
+    // === Utility Accessors (Lazy Initialization) ===
     protected ValidateValue validateValue() {
-        return new ValidateValue();
+        if (validateValueUtil == null) {
+            validateValueUtil = new ValidateValue();
+        }
+        return validateValueUtil;
     }
 
     protected Randomize randomize() {
-        return new Randomize();
+        if (randomizeUtil == null) {
+            randomizeUtil = new Randomize();
+        }
+        return randomizeUtil;
     }
 
     protected FakerUtil fakerUtil() {
-        return new FakerUtil();
+        if (fakerUtilInstance == null) {
+            fakerUtilInstance = FakerUtil.getInstance();
+        }
+        return fakerUtilInstance;
     }
 
     // === Element Finders ===
@@ -83,14 +139,14 @@ public class UiAutomator2 extends Mobile {
     }
 
     protected WebElement findElementBy(By by, Direction direction) {
-        for (int i = 0; i < MAX_SWIPE_COUNT; i++) {
+        for (int i = 0; i < SaladConfig.MAX_SWIPE_COUNT; i++) {
             try {
                 return androidDriver.findElement(by);
             } catch (NoSuchElementException e) {
                 swipe().toDirection(direction);
             }
         }
-        throw new NoSuchElementException("Couldn't find this element: " + by);
+        throw new NoSuchElementException("Couldn't find element after " + SaladConfig.MAX_SWIPE_COUNT + " swipes: " + by);
     }
 
     protected WebElement findElementBy(By by, int timeout) {
@@ -103,14 +159,17 @@ public class UiAutomator2 extends Mobile {
     }
 
     protected List<WebElement> findElementsBy(By by, Direction direction) {
-        for (int i = 0; i < MAX_SWIPE_COUNT; i++) {
+        for (int i = 0; i < SaladConfig.MAX_SWIPE_COUNT; i++) {
             try {
-                return androidDriver.findElements(by);
+                List<WebElement> elements = androidDriver.findElements(by);
+                if (!elements.isEmpty()) {
+                    return elements;
+                }
             } catch (NoSuchElementException e) {
                 swipe().toDirection(direction);
             }
         }
-        throw new NoSuchElementException("Couldn't find this element: " + by);
+        throw new NoSuchElementException("Couldn't find elements after " + SaladConfig.MAX_SWIPE_COUNT + " swipes: " + by);
     }
 
     protected List<WebElement> findElementsBy(By by, int timeout) {
