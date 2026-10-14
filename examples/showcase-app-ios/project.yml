@@ -1,0 +1,32 @@
+name: SaladShowcase
+options:
+  bundleIdPrefix: id.aldochristiaan.saladeShowcase
+  deploymentTarget:
+    iOS: "16.0"
+  createIntermediateGroups: true
+
+targets:
+  SaladShowcase:
+    type: application
+    platform: iOS
+    sources:
+      - path: ShowcaseApp/ShowcaseApp
+    info:
+      path: ShowcaseApp/ShowcaseApp/Info.plist
+      properties:
+        CFBundleDisplayName: Salad Showcase
+        CFBundleShortVersionString: "1.0"
+        CFBundleVersion: "1"
+        UILaunchScreen: {}
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
+        CFBundleURLTypes:
+          - CFBundleURLName: id.aldochristiaan.salad.showcase
+            CFBundleURLSchemes:
+              - saladshowcase
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: id.aldochristiaan.salad.showcase
+        TARGETED_DEVICE_FAMILY: "1"
+        SWIFT_VERSION: "5.9"
+        GENERATE_INFOPLIST_FILE: false

@@ -5,16 +5,37 @@ on:
     branches:
       - master
       - develop
+  pull_request:
+    branches:
+      - master
+      - develop
+  workflow_dispatch:
+
+# Least privilege + cancel superseded runs on the same ref
+permissions:
+  contents: read
+
+concurrency:
+  group: ui-test-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  # Pin Appium + drivers so an upstream release can't silently break CI
+  APPIUM_VERSION: '3.1.1'
+  UIAUTOMATOR2_VERSION: '7.1.1'
+  ESPRESSO_VERSION: '8.1.0'
 
 jobs:
   test:
     runs-on: ubuntu-latest
+    timeout-minutes: 45
     strategy:
+      fail-fast: false
       matrix:
-        api-level: [30]
-        target: [aosp_atd]
-        arch: [x86]
-        channel: [canary]
+        include:
+          - api-level: 30
+            target: aosp_atd
+            arch: x86_64
 
     steps:
       - name: Checkout
@@ -31,19 +52,17 @@ jobs:
         with:
           packages: 'platform-tools'
 
-      - name: Setup Node.js 25
+      - name: Setup Node.js 22 LTS
         uses: actions/setup-node@v4
         with:
-          node-version: 25
+          node-version: 22
 
       - name: Setup Appium
         run: |
-          npm i -g appium
-          appium driver install uiautomator2
-          appium driver install espresso
-          # Diagnostic only: the emulator is not installed yet at this point
-          # (android-emulator-runner sets it up later), so doctor would always
-          # report it as a required fix. Keep it informational, not fatal.
+          npm i -g appium@${{ env.APPIUM_VERSION }}
+          appium driver install uiautomator2@${{ env.UIAUTOMATOR2_VERSION }}
+          appium driver install espresso@${{ env.ESPRESSO_VERSION }}
+          # Doctor is diagnostic only (the emulator isn't installed yet), so keep it non-fatal
           appium driver doctor uiautomator2 || echo "::warning::uiautomator2 doctor reported issues"
           appium driver doctor espresso || echo "::warning::espresso doctor reported issues"
 
@@ -54,7 +73,16 @@ jobs:
           sudo udevadm trigger --name-match=kvm
 
       - name: Gradle cache
-        uses: gradle/actions/setup-gradle@v3
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Build Salad library
+        run: ./gradlew shadowJar
+
+      - name: Prepare showcase test project
+        run: |
+          # Fat jar for the showcase tests + the committed showcase APK
+          cp build/libs/salad-*.jar examples/showcase/libs/
+          cp examples/apk/showcase-android-debug.apk examples/showcase/src/test/resources/
 
       - name: AVD cache
         uses: actions/cache@v4
@@ -63,7 +91,7 @@ jobs:
           path: |
             ~/.android/avd/*
             ~/.android/adb*
-          key: avd-${{ matrix.api-level }}
+          key: avd-${{ matrix.api-level }}-${{ matrix.target }}-${{ matrix.arch }}
 
       - name: Create AVD and generate snapshot for caching
         if: steps.avd-cache.outputs.cache-hit != 'true'
@@ -72,56 +100,39 @@ jobs:
           api-level: ${{ matrix.api-level }}
           target: ${{ matrix.target }}
           arch: ${{ matrix.arch }}
-          channel: ${{ matrix.channel }}
+          channel: stable
           force-avd-creation: false
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: false
           script: echo "Generated AVD snapshot for caching."
 
-      - name: UiAutomator2 Test
+      # One emulator session runs both driver suites back-to-back to avoid re-booting the
+      # emulator for each driver.
+      - name: Showcase UI tests (UiAutomator2 + Espresso)
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: ${{ matrix.api-level }}
           target: ${{ matrix.target }}
           arch: ${{ matrix.arch }}
-          channel: ${{ matrix.channel }}
+          channel: stable
           force-avd-creation: false
           emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: true
           script: |
-            mkdir -p examples/uiautomator2/target/
-            touch examples/uiautomator2/target/appium.log
-            cp examples/apk/app-debug.apk examples/uiautomator2/src/test/resources
-            cd examples/uiautomator2 && ./gradlew clean test
+            set -e
+            cd examples/showcase
+            echo "===== UiAutomator2 showcase ====="
+            ./gradlew uiautomator2Test
+            echo "===== Espresso showcase ====="
+            ./gradlew espressoTest
 
-      - name: Cucumber Test
-        uses: reactivecircus/android-emulator-runner@v2
+      - name: Upload test reports and screenshots
+        if: failure()
+        uses: actions/upload-artifact@v4
         with:
-          api-level: ${{ matrix.api-level }}
-          target: ${{ matrix.target }}
-          arch: ${{ matrix.arch }}
-          channel: ${{ matrix.channel }}
-          force-avd-creation: false
-          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
-          disable-animations: true
-          script: |
-            mkdir -p examples/cucumber/target/
-            touch examples/cucumber/target/appium.log
-            cp examples/apk/app-debug.apk examples/cucumber/src/test/resources
-            cd examples/cucumber && ./gradlew cucumber --tags "@Pass"
-
-      - name: Espresso Test
-        uses: reactivecircus/android-emulator-runner@v2
-        with:
-          api-level: ${{ matrix.api-level }}
-          target: ${{ matrix.target }}
-          arch: ${{ matrix.arch }}
-          channel: ${{ matrix.channel }}
-          force-avd-creation: false
-          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
-          disable-animations: true
-          script: |
-            mkdir -p examples/espresso/target/
-            touch examples/espresso/target/appium.log
-            cp examples/apk/app-debug.apk examples/espresso/src/test/resources
-            cd examples/espresso && ./gradlew clean test
+          name: showcase-test-artifacts-${{ matrix.api-level }}
+          path: |
+            examples/showcase/build/reports/tests/
+            examples/showcase/target/
+            examples/showcase/screenshot/
+          if-no-files-found: ignore
