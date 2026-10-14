@@ -4,10 +4,23 @@ on:
   push:
     branches:
       - master
+      - develop
+  pull_request:
+    branches:
+      - master
+      - develop
+
+permissions:
+  contents: read
+
+concurrency:
+  group: build-jar-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
 
     steps:
       - uses: actions/checkout@v4
@@ -18,6 +31,9 @@ jobs:
           distribution: 'temurin'
           java-version: '21'
 
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
       - name: Build and test with Gradle
         run: ./gradlew clean test shadowJar
 
@@ -27,3 +43,4 @@ jobs:
         with:
           name: test-results
           path: build/reports/tests/test/
+          if-no-files-found: ignore

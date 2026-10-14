@@ -80,7 +80,9 @@ jobs:
 
       - name: Prepare showcase test project
         run: |
-          # Fat jar for the showcase tests + the committed showcase APK
+          # Fat jar for the showcase tests + the committed showcase APK.
+          # Replace (don't accumulate) jars so fileTree never sees duplicate classes.
+          rm -f examples/showcase/libs/*.jar
           cp build/libs/salad-*.jar examples/showcase/libs/
           cp examples/apk/showcase-android-debug.apk examples/showcase/src/test/resources/
 

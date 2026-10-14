@@ -1,6 +1,6 @@
 name: SaladShowcase
 options:
-  bundleIdPrefix: id.aldochristiaan.saladeShowcase
+  bundleIdPrefix: id.aldochristiaan.salad
   deploymentTarget:
     iOS: "16.0"
   createIntermediateGroups: true
@@ -30,3 +30,12 @@ targets:
         TARGETED_DEVICE_FAMILY: "1"
         SWIFT_VERSION: "5.9"
         GENERATE_INFOPLIST_FILE: false
+
+# Explicit scheme so `xcodebuild -scheme SaladShowcase` never depends on auto-generation
+schemes:
+  SaladShowcase:
+    build:
+      targets:
+        SaladShowcase: all
+    run:
+      config: Debug

@@ -39,6 +39,10 @@ testlogger {
 tasks.withType(Test).configureEach {
     useJUnitPlatform()
     systemProperty 'junit.jupiter.extensions.autodetection.enabled', 'true'
+    // Capabilities (./capabilities-*.properties) and element dirs (src/test/resources/...)
+    // resolve against the test JVM's CWD. Pin it to the project dir so relative paths
+    // resolve the same whether Gradle is launched here or from the repo root with -p.
+    workingDir = projectDir
 }
 
 tasks.register('uiautomator2Test', Test) {
