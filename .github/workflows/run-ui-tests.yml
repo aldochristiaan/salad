@@ -118,13 +118,14 @@ jobs:
           force-avd-creation: false
           emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: true
+          # Invoke Gradle from the repo root with -p so the subproject is targeted
+          # explicitly; an inline `cd` is not reliably honored by emulator-runner.
           script: |
             set -e
-            cd examples/showcase
             echo "===== UiAutomator2 showcase ====="
-            ./gradlew uiautomator2Test
+            ./gradlew -p examples/showcase uiautomator2Test
             echo "===== Espresso showcase ====="
-            ./gradlew espressoTest
+            ./gradlew -p examples/showcase espressoTest
 
       - name: Upload test reports and screenshots
         if: failure()
