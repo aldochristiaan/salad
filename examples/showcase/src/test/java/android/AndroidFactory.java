@@ -13,6 +13,8 @@ import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.Properties;
@@ -28,6 +30,7 @@ import java.util.Properties;
 public class AndroidFactory {
 
     private static final String CAPABILITIES_TEMPLATE = "capabilities-%s.properties";
+    private static final String LOCAL_CAPABILITIES_TEMPLATE = "capabilities-%s.local.properties";
     private static final String ELEMENTS_DIR_TEMPLATE = "src/test/resources/elements-%s/";
     private static final String APP_PACKAGE = "id.aldochristiaan.salad.showcase";
 
@@ -42,6 +45,7 @@ public class AndroidFactory {
         String slug = slug(driverType);
 
         Properties capabilities = PropertiesLoader.loadCapabilities(String.format(CAPABILITIES_TEMPLATE, slug));
+        applyLocalOverrides(capabilities, String.format(LOCAL_CAPABILITIES_TEMPLATE, slug));
         String elementsDir = String.format(ELEMENTS_DIR_TEMPLATE, slug);
 
         salad = new Salad(capabilities, elementsDir, driverType, LogLevel.INFO);
@@ -92,6 +96,30 @@ public class AndroidFactory {
         } catch (IllegalArgumentException e) {
             LogUtil.warn("Unknown driver '" + prop + "', falling back to UIAUTOMATOR2");
             return Driver.UIAUTOMATOR2;
+        }
+    }
+
+    /**
+     * Merge device-specific overrides on top of the committed, CI-generic capabilities.
+     * <p>
+     * The committed {@code capabilities-<driver>.properties} target the CI emulator. A
+     * developer pointing a run at a locally attached device (different udid/device name,
+     * extra adb timeouts, ...) drops those keys into an optional, git-ignored
+     * {@code capabilities-<driver>.local.properties} which is layered over the base file.
+     * CI never sees this file, so it keeps using the emulator defaults.
+     */
+    private static void applyLocalOverrides(Properties base, String fileName) {
+        File local = new File("./" + fileName);
+        if (!local.isFile()) {
+            return;
+        }
+        try (FileInputStream fis = new FileInputStream(local)) {
+            Properties overrides = new Properties();
+            overrides.load(fis);
+            overrides.forEach((key, value) -> base.setProperty(key.toString(), value.toString()));
+            LogUtil.info("Applied " + overrides.size() + " local capability override(s) from " + fileName);
+        } catch (IOException e) {
+            LogUtil.error("Failed to load local capability overrides: " + fileName, e);
         }
     }
 

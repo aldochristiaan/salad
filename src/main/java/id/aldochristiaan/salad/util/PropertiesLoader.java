@@ -15,10 +15,14 @@ import java.util.Properties;
 public class PropertiesLoader {
 
     private static volatile PropertiesLoader instance;
+    /** Element locators (and any key set via {@link #setProperty}). */
     private Properties properties;
+    /** Appium session capabilities only — must never leak into element lookups or vice versa. */
+    private Properties capabilityProperties;
 
     private PropertiesLoader() {
         this.properties = new Properties();
+        this.capabilityProperties = new Properties();
     }
 
     /**
@@ -58,7 +62,7 @@ public class PropertiesLoader {
     }
 
     /**
-     * Load properties from a directory
+     * Load properties from a directory (element locators).
      */
     public void loadFromDirectory(String directory) {
         File dir = new File(directory);
@@ -78,7 +82,7 @@ public class PropertiesLoader {
     }
 
     /**
-     * Load properties from a single file
+     * Load properties from a single file (element locators).
      */
     public void loadFromFile(File file) {
         try (FileInputStream fis = new FileInputStream(file)) {
@@ -90,49 +94,54 @@ public class PropertiesLoader {
     }
 
     /**
-     * Load from Properties object
+     * Load Appium session capabilities. Kept separate from element locators so they are
+     * never forwarded to the driver as capabilities (or looked up as elements).
      */
     public void loadFromProperties(Properties props) {
-        this.properties.putAll(props);
+        this.capabilityProperties.putAll(props);
     }
 
     /**
-     * Get property value
+     * Get property value. Element locators take precedence; capability keys are a
+     * fallback for backward compatibility with single-store setups.
      */
     public String getProperty(String key) {
-        return properties.getProperty(key);
+        String value = properties.getProperty(key);
+        return value != null ? value : capabilityProperties.getProperty(key);
     }
 
     /**
      * Get property with default value
      */
     public String getProperty(String key, String defaultValue) {
-        return properties.getProperty(key, defaultValue);
+        String value = getProperty(key);
+        return value != null ? value : defaultValue;
     }
 
     /**
-     * Set property
+     * Set property (element store)
      */
     public void setProperty(String key, String value) {
         properties.setProperty(key, value);
     }
 
     /**
-     * Remove property
+     * Remove property from both stores
      */
     public void removeProperty(String key) {
         properties.remove(key);
+        capabilityProperties.remove(key);
     }
 
     /**
-     * Check if property exists
+     * Check if property exists in either store
      */
     public boolean hasProperty(String key) {
-        return properties.containsKey(key);
+        return properties.containsKey(key) || capabilityProperties.containsKey(key);
     }
 
     /**
-     * Get all properties as an independent snapshot copy.
+     * Get all properties as an independent snapshot copy (both stores merged).
      * <p>
      * Note: this intentionally copies the entries into the returned instance instead of using
      * {@code new Properties(properties)}, which would store the loaded values in the
@@ -143,15 +152,36 @@ public class PropertiesLoader {
      */
     public Properties getProperties() {
         Properties copy = new Properties();
+        copy.putAll(capabilityProperties);
         copy.putAll(properties);
         return copy;
     }
 
     /**
-     * Clear all properties
+     * Get only the Appium session capabilities. Element locators are excluded so they are
+     * never sent to the driver as capabilities.
+     */
+    public Properties getCapabilityProperties() {
+        Properties copy = new Properties();
+        copy.putAll(capabilityProperties);
+        return copy;
+    }
+
+    /**
+     * Get only the element locator properties.
+     */
+    public Properties getElementProperties() {
+        Properties copy = new Properties();
+        copy.putAll(properties);
+        return copy;
+    }
+
+    /**
+     * Clear all properties (both stores)
      */
     public void clear() {
         properties.clear();
+        capabilityProperties.clear();
     }
 
     /**

@@ -5,3 +5,6 @@ target/
 *.iml
 .idea/
 local.properties
+# Developer-machine capability overrides (e.g. a physical device udid); CI uses the
+# committed capabilities-<driver>.properties only.
+capabilities-*.local.properties

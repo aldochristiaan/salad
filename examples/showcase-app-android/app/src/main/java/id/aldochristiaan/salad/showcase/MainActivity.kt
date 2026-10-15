@@ -63,8 +63,10 @@ class MainActivity : AppCompatActivity() {
         }
 
         navView.setNavigationItemSelectedListener { item ->
+            // Standard drawer behavior: always close on selection so the underlying
+            // screen is interactive again when the user comes back to it.
+            drawerLayout.closeDrawer(GravityCompat.START)
             when (item.itemId) {
-                R.id.nav_home -> drawerLayout.closeDrawer(GravityCompat.START)
                 R.id.nav_list -> startActivity(Intent(this, ListActivity::class.java))
                 R.id.nav_forms -> startActivity(Intent(this, FormsActivity::class.java))
                 R.id.nav_toasts -> startActivity(Intent(this, ToastActivity::class.java))
