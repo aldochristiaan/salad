@@ -38,13 +38,13 @@ env:
   # Pin Appium + driver so an upstream release can't silently break CI
   APPIUM_VERSION: '3.1.1'
   XCUITEST_VERSION: '12.18.1'
-  SIM_DEVICE: 'iPhone 17 Pro Max'
+  SIM_DEVICE: 'iPhone 15'
   APP_NAME: 'SaladShowcase.app'
 
 jobs:
   test:
     # macos-15 (arm64) ships Xcode 26.x with the iOS 26 simulator runtime and a
-    # pre-created iPhone 17 Pro Max simulator.
+    # pre-created iPhone 15 simulator.
     runs-on: macos-15
     timeout-minutes: 60
     steps:
@@ -218,8 +218,8 @@ jobs:
           PROPS=examples/showcase/capabilities-ios.properties
           # Absolute app path: independent of the Appium server's working directory
           APP_ABS="$GITHUB_WORKSPACE/examples/showcase/src/test/resources/$APP_NAME"
-          sed -i '' "s|^deviceName=.*|deviceName=${SIM_DEVICE}|" "$PROPS"
-          sed -i '' "s|^app=.*|app=${APP_ABS}|" "$PROPS"
+          sed -i '' "s|^appium:deviceName=.*|appium:deviceName=${SIM_DEVICE}|" "$PROPS"
+          sed -i '' "s|^appium:app=.*|appium:app=${APP_ABS}|" "$PROPS"
           echo "appium:udid=${{ steps.sim.outputs.udid }}" >> "$PROPS"
           echo "--- resolved capabilities ---"
           cat "$PROPS"

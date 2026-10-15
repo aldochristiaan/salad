@@ -13,8 +13,6 @@ import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.Properties;
@@ -113,14 +111,11 @@ public class AndroidFactory {
         if (!local.isFile()) {
             return;
         }
-        try (FileInputStream fis = new FileInputStream(local)) {
-            Properties overrides = new Properties();
-            overrides.load(fis);
-            overrides.forEach((key, value) -> base.setProperty(key.toString(), value.toString()));
-            LogUtil.info("Applied " + overrides.size() + " local capability override(s) from " + fileName);
-        } catch (IOException e) {
-            LogUtil.error("Failed to load local capability overrides: " + fileName, e);
-        }
+        // Colon-safe parser: a plain Properties.load would collapse every
+        // "appium:someCap=value" override into a single "appium" key (last line wins).
+        Properties overrides = PropertiesLoader.loadCapabilities(local);
+        overrides.forEach((key, value) -> base.setProperty(key.toString(), value.toString()));
+        LogUtil.info("Applied " + overrides.size() + " local capability override(s) from " + fileName);
     }
 
     private static String slug(Driver driver) {

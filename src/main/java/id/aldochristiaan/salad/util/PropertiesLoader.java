@@ -3,9 +3,12 @@ package id.aldochristiaan.salad.util;
 import id.aldochristiaan.salad.config.SaladConfig;
 import org.openqa.selenium.NoSuchElementException;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.IOException;
+import java.io.StringReader;
 import java.util.Objects;
 import java.util.Properties;
 
@@ -32,19 +35,96 @@ public class PropertiesLoader {
      * <pre>{@code
      * Properties caps = PropertiesLoader.loadCapabilities("capabilities.properties");
      * }</pre>
+     * <p>
+     * <b>Important:</b> each line is parsed by hand, splitting at the first {@code =}.
+     * {@link java.util.Properties#load(java.io.InputStream)} also treats {@code :} as a
+     * key/value separator, which silently collapsed every {@code appium:someCap=value}
+     * line into a single {@code appium} key (last line wins) — so Appium capabilities
+     * like {@code appium:wdaLaunchTimeout} never reached the driver.
      * On failure an error is logged and an empty {@code Properties} is returned.
      *
      * @param fileName properties file name (resolved against {@code ./})
      * @return the loaded properties, or an empty instance when loading fails
      */
     public static Properties loadCapabilities(String fileName) {
+        return loadCapabilities(new File("./" + fileName));
+    }
+
+    /**
+     * Load capabilities from an arbitrary properties file, preserving keys that contain
+     * colons (e.g. {@code appium:udid}). See {@link #loadCapabilities(String)}.
+     */
+    public static Properties loadCapabilities(File file) {
         Properties props = new Properties();
-        try (FileInputStream fis = new FileInputStream("./" + fileName)) {
-            props.load(fis);
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String trimmed = line.strip();
+                if (trimmed.isEmpty() || trimmed.startsWith("#") || trimmed.startsWith("!")) {
+                    continue;
+                }
+                int separator = trimmed.indexOf('=');
+                if (separator < 0) {
+                    // No '=' on the line: keep standard Properties behavior for
+                    // "key: value" / "key value" styles by delegating to Properties.load.
+                    Properties legacy = new Properties();
+                    legacy.load(new StringReader(trimmed));
+                    props.putAll(legacy);
+                    continue;
+                }
+                String key = unescape(trimmed.substring(0, separator).strip());
+                String value = unescape(trimmed.substring(separator + 1).strip());
+                if (!key.isEmpty()) {
+                    props.setProperty(key, value);
+                }
+            }
         } catch (IOException e) {
-            LogUtil.error("Failed to load properties file: " + fileName, e);
+            LogUtil.error("Failed to load properties file: " + file.getName(), e);
         }
         return props;
+    }
+
+    /**
+     * Resolve escape sequences the same way {@link Properties#load(java.io.Reader)} does
+     * ({@code \n}, {@code \t}, {@code \r}, {@code \f}, {@code \\}, {@code uXXXX}, and
+     * importantly {@code \:} → {@code :}).
+     * Files written before the colon-safe parser escaped keys as {@code appium\:udid} to
+     * survive Properties.load; those must keep resolving to {@code appium:udid}.
+     */
+    private static String unescape(String input) {
+        if (input.indexOf('\\') < 0) {
+            return input;
+        }
+        char[] out = new char[input.length()];
+        int outLen = 0;
+        for (int i = 0; i < input.length(); i++) {
+            char c = input.charAt(i);
+            if (c != '\\' || i == input.length() - 1) {
+                out[outLen++] = c;
+                continue;
+            }
+            char next = input.charAt(++i);
+            switch (next) {
+                case 'n' -> out[outLen++] = '\n';
+                case 't' -> out[outLen++] = '\t';
+                case 'r' -> out[outLen++] = '\r';
+                case 'f' -> out[outLen++] = '\f';
+                case 'u' -> {
+                    if (i + 4 < input.length()) {
+                        try {
+                            out[outLen++] = (char) Integer.parseInt(input.substring(i + 1, i + 5), 16);
+                            i += 4;
+                        } catch (NumberFormatException e) {
+                            out[outLen++] = 'u';
+                        }
+                    } else {
+                        out[outLen++] = 'u';
+                    }
+                }
+                default -> out[outLen++] = next; // covers \\ \: \= and any other escaped char
+            }
+        }
+        return new String(out, 0, outLen);
     }
 
     /**

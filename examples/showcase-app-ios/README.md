@@ -47,7 +47,7 @@ Copy the produced `SaladShowcase.app` to
 ## CI
 
 `.github/workflows/run-ui-tests-ios.yml` does all of the above on a
-`macos-15` runner (Xcode 26 / iOS 26, iPhone 17 Pro Max simulator) whenever
+`macos-15` runner (Xcode 26 / iOS 26, iPhone 15 simulator) whenever
 files in this directory or the iOS test sources change. The built `.app` is
 cached keyed on a hash of the sources in this directory, so it is only rebuilt
 when the app source actually changes.
