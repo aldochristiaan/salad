@@ -1,0 +1,11 @@
+{
+  "toolsVersions": {
+    "compileSdk": "35"
+  },
+  "additionalAndroidTestDependencies": [
+    "androidx.activity:activity:1.9.3",
+    "androidx.fragment:fragment:1.8.5",
+    "androidx.core:core:1.15.0",
+    "androidx.customview:customview:1.1.0"
+  ]
+}

@@ -92,7 +92,14 @@ public class Salad {
         try {
             setupAppiumService();
 
-            Properties caps = propertiesLoader.getProperties();
+            // Only real Appium capabilities — element locators from the elements directory
+            // must never be forwarded to the driver as session capabilities.
+            Properties caps = propertiesLoader.getCapabilityProperties();
+            if (caps.isEmpty()) {
+                // Backward compatibility: capabilities may have been loaded into the shared
+                // store (single-store loader) via loadFromFile/loadFromDirectory.
+                caps = propertiesLoader.getProperties();
+            }
             if (caps.isEmpty() && CAPABILITIES_PROPERTIES != null) {
                 caps = CAPABILITIES_PROPERTIES; // Backward compatibility
             }

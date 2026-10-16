@@ -1,0 +1,73 @@
+<resources>
+    <string name="app_name">Salad Showcase</string>
+
+    <!-- Toolbar / menu -->
+    <string name="menu_settings">Settings</string>
+    <string name="menu_about">About</string>
+    <string name="open_navigation_drawer">Open navigation drawer</string>
+
+    <!-- Drawer -->
+    <string name="drawer_header_email">salad.showcase@example.com</string>
+    <string name="nav_home">Home</string>
+    <string name="nav_list">List Screen</string>
+    <string name="nav_forms">Forms Screen</string>
+    <string name="nav_toasts">Toast Screen</string>
+    <string name="nav_gestures">Gestures Screen</string>
+    <string name="nav_viewpager">ViewPager Screen</string>
+    <string name="nav_webview">WebView Screen</string>
+
+    <!-- Main -->
+    <string name="main_greeting">This is the Salad Showcase home screen</string>
+    <string name="fab_content_description">Send message</string>
+    <string name="fab_clicked">FAB clicked!</string>
+    <string name="settings_clicked">Settings clicked!</string>
+
+    <!-- List -->
+    <string name="list_title">Scrollable List</string>
+    <string name="list_item_format">Item %1$d</string>
+    <string name="list_item_clicked">Clicked: %1$s</string>
+    <string name="list_item_long_clicked">Long clicked: %1$s</string>
+    <string name="list_add_item">Add Item</string>
+
+    <!-- Forms -->
+    <string name="forms_title">Forms</string>
+    <string name="forms_name_hint">Name</string>
+    <string name="forms_email_hint">Email</string>
+    <string name="forms_accept_terms">I accept the terms</string>
+    <string name="forms_enable_notifications">Enable notifications</string>
+    <string name="forms_submit">Submit</string>
+    <string name="forms_disabled_button">Disabled Button</string>
+    <string name="forms_submitted">Submitted: %1$s / %2$s</string>
+    <string name="forms_terms_checked">Terms accepted</string>
+
+    <!-- Toasts -->
+    <string name="toasts_title">Toasts</string>
+    <string name="toast_short">Show Short Toast</string>
+    <string name="toast_long">Show Long Toast</string>
+    <string name="toast_error">Show Error Toast</string>
+    <string name="toast_short_text">This is a short toast</string>
+    <string name="toast_long_text">This is a long toast message that stays visible</string>
+    <string name="toast_error_text">Error: Something went wrong (code 500)</string>
+    <string name="toast_status_idle">Toast status: idle</string>
+
+    <!-- Gestures -->
+    <string name="gestures_title">Gestures</string>
+    <string name="gestures_zoom_hint">Pinch the image to zoom</string>
+    <string name="gestures_zoom_image_content_description">Zoomable image</string>
+    <string name="gestures_long_press">Long Press Me</string>
+    <string name="gestures_long_pressed">Long pressed!</string>
+    <string name="gestures_fling_title">Fling this list</string>
+
+    <!-- ViewPager -->
+    <string name="viewpager_title">ViewPager</string>
+    <string name="viewpager_page_format">Page %1$d</string>
+    <string name="viewpager_content_format">This is content of page %1$d</string>
+
+    <!-- WebView -->
+    <string name="webview_title">WebView</string>
+
+    <!-- Second activity -->
+    <string name="second_title">Second Activity</string>
+    <string name="second_deeplink_result">Deeplink opened: %1$s</string>
+    <string name="second_back">Back to Main</string>
+</resources>
