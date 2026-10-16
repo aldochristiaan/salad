@@ -36,6 +36,11 @@ jobs:
           - api-level: 30
             target: aosp_atd
             arch: x86_64
+            # Pixel 5 hardware profile: 1080x2340 @ 440dpi, matching the physical
+            # device geometry the suite is developed against. The aosp_atd default
+            # profile is a tiny 320x640 @ 160dpi screen where showcase layouts
+            # overflow and tests fail for geometry reasons only.
+            profile: pixel_5
 
     steps:
       - name: Checkout
@@ -93,7 +98,9 @@ jobs:
           path: |
             ~/.android/avd/*
             ~/.android/adb*
-          key: avd-${{ matrix.api-level }}-${{ matrix.target }}-${{ matrix.arch }}
+          # Profile is part of the key: AVDs are profile-specific (screen size/density),
+          # so a cached aosp_atd-default AVD must not be restored for pixel_5.
+          key: avd-${{ matrix.api-level }}-${{ matrix.target }}-${{ matrix.arch }}-${{ matrix.profile }}
 
       - name: Create AVD and generate snapshot for caching
         if: steps.avd-cache.outputs.cache-hit != 'true'
@@ -102,6 +109,7 @@ jobs:
           api-level: ${{ matrix.api-level }}
           target: ${{ matrix.target }}
           arch: ${{ matrix.arch }}
+          profile: ${{ matrix.profile }}
           channel: stable
           force-avd-creation: false
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
@@ -116,6 +124,7 @@ jobs:
           api-level: ${{ matrix.api-level }}
           target: ${{ matrix.target }}
           arch: ${{ matrix.arch }}
+          profile: ${{ matrix.profile }}
           channel: stable
           force-avd-creation: false
           emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
