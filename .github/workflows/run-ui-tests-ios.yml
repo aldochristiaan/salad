@@ -38,7 +38,7 @@ env:
   # Pin Appium + driver so an upstream release can't silently break CI
   APPIUM_VERSION: '3.1.1'
   XCUITEST_VERSION: '12.18.1'
-  SIM_DEVICE: 'iPhone 16'
+  SIM_DEVICE: 'iPhone 17 Pro'
   APP_NAME: 'SaladShowcase.app'
 
 jobs:
@@ -162,11 +162,11 @@ jobs:
           rm -rf examples/showcase/src/test/resources/SaladShowcase.app
           cp -R "build/$APP_NAME" examples/showcase/src/test/resources/
 
-      - name: Boot iPhone 16 simulator (handles CoreLocation data migration)
+      - name: Boot iPhone 17 Pro simulator (handles CoreLocation data migration)
         uses: futureware-tech/simulator-action@v6
         id: sim
         with:
-          model: 'iPhone 16'
+          model: 'iPhone 17 Pro'
           os_version: '>=26.0'
           boot_timeout_seconds: '300'
           # The action handles the "Waiting on Data Migration" CoreLocation stall
