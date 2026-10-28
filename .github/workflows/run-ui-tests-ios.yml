@@ -163,12 +163,12 @@ jobs:
           cp -R "build/$APP_NAME" examples/showcase/src/test/resources/
 
       - name: Boot iPhone 15 simulator (handles CoreLocation data migration)
-        uses: futureware-tech/launch-ios-simulator@v1
+        uses: futureware-tech/simulator-action@v5
         id: sim
         with:
-          device: 'iPhone 15'
-          runtime: 'iOS 26.5'
-          timeout: '300'
+          model: 'iPhone 15'
+          os_version: 'iOS 26.5'
+          boot_timeout_seconds: '300'
           # The action handles the "Waiting on Data Migration" CoreLocation stall
           # by waiting for SpringBoard to become ready, not just bootstatus.
           # It outputs `udid` for use in capabilities.
