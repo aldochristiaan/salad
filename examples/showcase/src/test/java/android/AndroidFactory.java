@@ -46,7 +46,7 @@ public class AndroidFactory {
         applyLocalOverrides(capabilities, String.format(LOCAL_CAPABILITIES_TEMPLATE, slug));
         String elementsDir = String.format(ELEMENTS_DIR_TEMPLATE, slug);
 
-        salad = new Salad(capabilities, elementsDir, driverType, LogLevel.INFO);
+        salad = new Salad(capabilities, elementsDir, driverType, appiumLogLevel());
         startSession();
     }
 
@@ -94,6 +94,28 @@ public class AndroidFactory {
         } catch (IllegalArgumentException e) {
             LogUtil.warn("Unknown driver '" + prop + "', falling back to UIAUTOMATOR2");
             return Driver.UIAUTOMATOR2;
+        }
+    }
+
+    /**
+     * Appium server log level, overridable via the {@code SALAD_APPIUM_LOG_LEVEL}
+     * environment variable (valid values: {@code INFO}, {@code WARN}, {@code DEBUG}).
+     * <p>
+     * CI sets {@code debug}: the espresso driver logs the instrumentation's own
+     * output — the only place a failed server startup explains itself — at debug
+     * level only, so at the default INFO a startup failure arrives with no error
+     * text anywhere.
+     */
+    private static LogLevel appiumLogLevel() {
+        String env = System.getenv("SALAD_APPIUM_LOG_LEVEL");
+        if (env == null || env.isBlank()) {
+            return LogLevel.INFO;
+        }
+        try {
+            return LogLevel.valueOf(env.trim().toUpperCase(Locale.ROOT));
+        } catch (IllegalArgumentException e) {
+            LogUtil.warn("Unknown SALAD_APPIUM_LOG_LEVEL '" + env + "', falling back to INFO");
+            return LogLevel.INFO;
         }
     }
 

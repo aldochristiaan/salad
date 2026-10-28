@@ -127,6 +127,11 @@ jobs:
       # One emulator session runs both driver suites back-to-back to avoid re-booting the
       # emulator for each driver.
       - name: Showcase UI tests (UiAutomator2 + Espresso)
+        # The espresso driver logs the instrumentation's own output ([Instrumentation],
+        # which carries the real startup error) at debug level only — at info, a failed
+        # session arrives with zero detail. CI-only override via SALAD_APPIUM_LOG_LEVEL.
+        env:
+          SALAD_APPIUM_LOG_LEVEL: debug
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: ${{ matrix.api-level }}
@@ -137,18 +142,15 @@ jobs:
           force-avd-creation: false
           emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: true
-          # Invoke Gradle from the repo root with -p so the subproject is targeted
-          # explicitly; an inline `cd` is not reliably honored by emulator-runner.
+          # android-emulator-runner executes EACH LINE of this block as a separate
+          # `sh -c`, so shell state (`rc`, `set -e`) never survives across lines —
+          # that previously made `exit $rc` exit empty (= 0) and hid Espresso failures
+          # from both the step result and the failure-only artifact upload.
+          # The whole run therefore lives on ONE line: both suites always execute,
+          # the step fails if either fails, and logcat lands in target/ for the
+          # artifact (the instrumentation's error text is invisible at info level).
           script: |
-            # Don't abort between suites: a UiAutomator2 failure must not hide the
-            # Espresso report. Fail the step at the end with the combined result.
-            set +e
-            rc=0
-            echo "===== UiAutomator2 showcase ====="
-            ./gradlew -p examples/showcase uiautomator2Test || rc=1
-            echo "===== Espresso showcase ====="
-            ./gradlew -p examples/showcase espressoTest || rc=1
-            exit $rc
+            set +e; rc=0; echo "===== UiAutomator2 showcase ====="; ./gradlew -p examples/showcase uiautomator2Test || rc=1; echo "===== Espresso showcase ====="; ./gradlew -p examples/showcase espressoTest || rc=1; mkdir -p examples/showcase/target; adb logcat -d > examples/showcase/target/logcat.txt 2>&1; echo "Combined suite exit code: $rc"; exit $rc
 
       - name: Upload test reports and screenshots
         if: failure()
