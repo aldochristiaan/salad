@@ -162,64 +162,16 @@ jobs:
           rm -rf examples/showcase/src/test/resources/SaladShowcase.app
           cp -R "build/$APP_NAME" examples/showcase/src/test/resources/
 
-      - name: Boot simulator
+      - name: Boot iPhone 15 simulator (handles CoreLocation data migration)
+        uses: futureware-tech/launch-ios-simulator@v1
         id: sim
-        run: |
-          set -euo pipefail
-
-          # Pure-shell watchdog: macOS runners have no `timeout`/`gtimeout`.
-          run_with_timeout() {
-            local secs=$1; shift
-            "$@" &
-            local pid=$!
-            ( sleep "$secs"; kill -9 "$pid" 2>/dev/null ) &
-            local watcher=$!
-            wait "$pid" 2>/dev/null
-            local rc=$?
-            kill "$watcher" 2>/dev/null || true
-            return $rc
-          }
-
-          # Simulator boots can stall (~10% of runs on Xcode 26, a known Apple bug),
-          # so retry with a hard timeout instead of hanging the job.
-          UDID=""
-          for attempt in 1 2 3; do
-            UDID=$(xcrun simctl list devices available | grep -F "$SIM_DEVICE (" | grep -oiE '[0-9a-f]{8}-[0-9a-f-]{27}' | head -1 || true)
-
-            if [ -z "$UDID" ]; then
-              # No pre-created device: build one from the newest iOS 26 runtime.
-              DEV_TYPE=$(xcrun simctl list devicetypes -j | jq -r --arg name "$SIM_DEVICE" \
-                '.devicetypes[] | select(.name == $name) | .identifier' | head -1)
-              RUNTIME=$(xcrun simctl list runtimes -j | jq -r \
-                '[.runtimes[] | select(.isAvailable and (.platform == "iOS") and (.version | startswith("26")))] | sort_by(.version) | last | .identifier // empty')
-              if [ -z "$DEV_TYPE" ] || [ -z "$RUNTIME" ]; then
-                echo "::error::Cannot create $SIM_DEVICE (devicetype='$DEV_TYPE' runtime='$RUNTIME')"
-                xcrun simctl list devicetypes
-                xcrun simctl list runtimes
-                exit 1
-              fi
-              UDID=$(xcrun simctl create "$SIM_DEVICE" "$DEV_TYPE" "$RUNTIME")
-            fi
-
-            echo "Attempt $attempt: booting $SIM_DEVICE ($UDID)"
-            xcrun simctl boot "$UDID" 2>/dev/null || true
-            if run_with_timeout 180 xcrun simctl bootstatus "$UDID" -b; then
-              break
-            fi
-            echo "::warning::Boot stalled on attempt $attempt; restarting simulator"
-            xcrun simctl shutdown "$UDID" 2>/dev/null || true
-            UDID=""
-            sleep 5
-          done
-
-          if [ -z "$UDID" ]; then
-            echo "::error::Failed to boot $SIM_DEVICE after 3 attempts"
-            exit 1
-          fi
-
-          echo "udid=$UDID" >> "$GITHUB_OUTPUT"
-          echo "Booted $SIM_DEVICE: $UDID"
-          xcrun simctl list devices | grep -F "$SIM_DEVICE" || true
+        with:
+          device: 'iPhone 15'
+          runtime: 'iOS 26.5'
+          timeout: '300'
+          # The action handles the "Waiting on Data Migration" CoreLocation stall
+          # by waiting for SpringBoard to become ready, not just bootstatus.
+          # It outputs `udid` for use in capabilities.
 
       - name: Point capabilities at the live simulator
         run: |
