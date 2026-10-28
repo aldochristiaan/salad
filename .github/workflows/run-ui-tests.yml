@@ -85,11 +85,19 @@ jobs:
 
       - name: Prepare showcase test project
         run: |
-          # Fat jar for the showcase tests + the committed showcase APK.
+          # Fat jar for the showcase tests.
           # Replace (don't accumulate) jars so fileTree never sees duplicate classes.
           rm -f examples/showcase/libs/*.jar
           cp build/libs/salad-*.jar examples/showcase/libs/
-          cp examples/apk/showcase-android-debug.apk examples/showcase/src/test/resources/
+
+      # Build the showcase APK from source instead of committing a prebuilt binary:
+      # a committed APK silently goes stale against the app source (it shipped the
+      # Forms screen without the MaterialSwitch fix and crashed on launch in CI).
+      - name: Build showcase app APK
+        run: |
+          ./examples/showcase-app-android/gradlew -p examples/showcase-app-android assembleDebug
+          cp examples/showcase-app-android/app/build/outputs/apk/debug/app-debug.apk \
+             examples/showcase/src/test/resources/showcase-android-debug.apk
 
       - name: AVD cache
         uses: actions/cache@v4
@@ -132,11 +140,15 @@ jobs:
           # Invoke Gradle from the repo root with -p so the subproject is targeted
           # explicitly; an inline `cd` is not reliably honored by emulator-runner.
           script: |
-            set -e
+            # Don't abort between suites: a UiAutomator2 failure must not hide the
+            # Espresso report. Fail the step at the end with the combined result.
+            set +e
+            rc=0
             echo "===== UiAutomator2 showcase ====="
-            ./gradlew -p examples/showcase uiautomator2Test
+            ./gradlew -p examples/showcase uiautomator2Test || rc=1
             echo "===== Espresso showcase ====="
-            ./gradlew -p examples/showcase espressoTest
+            ./gradlew -p examples/showcase espressoTest || rc=1
+            exit $rc
 
       - name: Upload test reports and screenshots
         if: failure()

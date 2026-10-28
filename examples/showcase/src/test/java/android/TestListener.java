@@ -12,7 +12,10 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-/** Logs per-test results and captures a screenshot + app reset when a test fails. */
+/** Logs per-test results and captures a screenshot + app reset when a test fails.
+ *  Note: on CI's ATD emulator (swiftshader GPU) the captured screenshots are solid
+ *  black — `screencap` cannot read the framebuffer. Use the appium.log artifact
+ *  for diagnosis instead. */
 public class TestListener implements TestWatcher, AfterAllCallback {
 
     private final List<TestResultStatus> statuses = new ArrayList<>();
