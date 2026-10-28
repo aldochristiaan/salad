@@ -1,5 +1,9 @@
 package ios;
 
+import id.aldochristiaan.salad.util.LogLevel;
+import id.aldochristiaan.salad.util.LogUtil;
+import java.util.Locale;
+
 import id.aldochristiaan.salad.Salad;
 import id.aldochristiaan.salad.util.Driver;
 import id.aldochristiaan.salad.util.LogLevel;
@@ -33,7 +37,7 @@ public class IosFactory {
     @BeforeAll
     public static void setUp() {
         Properties capabilities = PropertiesLoader.loadCapabilities(CAPABILITIES_FILE);
-        salad = new Salad(capabilities, ELEMENTS_DIR, Driver.XCUITEST, LogLevel.INFO);
+        salad = new Salad(capabilities, ELEMENTS_DIR, Driver.XCUITEST, appiumLogLevel());
         salad.start();
         iosDriver = salad.getIosDriver();
         ios = new Ios(iosDriver);
@@ -48,6 +52,14 @@ public class IosFactory {
 
     public static IOSDriver getIosDriver() {
         return iosDriver;
+    }
+
+
+    private static LogLevel appiumLogLevel() {
+        String env = System.getenv("SALAD_APPIUM_LOG_LEVEL");
+        if (env == null || env.isBlank()) return LogLevel.INFO;
+        try { return LogLevel.valueOf(env.trim().toUpperCase(Locale.ROOT)); }
+        catch (IllegalArgumentException e) { LogUtil.warn("Unknown SALAD_APPIUM_LOG_LEVEL '" + env + "', falling back to INFO"); return LogLevel.INFO; }
     }
 
     public static void takeScreenshot(String name) {
