@@ -1,0 +1,211 @@
+name: Run UI Test (iOS)
+
+# macOS runners bill at a 10x multiplier, so this workflow only fires when iOS-relevant
+# files change. Everything Android is handled by run-ui-tests.yml.
+on:
+  push:
+    branches:
+      - master
+      - develop
+    paths:
+      - 'examples/showcase-app-ios/**'
+      - 'examples/showcase/src/test/java/ios/**'
+      - 'examples/showcase/src/test/resources/elements-ios/**'
+      - 'examples/showcase/capabilities-ios.properties'
+      - 'examples/showcase/build.gradle'
+      - '.github/workflows/run-ui-tests-ios.yml'
+  pull_request:
+    branches:
+      - master
+      - develop
+    paths:
+      - 'examples/showcase-app-ios/**'
+      - 'examples/showcase/src/test/java/ios/**'
+      - 'examples/showcase/src/test/resources/elements-ios/**'
+      - 'examples/showcase/capabilities-ios.properties'
+      - 'examples/showcase/build.gradle'
+      - '.github/workflows/run-ui-tests-ios.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ui-test-ios-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  # Pin Appium + driver so an upstream release can't silently break CI
+  APPIUM_VERSION: '3.1.1'
+  XCUITEST_VERSION: '12.18.1'
+  SIM_DEVICE: 'iPhone 17 Pro'
+  APP_NAME: 'SaladShowcase.app'
+
+jobs:
+  test:
+    # macOS 26 (Tahoe) ships Xcode 26.6 (build 17F113) with the iOS 26 simulator
+    # runtime; an iPhone 15 is created below from the devicetype list if missing.
+    # NOT macos-15: its newest Xcode is 26.3, which does not ship
+    # lib_TestingInterop.dylib under iPhoneSimulator.platform/Developer/usr/lib.
+    # WebDriverAgent >= 16.12.11 (appium-xcuitest-driver >= 12.16, incl. our pin)
+    # embeds that dylib for EVERY Xcode 26 (XCODE_VERSION_MAJOR=2600), so xcodebuild
+    # fails with "lstat(...lib_TestingInterop.dylib): No such file or directory"
+    # (exit 65) on all 4 retries. Xcode 26.6 is the exact build the upstream fix
+    # (appium/WebDriverAgent#1271) was validated against.
+    runs-on: macos-26
+    timeout-minutes: 60
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Compute app source hash
+        id: hash
+        # Hash only tracked files so a rebuild is skipped when the app source is unchanged
+        # (e.g. only the iOS tests or the workflow itself changed).
+        run: |
+          HASH=$(git ls-files -z examples/showcase-app-ios | xargs -0 shasum | shasum | cut -d' ' -f1)
+          echo "hash=$HASH" >> "$GITHUB_OUTPUT"
+          echo "App source hash: $HASH"
+
+      - name: Restore built .app (skip rebuild when source unchanged)
+        id: appcache
+        uses: actions/cache@v4
+        with:
+          path: build/${{ env.APP_NAME }}
+          # Runner label is part of the key: an .app built by macos-15's Xcode 26.3
+          # must not be reused on macos-26 — rebuild with Xcode 26.6 at least once.
+          key: ios-showcase-app-macos-26-${{ steps.hash.outputs.hash }}
+
+      - name: Select Xcode 26
+        if: steps.appcache.outputs.cache-hit != 'true'
+        run: |
+          set -euo pipefail
+          # Prefer the newest non-beta Xcode 26 so the iOS 26 SDK/runtime is selected.
+          XCODE=$(ls -d /Applications/Xcode_26*.app 2>/dev/null | grep -v beta | sort -V | tail -1)
+          if [ -z "$XCODE" ]; then
+            XCODE=$(ls -d /Applications/Xcode_26*.app 2>/dev/null | sort -V | tail -1)
+          fi
+          if [ -z "$XCODE" ]; then
+            echo "::error::No Xcode 26 installation found on the runner"
+            ls -d /Applications/Xcode*.app
+            exit 1
+          fi
+          echo "Using $XCODE"
+          sudo xcode-select -s "$XCODE"
+          xcodebuild -version
+
+      - name: Install XcodeGen
+        if: steps.appcache.outputs.cache-hit != 'true'
+        run: brew install xcodegen
+
+      - name: Generate Xcode project
+        if: steps.appcache.outputs.cache-hit != 'true'
+        working-directory: examples/showcase-app-ios
+        run: xcodegen generate
+
+      - name: Build .app (iOS Simulator)
+        if: steps.appcache.outputs.cache-hit != 'true'
+        working-directory: examples/showcase-app-ios
+        run: |
+          set -euo pipefail
+          mkdir -p "$GITHUB_WORKSPACE/build"
+          xcodebuild \
+            -project SaladShowcase.xcodeproj \
+            -scheme SaladShowcase \
+            -destination 'generic/platform=iOS Simulator' \
+            -derivedDataPath "$GITHUB_WORKSPACE/build/DerivedData" \
+            build 2>&1 | tee "$GITHUB_WORKSPACE/build/xcodebuild.log"
+          APP_PATH=$(find "$GITHUB_WORKSPACE/build/DerivedData" -name "$APP_NAME" -type d | head -1)
+          if [ -z "$APP_PATH" ]; then
+            echo "::error::Built $APP_NAME not found under DerivedData"
+            exit 1
+          fi
+          rm -rf "$GITHUB_WORKSPACE/build/$APP_NAME"
+          cp -R "$APP_PATH" "$GITHUB_WORKSPACE/build/$APP_NAME"
+          rm -rf "$GITHUB_WORKSPACE/build/DerivedData"
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: Set up Node.js 22 LTS
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Setup Appium (xcuitest)
+        run: |
+          npm i -g appium@${{ env.APPIUM_VERSION }}
+          appium driver install xcuitest@${{ env.XCUITEST_VERSION }}
+
+      - name: Select Xcode 26 (test phase)
+        run: |
+          set -euo pipefail
+          # WebDriverAgent is compiled at session start, so the test phase also needs
+          # Xcode 26 selected (the build-phase selection only ran on a cache miss).
+          XCODE=$(ls -d /Applications/Xcode_26*.app 2>/dev/null | grep -v beta | sort -V | tail -1)
+          if [ -z "$XCODE" ]; then
+            XCODE=$(ls -d /Applications/Xcode_26*.app 2>/dev/null | sort -V | tail -1)
+          fi
+          sudo xcode-select -s "$XCODE"
+          xcodebuild -version
+
+      - name: Build Salad library and stage app
+        run: |
+          set -euo pipefail
+          ./gradlew shadowJar
+          # Replace (don't accumulate) jars so fileTree never sees duplicate classes
+          rm -f examples/showcase/libs/*.jar
+          cp build/libs/salad-*.jar examples/showcase/libs/
+          rm -rf examples/showcase/src/test/resources/SaladShowcase.app
+          cp -R "build/$APP_NAME" examples/showcase/src/test/resources/
+
+      - name: Clean up duplicate simulators
+        run: |
+          # Delete unavailable simulators
+          xcrun simctl delete unavailable
+          # Optional: erase all if you want a completely fresh slate
+          xcrun simctl erase all
+
+      - name: Boot iPhone 17 Pro simulator (handles CoreLocation data migration)
+        uses: futureware-tech/simulator-action@v6
+        id: sim
+        with:
+          model: 'iPhone 17 Pro'
+          os: 'ios'
+          os_version: '26.4'
+          boot_timeout_seconds: '300'
+          wait_for_boot: 'true'
+          settle_timeout_seconds: '30'
+          # The action handles the "Waiting on Data Migration" CoreLocation stall
+          # by waiting for SpringBoard to become ready, not just bootstatus.
+          # It outputs `udid` for use in capabilities.
+
+      - name: Point capabilities at the live simulator
+        run: |
+          set -euo pipefail
+          PROPS=examples/showcase/capabilities-ios.properties
+          # Absolute app path: independent of the Appium server's working directory
+          APP_ABS="$GITHUB_WORKSPACE/examples/showcase/src/test/resources/$APP_NAME"
+          sed -i '' "s|^appium:deviceName=.*|appium:deviceName=${SIM_DEVICE}|" "$PROPS"
+          sed -i '' "s|^appium:app=.*|appium:app=${APP_ABS}|" "$PROPS"
+          echo "appium:udid=${{ steps.sim.outputs.udid }}" >> "$PROPS"
+          echo "--- resolved capabilities ---"
+          cat "$PROPS"
+
+      - name: Run XCUITest showcase suite
+        run: ./gradlew -p examples/showcase iosTest
+
+      - name: Upload test reports and screenshots
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-showcase-test-artifacts
+          path: |
+            examples/showcase/build/reports/tests/
+            examples/showcase/target/
+            examples/showcase/screenshot/
+            build/xcodebuild.log
+          if-no-files-found: ignore

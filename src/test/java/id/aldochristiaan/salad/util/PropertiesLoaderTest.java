@@ -172,6 +172,86 @@ class PropertiesLoaderTest {
         assertTrue(caps.isEmpty());
     }
 
+    @Test
+    @DisplayName("loadCapabilities keeps colon-containing keys like appium:udid intact")
+    void loadCapabilitiesPreservesColonKeys() throws IOException {
+        File file = new File("./loadcaps-colon-test.properties");
+        file.deleteOnExit();
+        try (FileOutputStream fos = new FileOutputStream(file)) {
+            fos.write(("platformName=iOS\n"
+                    + "appium:automationName=XCUITest\n"
+                    + "appium:deviceName=iPhone 15\n"
+                    + "appium:noReset=true\n"
+                    + "appium:wdaLaunchTimeout=300000\n"
+                    + "appium:udid=ABC-123\n").getBytes());
+        }
+
+        Properties caps = PropertiesLoader.loadCapabilities("loadcaps-colon-test.properties");
+
+        // Regression: java.util.Properties treats ':' as a key/value separator, so every
+        // "appium:*" line collapsed into a single "appium" key (last line wins) and the
+        // real capabilities never reached the Appium driver.
+        assertEquals(6, caps.size(), "Every appium: line must survive as its own key");
+        assertEquals("iOS", caps.getProperty("platformName"));
+        assertEquals("XCUITest", caps.getProperty("appium:automationName"));
+        assertEquals("iPhone 15", caps.getProperty("appium:deviceName"));
+        assertEquals("true", caps.getProperty("appium:noReset"));
+        assertEquals("300000", caps.getProperty("appium:wdaLaunchTimeout"));
+        assertEquals("ABC-123", caps.getProperty("appium:udid"));
+        assertNull(caps.getProperty("appium"), "No collapsed 'appium' key may remain");
+    }
+
+    @Test
+    @DisplayName("loadCapabilities skips comments/blank lines and keeps '=' inside values")
+    void loadCapabilitiesHandlesCommentsAndEqualsInValues() throws IOException {
+        File file = new File("./loadcaps-comment-test.properties");
+        file.deleteOnExit();
+        try (FileOutputStream fos = new FileOutputStream(file)) {
+            fos.write(("# comment\n"
+                    + "\n"
+                    + "! another comment\n"
+                    + "platformName=Android\n"
+                    + "app=src/test/resources/showcase-android-debug.apk\n").getBytes());
+        }
+
+        Properties caps = PropertiesLoader.loadCapabilities("loadcaps-comment-test.properties");
+
+        assertEquals(2, caps.size());
+        assertEquals("Android", caps.getProperty("platformName"));
+        assertEquals("src/test/resources/showcase-android-debug.apk", caps.getProperty("app"));
+    }
+
+    @Test
+    @DisplayName("loadCapabilities still supports 'key: value' lines without '='")
+    void loadCapabilitiesSupportsLegacyColonSeparator() throws IOException {
+        File file = new File("./loadcaps-legacy-test.properties");
+        file.deleteOnExit();
+        try (FileOutputStream fos = new FileOutputStream(file)) {
+            fos.write("deviceName: Android Emulator\n".getBytes());
+        }
+
+        Properties caps = PropertiesLoader.loadCapabilities("loadcaps-legacy-test.properties");
+
+        assertEquals("Android Emulator", caps.getProperty("deviceName"));
+    }
+
+    @Test
+    @DisplayName("loadCapabilities unescapes '\\:' so legacy escaped files keep working")
+    void loadCapabilitiesUnescapesLegacyEscapedKeys() throws IOException {
+        File file = new File("./loadcaps-escaped-test.properties");
+        file.deleteOnExit();
+        try (FileOutputStream fos = new FileOutputStream(file)) {
+            // Written before the colon-safe parser: ':' had to be escaped to survive
+            // Properties.load. It must still resolve to the real key.
+            fos.write("appium\\:udid=emulator-5554\n".getBytes());
+        }
+
+        Properties caps = PropertiesLoader.loadCapabilities("loadcaps-escaped-test.properties");
+
+        assertEquals("emulator-5554", caps.getProperty("appium:udid"));
+        assertNull(caps.getProperty("appium\\:udid"), "The raw escaped key must not survive");
+    }
+
     private static void writeProps(File file, String content) throws IOException {
         try (FileOutputStream fos = new FileOutputStream(file)) {
             fos.write(content.getBytes());

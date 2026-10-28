@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Required by the Appium Espresso driver: its in-app server binds a socket
+         in this app's process. Without it the server fails with EPERM on start. -->
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <application
+        android:allowBackup="false"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.SaladShowcase">
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:launchMode="singleTop">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <!-- Deeplink: saladshowcase://main/home -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data
+                    android:host="main"
+                    android:scheme="saladshowcase" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".ListActivity"
+            android:exported="true" />
+
+        <activity
+            android:name=".FormsActivity"
+            android:exported="true" />
+
+        <activity
+            android:name=".ToastActivity"
+            android:exported="true" />
+
+        <activity
+            android:name=".GesturesActivity"
+            android:exported="true" />
+
+        <activity
+            android:name=".ViewPagerActivity"
+            android:exported="true" />
+
+        <activity
+            android:name=".WebViewActivity"
+            android:exported="true" />
+
+        <!-- Deeplink target: saladshowcase://second/detail -->
+        <activity
+            android:name=".SecondActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data
+                    android:host="second"
+                    android:scheme="saladshowcase" />
+            </intent-filter>
+        </activity>
+
+    </application>
+
+</manifest>

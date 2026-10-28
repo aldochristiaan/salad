@@ -3,9 +3,12 @@ package id.aldochristiaan.salad.util;
 import id.aldochristiaan.salad.config.SaladConfig;
 import org.openqa.selenium.NoSuchElementException;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.IOException;
+import java.io.StringReader;
 import java.util.Objects;
 import java.util.Properties;
 
@@ -15,10 +18,14 @@ import java.util.Properties;
 public class PropertiesLoader {
 
     private static volatile PropertiesLoader instance;
+    /** Element locators (and any key set via {@link #setProperty}). */
     private Properties properties;
+    /** Appium session capabilities only — must never leak into element lookups or vice versa. */
+    private Properties capabilityProperties;
 
     private PropertiesLoader() {
         this.properties = new Properties();
+        this.capabilityProperties = new Properties();
     }
 
     /**
@@ -28,19 +35,96 @@ public class PropertiesLoader {
      * <pre>{@code
      * Properties caps = PropertiesLoader.loadCapabilities("capabilities.properties");
      * }</pre>
+     * <p>
+     * <b>Important:</b> each line is parsed by hand, splitting at the first {@code =}.
+     * {@link java.util.Properties#load(java.io.InputStream)} also treats {@code :} as a
+     * key/value separator, which silently collapsed every {@code appium:someCap=value}
+     * line into a single {@code appium} key (last line wins) — so Appium capabilities
+     * like {@code appium:wdaLaunchTimeout} never reached the driver.
      * On failure an error is logged and an empty {@code Properties} is returned.
      *
      * @param fileName properties file name (resolved against {@code ./})
      * @return the loaded properties, or an empty instance when loading fails
      */
     public static Properties loadCapabilities(String fileName) {
+        return loadCapabilities(new File("./" + fileName));
+    }
+
+    /**
+     * Load capabilities from an arbitrary properties file, preserving keys that contain
+     * colons (e.g. {@code appium:udid}). See {@link #loadCapabilities(String)}.
+     */
+    public static Properties loadCapabilities(File file) {
         Properties props = new Properties();
-        try (FileInputStream fis = new FileInputStream("./" + fileName)) {
-            props.load(fis);
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String trimmed = line.strip();
+                if (trimmed.isEmpty() || trimmed.startsWith("#") || trimmed.startsWith("!")) {
+                    continue;
+                }
+                int separator = trimmed.indexOf('=');
+                if (separator < 0) {
+                    // No '=' on the line: keep standard Properties behavior for
+                    // "key: value" / "key value" styles by delegating to Properties.load.
+                    Properties legacy = new Properties();
+                    legacy.load(new StringReader(trimmed));
+                    props.putAll(legacy);
+                    continue;
+                }
+                String key = unescape(trimmed.substring(0, separator).strip());
+                String value = unescape(trimmed.substring(separator + 1).strip());
+                if (!key.isEmpty()) {
+                    props.setProperty(key, value);
+                }
+            }
         } catch (IOException e) {
-            LogUtil.error("Failed to load properties file: " + fileName, e);
+            LogUtil.error("Failed to load properties file: " + file.getName(), e);
         }
         return props;
+    }
+
+    /**
+     * Resolve escape sequences the same way {@link Properties#load(java.io.Reader)} does
+     * ({@code \n}, {@code \t}, {@code \r}, {@code \f}, {@code \\}, {@code uXXXX}, and
+     * importantly {@code \:} → {@code :}).
+     * Files written before the colon-safe parser escaped keys as {@code appium\:udid} to
+     * survive Properties.load; those must keep resolving to {@code appium:udid}.
+     */
+    private static String unescape(String input) {
+        if (input.indexOf('\\') < 0) {
+            return input;
+        }
+        char[] out = new char[input.length()];
+        int outLen = 0;
+        for (int i = 0; i < input.length(); i++) {
+            char c = input.charAt(i);
+            if (c != '\\' || i == input.length() - 1) {
+                out[outLen++] = c;
+                continue;
+            }
+            char next = input.charAt(++i);
+            switch (next) {
+                case 'n' -> out[outLen++] = '\n';
+                case 't' -> out[outLen++] = '\t';
+                case 'r' -> out[outLen++] = '\r';
+                case 'f' -> out[outLen++] = '\f';
+                case 'u' -> {
+                    if (i + 4 < input.length()) {
+                        try {
+                            out[outLen++] = (char) Integer.parseInt(input.substring(i + 1, i + 5), 16);
+                            i += 4;
+                        } catch (NumberFormatException e) {
+                            out[outLen++] = 'u';
+                        }
+                    } else {
+                        out[outLen++] = 'u';
+                    }
+                }
+                default -> out[outLen++] = next; // covers \\ \: \= and any other escaped char
+            }
+        }
+        return new String(out, 0, outLen);
     }
 
     /**
@@ -58,7 +142,7 @@ public class PropertiesLoader {
     }
 
     /**
-     * Load properties from a directory
+     * Load properties from a directory (element locators).
      */
     public void loadFromDirectory(String directory) {
         File dir = new File(directory);
@@ -78,7 +162,7 @@ public class PropertiesLoader {
     }
 
     /**
-     * Load properties from a single file
+     * Load properties from a single file (element locators).
      */
     public void loadFromFile(File file) {
         try (FileInputStream fis = new FileInputStream(file)) {
@@ -90,49 +174,54 @@ public class PropertiesLoader {
     }
 
     /**
-     * Load from Properties object
+     * Load Appium session capabilities. Kept separate from element locators so they are
+     * never forwarded to the driver as capabilities (or looked up as elements).
      */
     public void loadFromProperties(Properties props) {
-        this.properties.putAll(props);
+        this.capabilityProperties.putAll(props);
     }
 
     /**
-     * Get property value
+     * Get property value. Element locators take precedence; capability keys are a
+     * fallback for backward compatibility with single-store setups.
      */
     public String getProperty(String key) {
-        return properties.getProperty(key);
+        String value = properties.getProperty(key);
+        return value != null ? value : capabilityProperties.getProperty(key);
     }
 
     /**
      * Get property with default value
      */
     public String getProperty(String key, String defaultValue) {
-        return properties.getProperty(key, defaultValue);
+        String value = getProperty(key);
+        return value != null ? value : defaultValue;
     }
 
     /**
-     * Set property
+     * Set property (element store)
      */
     public void setProperty(String key, String value) {
         properties.setProperty(key, value);
     }
 
     /**
-     * Remove property
+     * Remove property from both stores
      */
     public void removeProperty(String key) {
         properties.remove(key);
+        capabilityProperties.remove(key);
     }
 
     /**
-     * Check if property exists
+     * Check if property exists in either store
      */
     public boolean hasProperty(String key) {
-        return properties.containsKey(key);
+        return properties.containsKey(key) || capabilityProperties.containsKey(key);
     }
 
     /**
-     * Get all properties as an independent snapshot copy.
+     * Get all properties as an independent snapshot copy (both stores merged).
      * <p>
      * Note: this intentionally copies the entries into the returned instance instead of using
      * {@code new Properties(properties)}, which would store the loaded values in the
@@ -143,15 +232,36 @@ public class PropertiesLoader {
      */
     public Properties getProperties() {
         Properties copy = new Properties();
+        copy.putAll(capabilityProperties);
         copy.putAll(properties);
         return copy;
     }
 
     /**
-     * Clear all properties
+     * Get only the Appium session capabilities. Element locators are excluded so they are
+     * never sent to the driver as capabilities.
+     */
+    public Properties getCapabilityProperties() {
+        Properties copy = new Properties();
+        copy.putAll(capabilityProperties);
+        return copy;
+    }
+
+    /**
+     * Get only the element locator properties.
+     */
+    public Properties getElementProperties() {
+        Properties copy = new Properties();
+        copy.putAll(properties);
+        return copy;
+    }
+
+    /**
+     * Clear all properties (both stores)
      */
     public void clear() {
         properties.clear();
+        capabilityProperties.clear();
     }
 
     /**

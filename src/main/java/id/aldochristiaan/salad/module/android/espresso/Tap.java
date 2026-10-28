@@ -5,13 +5,12 @@ import id.aldochristiaan.salad.module.Espresso;
 import id.aldochristiaan.salad.util.Coordinates;
 import id.aldochristiaan.salad.util.PrecisionDescriber;
 import id.aldochristiaan.salad.util.SwipeSpeed;
-import io.appium.java_client.TouchAction;
 import io.appium.java_client.android.AndroidDriver;
-import io.appium.java_client.touch.WaitOptions;
-import io.appium.java_client.touch.offset.PointOption;
 import org.openqa.selenium.InvalidElementStateException;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.PointerInput;
+import org.openqa.selenium.interactions.Sequence;
 
 import java.time.Duration;
 import java.util.List;
@@ -51,11 +50,15 @@ public class Tap extends Espresso {
     }
 
     public void location(int x, int y, Duration time) {
-        new TouchAction(androidDriver)
-                .press(PointOption.point(x, y))
-                .waitAction(WaitOptions.waitOptions(time))
-                .release()
-                .perform();
+        // W3C actions (same approach as the UiAutomator2 Swipe). The Espresso driver does
+        // not support the legacy /touch/perform endpoint used by TouchAction.
+        PointerInput finger = new PointerInput(PointerInput.Kind.TOUCH, "finger");
+        Sequence tap = new Sequence(finger, 1);
+        tap.addAction(finger.createPointerMove(Duration.ZERO, PointerInput.Origin.viewport(), x, y));
+        tap.addAction(finger.createPointerDown(PointerInput.MouseButton.LEFT.asArg()));
+        tap.addAction(new org.openqa.selenium.interactions.Pause(finger, time));
+        tap.addAction(finger.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
+        androidDriver.perform(List.of(tap));
     }
 
     private void clickSafely(ElementSupplier supplier, String locator) {
