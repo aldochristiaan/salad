@@ -163,7 +163,7 @@ jobs:
           cp -R "build/$APP_NAME" examples/showcase/src/test/resources/
 
       - name: Boot iPhone 15 simulator (handles CoreLocation data migration)
-        uses: futureware-tech/simulator-action@v5
+        uses: futureware-tech/simulator-action@v6
         id: sim
         with:
           model: 'iPhone 15'
