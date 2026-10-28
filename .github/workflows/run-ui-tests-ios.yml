@@ -43,9 +43,16 @@ env:
 
 jobs:
   test:
-    # macos-15 (arm64) ships Xcode 26.x with the iOS 26 simulator runtime and a
-    # pre-created iPhone 15 simulator.
-    runs-on: macos-15
+    # macOS 26 (Tahoe) ships Xcode 26.6 (build 17F113) with the iOS 26 simulator
+    # runtime; an iPhone 15 is created below from the devicetype list if missing.
+    # NOT macos-15: its newest Xcode is 26.3, which does not ship
+    # lib_TestingInterop.dylib under iPhoneSimulator.platform/Developer/usr/lib.
+    # WebDriverAgent >= 16.12.11 (appium-xcuitest-driver >= 12.16, incl. our pin)
+    # embeds that dylib for EVERY Xcode 26 (XCODE_VERSION_MAJOR=2600), so xcodebuild
+    # fails with "lstat(...lib_TestingInterop.dylib): No such file or directory"
+    # (exit 65) on all 4 retries. Xcode 26.6 is the exact build the upstream fix
+    # (appium/WebDriverAgent#1271) was validated against.
+    runs-on: macos-26
     timeout-minutes: 60
     steps:
       - name: Checkout
@@ -65,7 +72,9 @@ jobs:
         uses: actions/cache@v4
         with:
           path: build/${{ env.APP_NAME }}
-          key: ios-showcase-app-${{ runner.os }}-${{ steps.hash.outputs.hash }}
+          # Runner label is part of the key: an .app built by macos-15's Xcode 26.3
+          # must not be reused on macos-26 — rebuild with Xcode 26.6 at least once.
+          key: ios-showcase-app-macos-26-${{ steps.hash.outputs.hash }}
 
       - name: Select Xcode 26
         if: steps.appcache.outputs.cache-hit != 'true'
