@@ -169,6 +169,8 @@ jobs:
           model: 'iPhone 17 Pro'
           os_version: '>=26.0'
           boot_timeout_seconds: '300'
+          wait_for_boot: 'true'
+          settle_timeout_seconds: '30'
           # The action handles the "Waiting on Data Migration" CoreLocation stall
           # by waiting for SpringBoard to become ready, not just bootstatus.
           # It outputs `udid` for use in capabilities.
