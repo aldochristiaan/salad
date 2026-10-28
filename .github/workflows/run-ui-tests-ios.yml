@@ -162,12 +162,20 @@ jobs:
           rm -rf examples/showcase/src/test/resources/SaladShowcase.app
           cp -R "build/$APP_NAME" examples/showcase/src/test/resources/
 
+      - name: Clean up duplicate simulators
+        run: |
+          # Delete unavailable simulators
+          xcrun simctl delete unavailable
+          # Optional: erase all if you want a completely fresh slate
+          xcrun simctl erase all
+
       - name: Boot iPhone 17 Pro simulator (handles CoreLocation data migration)
         uses: futureware-tech/simulator-action@v6
         id: sim
         with:
           model: 'iPhone 17 Pro'
-          os_version: '>=26.0'
+          os: 'ios'
+          os_version: '26.4'
           boot_timeout_seconds: '300'
           wait_for_boot: 'true'
           settle_timeout_seconds: '30'
